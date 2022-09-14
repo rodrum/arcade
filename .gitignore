@@ -1,0 +1,10 @@
+*mod
+*dat
+profile*
+.*
+bin
+output
+GeographicLib-1.49_Fortran
+*.exe
+*png
+*pdf
