@@ -1,6 +1,11 @@
 # arcade
 _Automated Rapid Climatological Azimuth Deviation Estimation_
 
+## Purpose
+This project aims to understand the feasibility of a simplified rapid azimuth deviation prediction scheme for improving the source location when implementing an association and location cross-bearings, grid-search method like IMS\_vASC.
+As a design principle, this implied using "offline", portable, and available for research purposes tools, so the calculations could be performed by any scientist in their personal workstation machine, but could also scale to a large research computation center.
+The empirical climatologies allow us to skip the waiting time of accessing and downloading realistic atmospheric descriptions and ensure reproducible results for reliable scientific use.
+
 ## ARCADE with NRLMSIS-2.0 and latest infraGA
 
 Collection of Python (and some bash) scripts, that use available open source
