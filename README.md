@@ -79,3 +79,9 @@ and results will be saved in the directory `path`/`name`, which is set in
 3. `do.grid_proc`: uses `ums_vassc_gridproc_ev`
 4. `do.readwrite_basic_during`: uses `readwrite_imsvasscbin_basic`
 5. `do.readwrite_gridproc`: uses `readwrite_imsvasscbin_gridproc`
+
+## Hybrid models and CDSAPI
+
+These models were used to compare and validate the climatological estimations, but can still be used for realistic aproaches.
+
+The hybrid models need the Climate Data Store (CDS) infrastructure and API module, `cdsapi`, provided by the European Centre for Medium-Range Weather Forecasts (ECMWF, https://www.ecmwf.int/). Please visit https://cds.climate.copernicus.eu/api-how-to to ensure the module is intalled in your system, and properly configured API user and key to be able to download the atmospheric descriptions.
