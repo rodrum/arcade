@@ -1,6 +1,13 @@
+ARCADE: Automated Rapid Climatologic Azimuth Deviation Estimation
+
+written by Rodrigo S. De Negri L. University of California, Santa Barbara, email: rsd00@ucsb.edu
+
+If you use this software please cite:
+__De Negri, R. and Matoza, R. S. (2022). Rapid location of remote volcanic infrasound using 3D ray-tracing and empirical climatologies: Application to the 2011 Cordón Caulle and 2015 Calbuco eruptions, Chile. TBD__
+
 -- Modified BSD-2 License - for Non-Commercial Research and Educational Use Only
 
-Copyright (c) 2017, The Regents of the University of California All rights reserved.
+Copyright (c) 2022, The Regents of the University of California All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted for non-commercial research and educational use only provided that the following conditions are met:
 
