@@ -6,6 +6,12 @@ This project aims to understand the feasibility of a simplified rapid azimuth de
 As a design principle, this implied using "offline", portable, and available for research purposes tools, so the calculations could be performed by any scientist in their personal workstation machine, but could also scale to a large research computation center.
 The empirical climatologies allow us to skip the waiting time of accessing and downloading realistic atmospheric descriptions and ensure reproducible results for reliable scientific use.
 
+## External repos
+
+### NRLMSIS2.0
+### HWM14
+### infraGA/GeoAC
+
 ## ARCADE with NRLMSIS-2.0 and latest infraGA
 
 Collection of Python (and some bash) scripts, that use available open source
@@ -89,3 +95,6 @@ The hybrid models need the Climate Data Store (CDS) infrastructure and API modul
 
 #### ecCodes to decode data
 In order to decode the downloaded data and use it automatically for ray tracig with infraGA, it is necessary to install `ecCodes` provided by ECMWF. Please follow the instructions here https://confluence.ecmwf.int/display/ECC/ecCodes+installation. I recommend to use the Python binding installation (https://confluence.ecmwf.int/display/UDOC/How+to+install+ecCodes+with+Python+bindings+in+conda+-+ecCodes+FAQ).
+
+## Other
+Tested on macOS Big Sur and Linux only!
