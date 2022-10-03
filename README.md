@@ -69,6 +69,8 @@ interesting cases.
   - Create an envinroment (replace `<env>` with the name you want) and install the requires packages listed in `arcade_conda_env.txt`
   
     `$ conda create --name <env> --file arcade_conda_env.txt`
+    
+  - When running the calculations, activate the environment with `$ conda activate <enb>`. **NOTE** If using hybrid models, you need to install the dependencies here too (see below).
   
 ## How to run
 
