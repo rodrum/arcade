@@ -72,6 +72,16 @@ interesting cases.
     
   - When running the calculations, activate the environment with `$ conda activate <enb>`. **NOTE** If using hybrid models, you need to install the dependencies here too (see below).
   
+### Hybrid models and CDSAPI
+
+These models were used to compare and validate the climatological estimations, but can still be used for realistic aproaches.
+
+#### CDSAPI Python module
+The hybrid models need the Climate Data Store (CDS) infrastructure and API module, `cdsapi`, provided by the European Centre for Medium-Range Weather Forecasts (ECMWF, https://www.ecmwf.int/). Please visit https://cds.climate.copernicus.eu/api-how-to to ensure the module is intalled in your system, and properly configured API user and key to be able to download the atmospheric descriptions.
+
+#### ecCodes to decode data
+In order to decode the downloaded data and use it automatically for ray tracig with infraGA, it is necessary to install `ecCodes` provided by ECMWF. Please follow the instructions here https://confluence.ecmwf.int/display/ECC/ecCodes+installation. I recommend to use the Python binding installation (https://confluence.ecmwf.int/display/UDOC/How+to+install+ecCodes+with+Python+bindings+in+conda+-+ecCodes+FAQ).
+
 ## How to run
 
 1. Inside repo, run `$ make all-prep`. 
@@ -145,16 +155,23 @@ Below `[ecmwf]` there are parameters related with the use of ERA 5 ECMWF data to
 - `h1` : sets minimum altitude to merge with climatologies. 
 - `h2`: sets maximum altitude to merge with climatologies. The merging process starts at `h1` with puse ERA 5 values, and ends at `h2` with puse climatology values.
 
+## Results
 
-## Hybrid models and CDSAPI
+### `azimuth_deviation_table.txt`
+This is the main summary of results. It contains a header and each row represents the results of a specific source-station pair. Each column of is described below:
+- Column 1, `Year`: the year as YYYY. 
+- Column 2, `DOY` : Day of Year as three digit numbed (1 to 356).
+- Column 3, `SouNum` : source number starting from 1. Follows order from `sou_pos` from `discretize_parameters.toml`.
+- Column 4, `StaNum` : station number starting from 1. Follows order from `sta_pos` from `discretize_parameters.toml`.
+- Column 5, `TrueBaz` : geographical (true) backazimuth from station to particular source in degrees.
+- Column 6, `BazDevS` : stratospheric-only calculated backazimuth deviation from true.
+- Column 7, `#BazDS` : number of stratospheric ground intercepts found for this calculation.
+- Column 8, `BazDevT` : thermospheric-only calculated backazimuth deviation from true.
+- Column 9, `#BazDT` : number of thermospheric ground intercepts found for this calculation.
+- Column 10, `BazDevA` : average of `BazDevS` and `BazDevT` to calculate the azimuth deviation estimation. 
+- Column 11, `StdBDA` : standard deviation of `BazDevA`.
+- Column 12, `Ill`: `True` if particular source-station pair could not be found, of `False` in the contrary case. A successful calculation should have `False` in this column.
 
-These models were used to compare and validate the climatological estimations, but can still be used for realistic aproaches.
-
-### CDSAPI Python module
-The hybrid models need the Climate Data Store (CDS) infrastructure and API module, `cdsapi`, provided by the European Centre for Medium-Range Weather Forecasts (ECMWF, https://www.ecmwf.int/). Please visit https://cds.climate.copernicus.eu/api-how-to to ensure the module is intalled in your system, and properly configured API user and key to be able to download the atmospheric descriptions.
-
-### ecCodes to decode data
-In order to decode the downloaded data and use it automatically for ray tracig with infraGA, it is necessary to install `ecCodes` provided by ECMWF. Please follow the instructions here https://confluence.ecmwf.int/display/ECC/ecCodes+installation. I recommend to use the Python binding installation (https://confluence.ecmwf.int/display/UDOC/How+to+install+ecCodes+with+Python+bindings+in+conda+-+ecCodes+FAQ).
 
 ## Other
 Tested on macOS Big Sur and Ubuntu Linux only!
