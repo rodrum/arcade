@@ -76,7 +76,7 @@ interesting cases.
 
 1. Inside repo, run `$ make all-prep`. 
 2. Modify the input files `arcade_config.toml` and `discretize_parameters.toml`
-to suit your model. 
+to suit your model. (Currently it is setup with an example run for Puyehue-Cordon Caulle to IS02 on 2011-06-04 at 19:00:00 UTC)
 3. Run `$ make run-arcade` to calculate the azimuth deviations.
 4. After the modeling ends, the input configuration files and output figures
 and results will be saved in the directory `path`/`name`, which is set in
@@ -84,7 +84,36 @@ and results will be saved in the directory `path`/`name`, which is set in
 
 ## Parameters and options
 
-FILL ME
+### `./input/arcade_config.toml`
+Here you set up the ARCADE_main.py run parameters.
+- `run_type`:
+  `norm` - will use default non-perturbed atmospheric descriptions
+  `pert` - will use perturbed atmospheric descriptions
+- `use_thermo` : `true` or `false`, determines if using thermospheric arrivals or not
+- `max_run` : maximum number of tries before giving up in searching for arrivals near each target station
+- `atten_th` : attenuation threshold filter. Negative number representing the minimum attenuaton an arrival can have before not being considered in the estimations.
+- `min_dist_arrv` : distance in km that sets the maximum distance at which an arrival can be to be associated with a station in the first search process (later it gets reduces to 5 km)
+- `daz` : maximum distance in degrees to consider an arrival associated with a station. Measures azimuth difference.
+- `dphi` : determines the aperture to launch rays around an azimuth value
+- `scale` : this parameter scales the azimuth steps (the bigger the smaller the step). Check `ARCADE_main.py` to find relationship.
+- `thresh`: this is the final distance in degrees to declare the search as completed.
+- `k` : parameter involved in iterative search to look for arrivals around station before reaching `thresh`.
+
+Below `[launch_parameters]` some other parameters related with the specific launch are set. These are related with the 3D ray tracing process:
+- `incl_min` : minimum vertical launch angle in degrees
+- `incl_max` : maximum vertical launch angle in degrees
+- `incl_step` : step in degrees for launch angles, determine also the number of rays that are launched
+- `drng` : maximum extra range given a source-station geographical distance to model
+- `bounces` : maximum number of 'bounces' to model. A bounce is then the ray reaches a turning height and comes back to the ground.
+- `src_alt` : altitude of source in kilometers
+- `write_atmo` : `false` or `true`, depending if you want to write the atmospheric profiles (it slows down calculations so starts as `false`).
+- `calc_amp` : `false` or `true`, if calculating the amplitudes for the rays. As it slows down calculations so it's should be `false` for testing.
+- `perc_cpu` : from all available cpu/threads, how many will you use? Calculated as number of cpus/perc_cpu, so 1=100% of total, 2=50% of total, 3=33.333% of total and so on.
+
+Below `[project_info]` a couple of parameters about the project name and location are set. These are important to save the results and running parameters after the modeling has been completed (check `wrap_proj.sh`).
+- `name` : name of project as string between quotes. Example "Test_0".
+- `path` : path of project as string. Example: `/home/yourname/Desktop/`. The project will be save inside this path after running with the name set in `name`. That is: `/home/yourname/Desktop/Test_0".
+### `./input/discretize_parameters.toml`
 
 ## Hybrid models and CDSAPI
 
