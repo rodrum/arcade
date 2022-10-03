@@ -86,14 +86,14 @@ and results will be saved in the directory `path`/`name`, which is set in
 
 FILL ME
 
-### Hybrid models and CDSAPI
+## Hybrid models and CDSAPI
 
 These models were used to compare and validate the climatological estimations, but can still be used for realistic aproaches.
 
-#### CDSAPI Python module
+### CDSAPI Python module
 The hybrid models need the Climate Data Store (CDS) infrastructure and API module, `cdsapi`, provided by the European Centre for Medium-Range Weather Forecasts (ECMWF, https://www.ecmwf.int/). Please visit https://cds.climate.copernicus.eu/api-how-to to ensure the module is intalled in your system, and properly configured API user and key to be able to download the atmospheric descriptions.
 
-#### ecCodes to decode data
+### ecCodes to decode data
 In order to decode the downloaded data and use it automatically for ray tracig with infraGA, it is necessary to install `ecCodes` provided by ECMWF. Please follow the instructions here https://confluence.ecmwf.int/display/ECC/ecCodes+installation. I recommend to use the Python binding installation (https://confluence.ecmwf.int/display/UDOC/How+to+install+ecCodes+with+Python+bindings+in+conda+-+ecCodes+FAQ).
 
 ## Other
