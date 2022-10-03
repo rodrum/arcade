@@ -113,7 +113,38 @@ Below `[launch_parameters]` some other parameters related with the specific laun
 Below `[project_info]` a couple of parameters about the project name and location are set. These are important to save the results and running parameters after the modeling has been completed (check `wrap_proj.sh`).
 - `name` : name of project as string between quotes. Example "Test_0".
 - `path` : path of project as string. Example: `/home/yourname/Desktop/`. The project will be save inside this path after running with the name set in `name`. That is: `/home/yourname/Desktop/Test_0".
+
+
 ### `./input/discretize_parameters.toml`
+Here you set up the parameters used in the discretization process. That is, when the area is defined thorugh the station locations, souce locations, grid steps, etc.
+- `year` : year as YYYY. Example `2011`.
+- `doys` : list of days of year to be calculated. Example `[123, 124, 125, 145]`. It can also be just one day like `[155]`.
+- `sec` : time of day in seconds. Example: `68400` (19:00).
+- `hmin` : minimum altitude considered in kilometers for atmospheric descriptions
+- `hmax` : maximum altitude in kilometers
+- `dh` : altitude step to calculate atmospheric descriptions in kilometers
+- `f107a` : determines the solar activity for the climatologies, set as 'moderate' by default (value `150`).
+- `f107` : related with `f107a`, set as same value.
+- `apd` : determines the geomagnetic activity for the climatologies, set as 'quiet' by default (value `4`).
+- `aph` : related with `apd`, set as same number.
+- `sou_pos` : list of source locations in latitude-longitude pairs. Example: `[[-41.33, -72.62], [-40.59, -72.117]]`. It can be just one source as `[[-40.59, -72.117]]`.
+- `sta_pos` : list of station locations. Analogous to `sou_pos`. 
+- `sta_nam` : list of names of stations. Example: `["IS02", "IS08", "IS09"]`. It should correspond to `sta_pos`.
+- `sta_skp` : Not used in this version. List of station numbers from list you want to skip in the plotting process.
+- `ds` : step in kilometers to discretize along each path for calculating the average per height
+
+Below `[range_dependent]` there are parameters to determine is using a range-dependent calculation or not plus the grid discretization.
+- `use_rng_dep` : `false` or `true`. By default is false as the range-repdendent calculations where not used in the paper associated with this repo. It is also much slower than the range-independent cases.
+- `dlat` and `dlon`: the step size in degrees for the grids.
+
+Below `[ecmwf]` there are parameters related with the use of ERA 5 ECMWF data to construct the hybrid atmospheric descriptions.
+- `use_ecmwf`: `false` or `true`, depending if using hybrid model. Of coure, `true` means using it, while `false` not using it.
+- `auto_area`: `true` or `false`. Set as `false` if setting the area to be downloaded manually or `true` if determined by the source and station locations.
+- `min_lon`, `max_lon`, `min_lat`, `max_lat`: sets the area if `auto_area` is `false`.
+- `dlon`, `dlat`: sets the grid step of the data. It depends on ERA 5 so I recomment 1 degree.
+- `h1` : sets minimum altitude to merge with climatologies. 
+- `h2`: sets maximum altitude to merge with climatologies. The merging process starts at `h1` with puse ERA 5 values, and ends at `h2` with puse climatology values.
+
 
 ## Hybrid models and CDSAPI
 
