@@ -1,7 +1,7 @@
 """
 A-utomated
 R-apid
-C-limatologic
+C-limatological
 A-zimuth
 D-eviation
 E-stimation
