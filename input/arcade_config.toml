@@ -1,5 +1,5 @@
 # run type: if normal, perturbed, or hybrid 
-run_type = "pert"  # options: "norm", "pert", "hybrid"
+run_type = "norm"  # options: "norm", "pert", "hybrid"
 # use thermospheric arrivals to determine azimuth deviation
 use_thermo = true
 # maximum number of runs before giving up
@@ -48,5 +48,5 @@ perc_cpu = 1 # as num_cpu/perc_cpu
     
 # Project info ############################################
 [project_info]
-name = "PCCVC-Hybrid-Pert-StratoThermo-RelaxParams"
-path = "/home/rodrigo/MATOZALAB_SCRATCH/rodrigo/ARCADE_paper"
+name = "PCCVC-Clim-Norm-StratoThermo"
+path = "FILLME"
