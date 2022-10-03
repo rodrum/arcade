@@ -63,10 +63,12 @@ interesting cases.
 
 
 ## Requisites
+- All external repos in place and hopefully individually tested (thorugh makefiles inside each one). 
 - Fortran and c++ compilers (check `makefile` to define Fortran compiler in first line)
 - Python 3.9 Conda: follow instructions here https://docs.conda.io/en/latest/miniconda.html
   - Create an envinroment (replace `<env>` with the name you want) and install the requires packages listed in `arcade_conda_env.txt`
-  `$ conda create --name <env> --file arcade_conda_env.txt`
+  
+    `$ conda create --name <env> --file arcade_conda_env.txt`
   
 ## How to run
 
