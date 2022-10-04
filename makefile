@@ -68,7 +68,7 @@ calculate-rngdep-nodes-ecmwf: requisites msis-mods
 	$(MSISE)/msis_calc.mod $(MSISE)/msis_gtd8d.F90 \
 	$(HWM)/hwm14.f90
 
-all: infraga-sph infraga-sph-rngdep calculate-sph-nodes complete-ecmwf calculate-rngdep-nodes calculate-rngdep-nodes-ecmwf
+all-prep: infraga-sph infraga-sph-rngdep calculate-sph-nodes complete-ecmwf calculate-rngdep-nodes calculate-rngdep-nodes-ecmwf
 	rm *mod
 
 #===============================================================================
