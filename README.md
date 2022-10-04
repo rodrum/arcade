@@ -3,7 +3,7 @@ _Automated Rapid Climatological Azimuth Deviation Estimation_
 
 ## Purpose
 This project aims to understand the feasibility of a simplified rapid azimuth deviation prediction scheme for improving the source location when implementing an association and location cross-bearings, grid-search method like IMS\_vASC [Matoza et al., 2017].
-As a design principle, this implied using "offline", portable, and available for research purposes tools, so the calculations could be performed by any scientist in their personal workstation machine, but could also scale to a large research computation center.
+This implies using "offline", portable, and available for research purposes tools, so the calculations could be performed by any scientist in their personal workstation machine, but could also scale to a large research computation center.
 
 ## Project code
 The project itself is a collection of Python scripts plus some Fortran 90 layers that communicate with 
@@ -21,7 +21,7 @@ The method has two main external components: the atmospheric model (HWM14+NRLMSI
 
 ### NRLMSIS2.0
 NRLMSIS 2.0 Code and all data samples used in this work are available at https://map.nrl.navy.mil/map/pub/nrl/NRLMSIS/NRLMSIS2.0
-The associated publicacion is __Emmert, J. T., Drob, D. P., Picone, J. M., Siskind, D. E., Jones, M., Mlynczak, M. G., et al. (2021). NRLMSIS 2.0: A whole-atmosphere empirical model of temperature and neutral species densities. Earth and Space Science, 8, e2020EA001321. https://doi.org/10.1029/2020EA001321__
+The associated publication is __Emmert, J. T., Drob, D. P., Picone, J. M., Siskind, D. E., Jones, M., Mlynczak, M. G., et al. (2021). NRLMSIS 2.0: A whole-atmosphere empirical model of temperature and neutral species densities. Earth and Space Science, 8, e2020EA001321. https://doi.org/10.1029/2020EA001321__
 
 
 ### HWM14
@@ -70,17 +70,16 @@ interesting cases.
   
     `$ conda create --name <env> --file arcade_conda_env.txt`
     
-  - When running the calculations, activate the environment with `$ conda activate <enb>`. **NOTE** If using hybrid models, you need to install the dependencies here too (see below).
+  - When running the calculations, activate the environment with `$ conda activate <env>`. **NOTE:** If using hybrid models, you need to install the dependencies here too (see below).
   
-### Hybrid models and CDSAPI
-
-These models were used to compare and validate the climatological estimations, but can still be used for realistic aproaches.
+### Hybrid models
+In addition to the empirical climatologies (NRMSLSIS2.0/HWM14), you can also use hybrid atmospheric descriptions that are a combination of ERA 5 ECMWF below ~80 km and empirical climatologies at higher altitudes. These models were used to compare and validate the climatological estimations, but can still be used for realistic aproaches.
 
 #### CDSAPI Python module
-The hybrid models need the Climate Data Store (CDS) infrastructure and API module, `cdsapi`, provided by the European Centre for Medium-Range Weather Forecasts (ECMWF, https://www.ecmwf.int/). Please visit https://cds.climate.copernicus.eu/api-how-to to ensure the module is intalled in your system, and properly configured API user and key to be able to download the atmospheric descriptions.
+The hybrid models need the Climate Data Store (CDS) infrastructure and API module, `cdsapi`, provided by the European Centre for Medium-Range Weather Forecasts (ECMWF, https://www.ecmwf.int/). Please visit https://cds.climate.copernicus.eu/api-how-to to ensure the module is installed in your system, and properly configured API user and key to be able to download the atmospheric descriptions.
 
 #### ecCodes to decode data
-In order to decode the downloaded data and use it automatically for ray tracig with infraGA, it is necessary to install `ecCodes` provided by ECMWF. Please follow the instructions here https://confluence.ecmwf.int/display/ECC/ecCodes+installation. I recommend to use the Python binding installation (https://confluence.ecmwf.int/display/UDOC/How+to+install+ecCodes+with+Python+bindings+in+conda+-+ecCodes+FAQ).
+In order to decode the downloaded data and use it automatically for ray tracing with infraGA, it is necessary to install `ecCodes` provided by ECMWF. Please follow the instructions here https://confluence.ecmwf.int/display/ECC/ecCodes+installation. I recommend to use the Python binding installation (https://confluence.ecmwf.int/display/UDOC/How+to+install+ecCodes+with+Python+bindings+in+conda+-+ecCodes+FAQ).
 
 ## How to run
 
@@ -158,7 +157,7 @@ Below `[ecmwf]` there are parameters related with the use of ERA 5 ECMWF data to
 ## Results
 
 ### `azimuth_deviation_table.txt`
-This is the main summary of results. It contains a header and each row represents the results of a specific source-station pair. Each column of is described below:
+This is the main summary of results. It contains a header and each row represents the results of a specific source-station pair. Each column of this file is described below:
 - Column 1, `Year`: the year as YYYY. 
 - Column 2, `DOY` : Day of Year as three digit numbed (1 to 356).
 - Column 3, `SouNum` : source number starting from 1. Follows order from `sou_pos` from `discretize_parameters.toml`.
@@ -172,6 +171,5 @@ This is the main summary of results. It contains a header and each row represent
 - Column 11, `StdBDA` : standard deviation of `BazDevA`.
 - Column 12, `Ill`: `True` if particular source-station pair could not be found, of `False` in the contrary case. A successful calculation should have `False` in this column.
 
-
-## Other
-Tested on macOS Big Sur and Ubuntu Linux only!
+## Thanks to...
+- Jeremy Francoeur
