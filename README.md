@@ -173,4 +173,4 @@ This is the main summary of results. It contains a header and each row represent
 
 ## Thanks to...
 - Robin Matoza: concept, analisis, and many ideas
-- Jeremy Francoeur: proof-reading, testing 
+- Jeremy Francoeur: proofreading, testing 
