@@ -10,26 +10,6 @@ The project itself is a collection of Python scripts plus some Fortran 90 layers
 available open source climatologies and a 3D ray-tracing algorithm. 
 `ARCADE_main.py` contains the functions that serve to find and estimate the azimuth deviations, representing the core of the used methodology. 
 
-## External repos
-
-The climatologies used are the Horizontal Wind Model (HWM14) [Drob et al., 2014] 
-to estimate horizonal winds in height, and NRLMSIS2.0 [Emmert et al., 2021] to 
-estimate other properties of the atmosphere in height, like density, temperature 
-and pressure. The 3D ray-tracing algorithm used is infraGA [Blom and Waxler, 2012].
-
-The method has two main external components: the atmospheric model (HWM14+NRLMSIS2.0) and the 3D ray tracing algorithm (infraGA/geoAC). Each one of this components has an associated repository that needs to be inside `repos` folder, with the names as defined in the `makefile`. That is, `./repos/HWM14`, `./repos/NRLMSIS2.0` and `./repos/infraGA-master`. Below the instructions to access each one of the components.
-
-### NRLMSIS2.0
-NRLMSIS 2.0 Code and all data samples used in this work are available at https://map.nrl.navy.mil/map/pub/nrl/NRLMSIS/NRLMSIS2.0
-The associated publication is __Emmert, J. T., Drob, D. P., Picone, J. M., Siskind, D. E., Jones, M., Mlynczak, M. G., et al. (2021). NRLMSIS 2.0: A whole-atmosphere empirical model of temperature and neutral species densities. Earth and Space Science, 8, e2020EA001321. https://doi.org/10.1029/2020EA001321__
-
-
-### HWM14
-Available to download from the supporting information of __Drob, D. P., Emmert, J. T., Meriwether, J. W., Makela, J. J., Doornbos, E., Conde, M., Hernandez, G., Noto, J., Zawdie, K. A., McDonald, S. E., et al. (2015), An update to the Horizontal Wind Model (HWM): The quiet time thermosphere, Earth and Space Science, 2, 301– 319, doi:10.1002/2014EA000089.__
-
-### infraGA/geoAC
-Available from the public seosmoacoustic repository of Los Alamos National Laboratory https://github.com/LANL-Seismoacoustics/infraGA
-
 ## Current capabilities
 
 ARCADE is cabable of different types of ray propagation modelling. The most 
@@ -63,7 +43,7 @@ interesting cases.
 
 
 ## Requisites
-- All external repos in place and hopefully individually tested (thorugh makefiles inside each one). 
+- All external repos (see below) in place and hopefully individually tested (thorugh makefiles inside each one). 
 - Fortran and c++ compilers (check `makefile` to define Fortran compiler in first line)
 - Python 3.9 Conda: follow instructions here https://docs.conda.io/en/latest/miniconda.html
   - Create an envinroment (replace `<env>` with the name you want) and install the requires packages listed in `arcade_conda_env.txt`
@@ -71,7 +51,27 @@ interesting cases.
     `$ conda create --name <env> --file arcade_conda_env.txt`
     
   - When running the calculations, activate the environment with `$ conda activate <env>`. **NOTE:** If using hybrid models, you need to install the dependencies here too (see below).
-  
+
+### External repos
+
+The climatologies used are the Horizontal Wind Model (HWM14) [Drob et al., 2014] 
+to estimate horizonal winds in height, and NRLMSIS2.0 [Emmert et al., 2021] to 
+estimate other properties of the atmosphere in height, like density, temperature 
+and pressure. The 3D ray-tracing algorithm used is infraGA [Blom and Waxler, 2012].
+
+The method has two main external components: the atmospheric model (HWM14+NRLMSIS2.0) and the 3D ray tracing algorithm (infraGA/geoAC). Each one of these components has an associated repository that needs to be inside `repos` folder, with the names as defined in the `makefile`. That is, `./repos/HWM14`, `./repos/NRLMSIS2.0` and `./repos/infraGA-master`. Below are the instructions to access each one of the components.
+
+#### NRLMSIS2.0
+NRLMSIS 2.0 Code and all data samples used in this work are available at https://map.nrl.navy.mil/map/pub/nrl/NRLMSIS/NRLMSIS2.0
+The associated publication is __Emmert, J. T., Drob, D. P., Picone, J. M., Siskind, D. E., Jones, M., Mlynczak, M. G., et al. (2021). NRLMSIS 2.0: A whole-atmosphere empirical model of temperature and neutral species densities. Earth and Space Science, 8, e2020EA001321. https://doi.org/10.1029/2020EA001321__
+
+
+#### HWM14
+Available to download from the supporting information of __Drob, D. P., Emmert, J. T., Meriwether, J. W., Makela, J. J., Doornbos, E., Conde, M., Hernandez, G., Noto, J., Zawdie, K. A., McDonald, S. E., et al. (2015), An update to the Horizontal Wind Model (HWM): The quiet time thermosphere, Earth and Space Science, 2, 301– 319, doi:10.1002/2014EA000089.__
+
+#### infraGA/geoAC
+Available from the public seosmoacoustic repository of Los Alamos National Laboratory https://github.com/LANL-Seismoacoustics/infraGA
+
 ### Hybrid models
 In addition to the empirical climatologies (NRMSLSIS2.0/HWM14), you can also use hybrid atmospheric descriptions that are a combination of ERA 5 ECMWF below ~80 km and empirical climatologies at higher altitudes. These models were used to compare and validate the climatological estimations, but can still be used for realistic aproaches.
 
@@ -172,4 +172,5 @@ This is the main summary of results. It contains a header and each row represent
 - Column 12, `Ill`: `True` if particular source-station pair could not be found, of `False` in the contrary case. A successful calculation should have `False` in this column.
 
 ## Thanks to...
-- Jeremy Francoeur
+- Robin Matoza: concept, analisis, and many ideas
+- Jeremy Francoeur: proof-reading, testing 
