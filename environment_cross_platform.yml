@@ -1,0 +1,16 @@
+name: arcade
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - geographiclib
+  - toml
+  - obspy
+  - numpy
+  - pandas
+  - scipy
+  - matplotlib
+  - cartopy
+  - eccodes
+prefix: /Users/rodrigo/miniconda3/envs/arcade
