@@ -49,7 +49,7 @@ interesting cases.
   - For HWM14 you'll need fftw3 (libfftw3-dev in Ubuntu; fftw-3 with port in MacOS).
 - Python 3.9 Conda: follow instructions here https://docs.conda.io/en/latest/miniconda.html
   - Create the `arcade` envinroment with `$ conda env create -f environment_cross_platform.yml`    
-  - When running the calculations, activate the environment with `$ conda activate <env>`. **NOTE:** If using hybrid models, you need to install the dependencies here too (see below).
+  - When running the calculations, activate the environment with `$ conda activate arcade`. **NOTE:** If using hybrid models, you need to install the dependencies here too (see below).
 
 ### External repos
 
