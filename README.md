@@ -45,11 +45,10 @@ interesting cases.
 ## Requisites
 - All external repos (see below) in place and hopefully individually tested (thorugh makefiles inside each one). 
 - Fortran and c++ compilers (check `makefile` to define Fortran compiler in first line)
+  - For NRMLSIS2.0 you'll need gfortran version 4.8.5 or 6.3.0 or 8.1.0
+  - For HWM14 you'll need fftw3 (libfftw3-dev in Ubuntu; fftw-3 with port in MacOS).
 - Python 3.9 Conda: follow instructions here https://docs.conda.io/en/latest/miniconda.html
-  - Create an envinroment (replace `<env>` with the name you want) and install the requires packages listed in `arcade_conda_env.txt`
-  
-    `$ conda create --name <env> --file arcade_conda_env.txt`
-    
+  - Create the `arcade` envinroment with `$ conda env create -f environment.yml`    
   - When running the calculations, activate the environment with `$ conda activate <env>`. **NOTE:** If using hybrid models, you need to install the dependencies here too (see below).
 
 ### External repos
