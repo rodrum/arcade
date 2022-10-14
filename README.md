@@ -172,8 +172,8 @@ This is the main summary of results. It contains a header and each row represent
 
 # Example: calculating the expected azimuth deviation at IS41 for infrasound signals coming from 2011 Puyehue-Cordón Caulle, Chile eruption
 1. For this example you should keep the configuration file `./input/arcade_config.toml` untouched, except for the last line (l. 52). Set the parameter `path =  "FILLME"` with the path in your workstation where you would like to save your results (Example: `path = /Users/rodrum/Desktop/`). 
-  *Note 1:*: the project name is set in line 51 as `name = "PCCVC-Clim-Norm-StratoThermo". This will be the folder name that will contain your results.
-  *Note 2:* `perc_cpu` (line 47) is set as `1`, which means that in theory the calculations will use all the cores in your workstation. You don't have to worry about this as this example calculates just one source to one station, which will use only one core (each profile takes one core). 
+  - *Note 1:* the project name is set in line 51 as `name = "PCCVC-Clim-Norm-StratoThermo"`. This will be the folder name that will contain your results.
+  - *Note 2:* `perc_cpu` (line 47) is set as `1`, which means that in theory the calculations will use all the cores in your workstation. You don't have to worry about this as this example calculates just one source to one station, which will use only one core (each profile takes one core). 
 2. In the parameters file `./input/discretize_parameters.toml` you need to uncomment the coordinates of the station IS41 (or I41PY), and comment all the other predefined station locations. That is, comment line 26 and uncomment line 33. Everything else is already set-up for the example. 
 3. Once the input files have been modified and saved in place, just run `make run-arcade` and wait... Depending on your workstation this could take up to 
 
