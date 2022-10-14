@@ -170,7 +170,7 @@ This is the main summary of results. It contains a header and each row represent
 - Column 11, `StdBDA` : standard deviation of `BazDevA`.
 - Column 12, `Ill`: `True` if particular source-station pair could not be found, of `False` in the contrary case. A successful calculation should have `False` in this column.
 
-# Example: calculating the expected azimuth deviation at IS41 for infrasound signals coming from 2011 Puyehue-Cordón Caulle, Chile eruption
+## Example: calculating the expected azimuth deviation at IS41 for infrasound signals coming from 2011 Puyehue-Cordón Caulle, Chile eruption
 1. For this example you should keep the configuration file `./input/arcade_config.toml` untouched, except for the last line (l. 52). Set the parameter `path =  "FILLME"` with the path in your workstation where you would like to save your results (Example: `path = /Users/rodrum/Desktop/`). 
   - *Note 1:* the project name is set in line 51 as `name = "PCCVC-Clim-Norm-StratoThermo"`. This will be the folder name that will contain your results.
   - *Note 2:* `perc_cpu` (line 47) is set as `1`, which means that in theory the calculations will use all the cores in your workstation. You don't have to worry about this as this example calculates just one source to one station, which will use only one core (each profile takes one core). 
