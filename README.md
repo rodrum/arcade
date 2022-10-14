@@ -182,7 +182,15 @@ This is the main summary of results. It contains a header and each row represent
 The results are organized as follows:
 - `input/` will contain the same configuration files used for the model to allow for reproducibility. It should also contain the files `doys.txt`, `sources.txt`, and `stations.txt` that are automatically generated. These files are merely used for plotting during the process and not really necessary as the values come from the files `arcade_config.toml` and `discretize_parameters.toml`.
 - `output/` 
-  - `azimuth_deviation_table.txt` - file containing the summary of the azimuth deviations. The colums are explained in detail in the previous section.
+  - `azimuth_deviation_table.txt` - file containing the summary of the azimuth deviations. The colums are explained in detail in the previous section. The file should contain these two lines:  
+ 
+    
+    ```
+    Year     DOY  SouNum  StaNum TrueBaz BazDevS  #BazDS BazDevT  #BazDT BazDevA   StdBDA     Ill
+    2011     155       1       1  217.16    6.65      15    6.67      17    6.66 6.37e-02   False
+    ```
+    Meaning that the average azimuth deviation is 6.66 degrees, calculated with 15 stratospheric arrivals and 17 thermospheric arrivals.
+    
   - `figures/`: this folder contains useful figures that serve to have a visual idea of the locations of the source and station as well as the atmospheric winds for each profile.
     - `glob_XXX_YYYYY_ZZZZ.png` - a global map of the location of the station number `ZZZZ` and source number `YYYYY`. In this example the numbers should be `0001` and `00001` for the station and source, respectively. `XXX` describes the day of the year number (DOY) and in this case is set as `155` (June 4 of 2011).
     ![Map of source and station location](examples/PCCVC_to_IS41-clim-norm-stratothermo/glob_155_00001_0001.png?raw=true "Global Map")
