@@ -185,8 +185,11 @@ The results are organized as follows:
   - `azimuth_deviation_table.txt` - file containing the summary of the azimuth deviations. The colums are explained in detail in the previous section.
   - `figures/`: this folder contains useful figures that serve to have a visual idea of the locations of the source and station as well as the atmospheric winds for each profile.
     - `glob_XXX_YYYYY_ZZZZ.png` - a global map of the location of the station number `ZZZZ` and source number `YYYYY`. In this example the numbers should be `0001` and `00001` for the station and source, respectively. `XXX` describes the day of the year number (DOY) and in this case is set as `155` (June 4 of 2011).
+    ![Map of source and station location](examples/PCCVC_to_IS41-clim-norm-stratothermo/glob_155_00001_0001.png?raw=true "Global Map")
     - `prof_XXX_YYYYY_ZZZZ.png` - Top: a map that contains the last figure in the top. Middle: Temperature (K), zonal winds(E-W direction, m/s), meridional winds (N-S direction, m/s), density (g/cm^3), and pressure (mbar) in height. Bottom: along-profile (source-station) winds, and across-winds (perpendicular to source-station).
+    ![Atmospheric profiles](examples/PCCVC_to_IS41-clim-norm-stratothermo/prof_155_00001_0001.png?raw=true "Atmospheric profiles")
     - `arrv_XXX_YYYYY_ZZZZ.png` - Snapshot of last iteration of ground intecept (arrivals) for the profile. Top-left: colored by Transmission Loss (dB). Top-right: colored by travel time (hours). Bottom-left: colored by celerity (km/s). Bottom-right: colored by turnin height (km).
+     ![Arrivals](examples/PCCVC_to_IS41-clim-norm-stratothermo/arrv_155_00001_0001.png?raw=true "Arrivals")
   - `nodes/` contains files related with the calculations, basically middle-ground files to help obtain atmospheric descriptions with HWM14/NRMLSIS2.0
   - `proc/` contains important output of the calculations that can be used lated to a deeper analysis
     - `run_arcade_out.txt` - is the output of the main calculations. Check this file if anything goes wrong and the calculations fail. It should also contain the time it took to calculate the model in the last three lines (is the output of `time` in Unix).
