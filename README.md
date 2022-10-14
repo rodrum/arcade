@@ -190,7 +190,9 @@ The results are organized as follows:
   - `nodes/` contains files related with the calculations, basically middle-ground files to help obtain atmospheric descriptions with HWM14/NRMLSIS2.0
   - `proc/` contains important output of the calculations that can be used lated to a deeper analysis
     - `run_arcade_out.txt` - is the output of the main calculations. Check this file if anything goes wrong and the calculations fail. It should also contain the time it took to calculate the model in the last three lines (is the output of `time` in Unix).
-    - `prof_XXX_YYYYY_ZZZZ_SOMENAME.txt` - contains the output of ARCADE. The name `SOMENAME` will change depending in the kind of model you choose to calculate. In this case it will be just `_out`, as we are using raw empirical climatologies.
+    - `prof_XXX_YYYYY_ZZZZ_SOMENAME.txt` - contains the output of each iteration search done with ARCADE. The name `SOMENAME` will change depending in the kind of model you choose to calculate. In this case it will be just `_out`, as we are using raw empirical climatologies. Use this file to check how the iterations turn out.
+    - `arrv/` - contains the arrivals for each iteration and profile (output of 3d rat tracing infraGA). As the number of files could be huge, this feature should be disabled for large combinations of sources and stations. The format of each file name is `NUM-A_prof_XXX_YYYYY_ZZZZ.arrivals.dat`, where `NUM` is the run number (iteration number), and `A` could be `1` or `2` depending on the launch azimuth used to enclose the target station (see PAPER TBD). Use these files to understand the iteration process, or even make a video as each files is a snapshot of the resulting 3d ray tracing calculations.
+    - `rays/` - contains the 3D ray paths for each iteration and profile (also output of infraGA). The format is similar to the files in `arrv/`.
 
 ## Thanks to...
 - Robin Matoza: concept, analisis, and many ideas
