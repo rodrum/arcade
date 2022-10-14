@@ -175,7 +175,22 @@ This is the main summary of results. It contains a header and each row represent
   - *Note 1:* the project name is set in line 51 as `name = "PCCVC-Clim-Norm-StratoThermo"`. This will be the folder name that will contain your results.
   - *Note 2:* `perc_cpu` (line 47) is set as `1`, which means that in theory the calculations will use all the cores in your workstation. You don't have to worry about this as this example calculates just one source to one station, which will use only one core (each profile takes one core). 
 2. In the parameters file `./input/discretize_parameters.toml` you need to uncomment the coordinates of the station IS41 (or I41PY), and comment all the other predefined station locations. That is, comment line 26 and uncomment line 33. Everything else is already set-up for the example. 
-3. Once the input files have been modified and saved in place, just run `make run-arcade` and wait... Depending on your workstation this could take up to 
+3. Once the input files have been modified and saved in place, just run `make run-arcade` and wait... With a 3.5 Ghz Intel Core i7 processor, this calculation should take about 19 minutes.
+4. When the calculations are completed, you should have a folder named `name` in the path defined with `path` in the config. file `./input/arcade_config.toml`.
+
+### Results
+The results are organized as follows:
+- `input/` will contain the same configuration files used for the model to allow for reproducibility. It should also contain the files `doys.txt`, `sources.txt`, and `stations.txt` that are automatically generated. These files are merely used for plotting during the process and not really necessary as the values come from the files `arcade_config.toml` and `discretize_parameters.toml`.
+- `output/` 
+  - `azimuth_deviation_table.txt` - file containing the summary of the azimuth deviations. The colums are explained in detail in the previous section.
+  - `figures/`: this folder contains useful figures that serve to have a visual idea of the locations of the source and station as well as the atmospheric winds for each profile.
+    - `glob_XXX_YYYYY_ZZZZ.png` - a global map of the location of the station number `ZZZZ` and source number `YYYYY`. In this example the numbers should be `0001` and `00001` for the station and source, respectively. `XXX` describes the day of the year number (DOY) and in this case is set as `155` (June 4 of 2011).
+    - `prof_XXX_YYYYY_ZZZZ.png` - Top: a map that contains the last figure in the top. Middle: Temperature (K), zonal winds(E-W direction, m/s), meridional winds (N-S direction, m/s), density (g/cm^3), and pressure (mbar) in height. Bottom: along-profile (source-station) winds, and across-winds (perpendicular to source-station).
+    - `arrv_XXX_YYYYY_ZZZZ.png` - Snapshot of last iteration of ground intecept (arrivals) for the profile. Top-left: colored by Transmission Loss (dB). Top-right: colored by travel time (hours). Bottom-left: colored by celerity (km/s). Bottom-right: colored by turnin height (km).
+  - `nodes/` contains files related with the calculations, basically middle-ground files to help obtain atmospheric descriptions with HWM14/NRMLSIS2.0
+  - `proc/` contains important output of the calculations that can be used lated to a deeper analysis
+    - `run_arcade_out.txt` - is the output of the main calculations. Check this file if anything goes wrong and the calculations fail. It should also contain the time it took to calculate the model in the last three lines (is the output of `time` in Unix).
+    - `prof_XXX_YYYYY_ZZZZ_SOMENAME.txt` - contains the output of ARCADE. The name `SOMENAME` will change depending in the kind of model you choose to calculate. In this case it will be just `_out`, as we are using raw empirical climatologies.
 
 ## Thanks to...
 - Robin Matoza: concept, analisis, and many ideas
