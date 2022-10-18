@@ -130,11 +130,6 @@ def rng_ind_ecmwf():
     import interpolate_ecmwf
     interpolate_ecmwf.main_rng_ind()
 
-    doy_sou_sta = []
-    # for doy in doys:  
-    doy =  params['doys'][0] # NOTE: only one day implemented for now 
-    iyd = (year%1000)*1000+doy
-
     #=== get fixed altitudes from levels file (taken from 'interpolate_ecmwd.py')
     # load levels 1/to/137
     levels_file = join("../input", 'ECMWF - L137 model level definitions.csv')
@@ -147,41 +142,48 @@ def rng_ind_ecmwf():
     # max_geom_alt = geom_alt_flip[-1]
     # ind = np.where(alts>max_geom_alt)[0]
     # new_alts = np.append(geom_alt_flip, alts[ind])
+    
+    doy_sou_sta = []
+    # for doy in doys:  
+    #doy =  params['doys'][0] # NOTE: only one day implemented for now 
 
-    print(f"-> idy={iyd}")
-    for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
-        for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
-            climt_out = f"nodes_climt_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
-            ecmwf_out = f"nodes_ecmwf_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
-            print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
-            aux = 0
-            for file_out, alts_new in [(ecmwf_out, geom_alt_flip), (climt_out, alts)]:
-                with open(join(out_path, file_out), 'w') as f:
-                    # calculate nodes along arc
-                    l = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
-                    # along arc discretization
-                    nl = int(np.ceil(l.s13/ds/1000))  # number of points
-                    # to save for later
-                    if aux == 0:
+    for doy in doys:
+        iyd = (year%1000)*1000+doy
+        print(f"-> idy={iyd}")
+        for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
+            for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
+                climt_out = f"nodes_climt_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+                ecmwf_out = f"nodes_ecmwf_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+                print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
+                # aux = 0
+                for file_out, alts_new in [(ecmwf_out, geom_alt_flip), (climt_out, alts)]:
+                    with open(join(out_path, file_out), 'w') as f:
+                        # calculate nodes along arc
+                        l = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
+                        # along arc discretization
+                        nl = int(np.ceil(l.s13/ds/1000))  # number of points
+                        # to save for later
+                        # if aux == 0:
+                            # doy_sou_sta.append([doy, isou, ista, nl])
+                        # aux += 1
                         doy_sou_sta.append([doy, isou, ista, nl])
-                    aux += 1
-                    arc = np.linspace(0, l.s13, nl)
-                    for alt in alts_new:
-                        for s in arc:
-                            g = l.Position(s, Geodesic.STANDARD | Geodesic.LONG_UNROLL)
-                            f.write(
-                                f"{int(iyd):>5d} "
-                                f"{int(sec):>5d} "
-                                f"{alt:>9.4f} "
-                                f"{g['lat2']:>6.1f} " 
-                                f"{g['lon2']:>6.1f} "
-                                f"{stl:>6.2f} "
-                                f"{f107a:>6.1f} "
-                                f"{f107:>6.1f} "
-                                f"{apd:>6.1f} "
-                                f"{aph:6.1f}\n"
-                                )
-                    print(f"--> saved {join(out_path, file_out)}")
+                        arc = np.linspace(0, l.s13, nl)
+                        for alt in alts_new:
+                            for s in arc:
+                                g = l.Position(s, Geodesic.STANDARD | Geodesic.LONG_UNROLL)
+                                f.write(
+                                    f"{int(iyd):>5d} "
+                                    f"{int(sec):>5d} "
+                                    f"{alt:>9.4f} "
+                                    f"{g['lat2']:>6.1f} " 
+                                    f"{g['lon2']:>6.1f} "
+                                    f"{stl:>6.2f} "
+                                    f"{f107a:>6.1f} "
+                                    f"{f107:>6.1f} "
+                                    f"{apd:>6.1f} "
+                                    f"{aph:6.1f}\n"
+                                    )
+                        print(f"--> saved {join(out_path, file_out)}")
 
     # =========================================================
     # Run complete_ecmwf
