@@ -344,7 +344,8 @@ def filter_stratoThermo(results_tab, filtered_grdInt, thresh_height, prof):
         print(f"    std baz = {thermo_tup[4]:9.4f}")
     return strato_tup, thermo_tup
 
-def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False, atten_th=-120):
+def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False, 
+    atten_th=-120, save_arrivals=False, save_raypaths=False):
     # Create launch
     launch = ''
     if rngdep == False:
@@ -378,44 +379,50 @@ def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False, 
         rays_1_out = '1_'+prof+'.raypaths.dat'
         rays_2_out = '2_'+prof+'.raypaths.dat'
 
-    # Copy output to folders that will be saved, adding the run number to name
-    # to keep track of the process. 
-    subprocess.check_output(
-                        [
-                            'cp', 
-                            out_results+prof_1, 
-                            '../output/proc/arrv/'+f"{run_num-1}-"+\
-                            prof_1
-                        ]
-                    )
-    print(f"  -> File {prof_1} copied to ../output/proc/arrv/")
-    subprocess.check_output(
-                        [
-                            'cp', 
-                            out_results+prof_2, 
-                            '../output/proc/arrv/'+f"{run_num-1}-"+\
-                            prof_2
-                        ]
-                    )
-    print(f"  -> File {prof_2} copied to ../output/proc/arrv/")
-    subprocess.check_output(
-                        [
-                            'cp', 
-                            out_results+rays_1_out, 
-                            '../output/proc/rays/'+f"{run_num-1}-"+\
-                            rays_1_out
-                        ]
-                    )
-    print(f"  -> File {rays_1_out} copied to ../output/proc/rays/")
-    subprocess.check_output(
-                        [
-                            'cp', 
-                            out_results+rays_2_out, 
-                            '../output/proc/rays/'+f"{run_num-1}-"+\
-                            rays_2_out
-                        ]
-                    )
-    print(f"  -> File {rays_2_out} copied to ../output/proc/rays/")
+    if save_arrivals == True:
+        # Copy output to folders that will be saved, adding the run number to name
+        # to keep track of the process. 
+        subprocess.check_output(
+                            [
+                                'cp', 
+                                out_results+prof_1, 
+                                '../output/proc/arrv/'+f"{run_num-1}-"+\
+                                prof_1
+                            ]
+                        )
+        print(f"  -> File {prof_1} copied to ../output/proc/arrv/")
+        subprocess.check_output(
+                            [
+                                'cp', 
+                                out_results+prof_2, 
+                                '../output/proc/arrv/'+f"{run_num-1}-"+\
+                                prof_2
+                            ]
+                        )
+        print(f"  -> File {prof_2} copied to ../output/proc/arrv/")
+    else:
+        print("--> Note: intermediate-process arrivals will not be saved.")
+    if save_raypaths == True:
+        subprocess.check_output(
+                            [
+                                'cp', 
+                                out_results+rays_1_out, 
+                                '../output/proc/rays/'+f"{run_num-1}-"+\
+                                rays_1_out
+                            ]
+                        )
+        print(f"  -> File {rays_1_out} copied to ../output/proc/rays/")
+        subprocess.check_output(
+                            [
+                                'cp', 
+                                out_results+rays_2_out, 
+                                '../output/proc/rays/'+f"{run_num-1}-"+\
+                                rays_2_out
+                            ]
+                        )
+        print(f"  -> File {rays_2_out} copied to ../output/proc/rays/")
+    else: 
+        print("--> Note: intermediate-process raypaths will not be saved.")
 
     # Filter ground intercepts near the station with a radius of 'dw'
     gridLat = grid_params[0]
@@ -581,6 +588,8 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                                     # arrivals to calculate the backazimuth
             atten_th = arcade_conf['atten_th']
 
+            save_raypaths = arcade_conf['launch_parameters']['save_raypaths']
+            save_arrivals = arcade_conf['launch_parameters']['save_arrivals']
             while True in bisect:
                 # Obtain ground intercepts
                 run_num, strato_tup1, thermo_tup1, strato_tup2, thermo_tup2 =\
@@ -590,7 +599,9 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                         run_num, 
                         profInd,
                         rngdep,
-                        atten_th
+                        atten_th,
+                        save_arrivals,
+                        save_raypaths
                         )
                 num_s, num_t = strato_tup1[0], thermo_tup1[0]
                 num_s2, num_t2 = strato_tup2[0], thermo_tup2[0]
@@ -804,7 +815,9 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                                             run_num, 
                                             profInd,
                                             rngdep,
-                                            atten_th
+                                            atten_th,
+                                            save_arrivals,
+                                            save_raypaths
                                             )
                                 if run_num >= max_run:
                                     print(f"    WARNING: max_run({max_run}) reached while distance is bigger than threshold")
@@ -847,7 +860,9 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                                             run_num, 
                                             profInd,
                                             rngdep,
-                                            atten_th
+                                            atten_th,
+                                            save_arrivals,
+                                            save_raypaths
                                             )
                                 if run_num >= max_run:
                                     print(f"    WARNING: max_run({max_run}) reached while distance is bigger than threshold")

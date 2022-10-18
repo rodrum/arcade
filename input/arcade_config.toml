@@ -45,6 +45,11 @@ calc_amp = false
 
 # Flags for main run
 perc_cpu = 1 # as num_cpu/perc_cpu
+
+# Save raypaths? Raypaths could be very heavy files
+save_raypaths = false
+# Save arrivals? Arrivals are smaller than raypaths, but still could grow big
+save_arrivals = false
     
 # Project info ############################################
 [project_info]
