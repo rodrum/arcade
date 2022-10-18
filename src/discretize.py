@@ -232,41 +232,41 @@ def rng_ind_ecmwf():
                     lay_ind += nl
             print(f"Done.")
 
-    #=== load both output profiles (climat and ecmwf) and merge
-    for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
-        for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
-            ecmwf_file = join(
-                out_path_prof,
-                f"prof_ecmwf_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
-                )
-            ecmwf_data = np.loadtxt(ecmwf_file)
-            climt_file = join( 
-                out_path_prof,
-                f"prof_climt_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
-                )
-            climt_data = np.loadtxt(climt_file)
-            h1 = params['ecmwf']['h1'] # km
-            h2 = params['ecmwf']['h2'] # km
-            mixed_data = []
-            for i in range(ecmwf_data.shape[0]):
-                height = ecmwf_data[i,0]
-                if height <= h1:
-                    mixed_data.append(ecmwf_data[i])
-                else:
-                    mixed_data.append(
-                        (h2-height)/(h2-h1)*ecmwf_data[i]+ \
-                        (height-h1)/(h2-h1)*climt_data[int(height/0.5)] 
-                        )
-            for i in range(int(h2/0.5), climt_data.shape[0]):
-                mixed_data.append(climt_data[i])
-            mixed_data = np.asarray(mixed_data)
-            for i in range(1,3):
-                mixed_file = join( 
-                    "../output/profiles",
-                    f"{i}_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}_mix.met"
+        #=== load both output profiles (climat and ecmwf) and merge
+        for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
+            for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
+                ecmwf_file = join(
+                    out_path_prof,
+                    f"prof_ecmwf_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
                     )
-                np.savetxt(mixed_file, mixed_data, fmt='%9.4E')
-            print("Saved {0}".format(mixed_file))
+                ecmwf_data = np.loadtxt(ecmwf_file)
+                climt_file = join( 
+                    out_path_prof,
+                    f"prof_climt_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+                    )
+                climt_data = np.loadtxt(climt_file)
+                h1 = params['ecmwf']['h1'] # km
+                h2 = params['ecmwf']['h2'] # km
+                mixed_data = []
+                for i in range(ecmwf_data.shape[0]):
+                    height = ecmwf_data[i,0]
+                    if height <= h1:
+                        mixed_data.append(ecmwf_data[i])
+                    else:
+                        mixed_data.append(
+                            (h2-height)/(h2-h1)*ecmwf_data[i]+ \
+                            (height-h1)/(h2-h1)*climt_data[int(height/0.5)] 
+                            )
+                for i in range(int(h2/0.5), climt_data.shape[0]):
+                    mixed_data.append(climt_data[i])
+                mixed_data = np.asarray(mixed_data)
+                for i in range(1,3):
+                    mixed_file = join( 
+                        "../output/profiles",
+                        f"{i}_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}_mix.met"
+                        )
+                    np.savetxt(mixed_file, mixed_data, fmt='%9.4E')
+                print("Saved {0}".format(mixed_file))
 
 def rng_dep_clim():
     dlat = params['range_dependent']['dlat'] 
