@@ -22,6 +22,10 @@ thresh = 0.1
 #   that is given to the launch azimuth while 
 #   trying to improve the accuracy of the arrivals
 k = 0.1 # as (phi2-phi1)/2 * k
+# Plot profiles
+plot_profiles = false
+# Plot arrivals
+plot_arrivals = false
 
 # Launch parameters for iterations ########################
 [launch_parameters]
