@@ -19,23 +19,25 @@ params = toml.load("./input/discretize_parameters.toml")
 arcade_params = toml.load("./input/arcade_config.toml")
 plot_profiles = arcade_params['plot_profiles']
 
+geod = Geodesic.WGS84
+
+path_input = "./input"
+path_profiles = "./output/profiles"
+path_figures = "./output/figures"
+
+doys = np.loadtxt(join(path_input, 'doys.txt'), dtype='int', ndmin=1)
+sources = np.loadtxt(join(path_input, 'sources.txt'), ndmin=2)
+stations = np.loadtxt(join(path_input, 'stations.txt'), ndmin=2)
+
+try:
+    mkdir(path_figures)
+    print(f"Folder {path_figures} created")
+except FileExistsError:
+    print(f"Folder {path_figures} already there")
+
 if plot_profiles == True:
 
-    geod = Geodesic.WGS84
 
-    path_input = "./input"
-    path_profiles = "./output/profiles"
-    path_figures = "./output/figures"
-
-    doys = np.loadtxt(join(path_input, 'doys.txt'), dtype='int', ndmin=1)
-    sources = np.loadtxt(join(path_input, 'sources.txt'), ndmin=2)
-    stations = np.loadtxt(join(path_input, 'stations.txt'), ndmin=2)
-
-    try:
-        mkdir(path_figures)
-        print(f"Folder {path_figures} created")
-    except FileExistsError:
-        print(f"Folder {path_figures} already there")
 
     if plot_profiles == True:
         profile_num = 0
