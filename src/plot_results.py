@@ -1,5 +1,5 @@
 """
-Code to plot resulting arrivals and raypaths after running ARCADE with infraGA
+Code to plot resulting arrivals and raypaths after running ARCADE with infraGA.
 """
 
 import numpy as np 
