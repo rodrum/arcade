@@ -7,32 +7,32 @@ import matplotlib.pyplot as plt
 from os.path import join
 import toml
     
-arrv_path = "../output/profiles"
-rays_path = "../output/profiles"
-fig_path = "../output/figures/"
+def main():
+    arrv_path = "../output/profiles"
+    rays_path = "../output/profiles"
+    fig_path = "../output/figures/"
 
-plot_arrivals = toml.load("../input/arcade_config.toml")['plot_arrivals']
+    plot_arrivals = toml.load("../input/arcade_config.toml")['plot_arrivals']
 
-if plot_arrivals == True:
-    doys = np.loadtxt("../input/doys.txt", dtype='int', ndmin=1)
-    sources = np.loadtxt("../input/sources.txt", ndmin=2)
-    stations = np.loadtxt("../input/stations.txt", ndmin=2)
-    run_type = toml.load("../input/arcade_config.toml")['run_type']
-    rng_dep = toml.load("../input/discretize_parameters.toml")['range_dependent']['use_rng_dep']
-    use_ecmwf = toml.load("../input/discretize_parameters.toml")['ecmwf']['use_ecmwf']
-
-
-    end_str = ".arrivals.dat"
-    if rng_dep == False:
-        if run_type == "pert":
-            end_str = "_pert.arrivals.dat"
-        elif use_ecmwf == True:
-            end_str = "_mix.arrivals.dat"   
-    else:
-        end_str = "_.arrivals.dat"
+    if plot_arrivals == True:
+        doys = np.loadtxt("../input/doys.txt", dtype='int', ndmin=1)
+        sources = np.loadtxt("../input/sources.txt", ndmin=2)
+        stations = np.loadtxt("../input/stations.txt", ndmin=2)
+        run_type = toml.load("../input/arcade_config.toml")['run_type']
+        rng_dep = toml.load("../input/discretize_parameters.toml")['range_dependent']['use_rng_dep']
+        use_ecmwf = toml.load("../input/discretize_parameters.toml")['ecmwf']['use_ecmwf']
 
 
-    def main():
+        end_str = ".arrivals.dat"
+        if rng_dep == False:
+            if run_type == "pert":
+                end_str = "_pert.arrivals.dat"
+            elif use_ecmwf == True:
+                end_str = "_mix.arrivals.dat"   
+        else:
+            end_str = "_.arrivals.dat"
+
+
         # Arrivals (Ground intercepts)
         prof_num = 0
         for doy in doys:
@@ -200,43 +200,43 @@ if plot_arrivals == True:
                         prof_num += 1
                         print(f"   > Figure {name_fig} saved")
 
-        # Arrivals (Ground intercepts)
+            
+            # Rays (Ground intercepts) NOTE: incomplete
+            prof_num = 0
+            for doy in doys:
+                for isou, (sou_lat, sou_lon) in enumerate(sources):
+                    for ista, (sta_lat, sta_lon) in enumerate(stations):
+                        rays1_name = join(
+                            rays_path,
+                            f"1_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}{end_str}"
+                            )
+                        rays2_name = join(
+                            rays_path,
+                            f"2_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}{end_str}"
+                            )
+                        rays_1, rays_2 = [], []
+                        try:
+                            rays_1 = np.loadtxt(rays1_name)
+                            print(f"File {rays1_name} loaded")
+                        except FileNotFoundError:
+                            print(f"ERROR: File {rays1_name} not found!")
 
-        prof_num = 0
-        for doy in doys:
-            for isou, (sou_lat, sou_lon) in enumerate(sources):
-                for ista, (sta_lat, sta_lon) in enumerate(stations):
-                    rays1_name = join(
-                        rays_path,
-                        f"1_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}{end_str}"
-                        )
-                    rays2_name = join(
-                        rays_path,
-                        f"2_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}{end_str}"
-                        )
-                    rays_1, rays_2 = [], []
-                    try:
-                        rays_1 = np.loadtxt(rays1_name)
-                        print(f"File {rays1_name} loaded")
-                    except FileNotFoundError:
-                        print(f"ERROR: File {rays1_name} not found!")
+                        try:
+                            rays_2 = np.loadtxt(rays2_name)
+                            print(f"File {rays2_name} loaded")
+                        except FileNotFoundError:
+                            print(f"ERROR: File {rays2_name} not found!")
 
-                    try:
-                        rays_2 = np.loadtxt(rays2_name)
-                        print(f"File {rays2_name} loaded")
-                    except FileNotFoundError:
-                        print(f"ERROR: File {rays2_name} not found!")
-
-                    """
-                    Fields are:
-                    0: lat [deg] 
-                    1: lon [deg]   
-                    3: z [km]  
-                    4: trans. coeff. [dB]  
-                    5: absorption [dB]
-                    6: time [s]
-                    """
-else:
-    print(f"Note: skipping arrival plots (results)...")
+                        """
+                        Fields are:
+                        0: lat [deg] 
+                        1: lon [deg]   
+                        3: z [km]  
+                        4: trans. coeff. [dB]  
+                        5: absorption [dB]
+                        6: time [s]
+                        """
+    else:
+        print(f"Note: skipping arrival plots (results)...")
 
 
