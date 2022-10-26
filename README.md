@@ -1,6 +1,8 @@
 # arcade
 _Automated Rapid Climatological Azimuth Deviation Estimation_
 
+![Diagram climatological range-independent model](clim-range-ind-diag.jpg?raw=true "Diagram Climatological range-independent model")
+
 ## Purpose
 This project aims to understand the feasibility of a simplified rapid azimuth deviation prediction scheme for improving the source location when implementing an association and location cross-bearings, grid-search method like IMS\_vASC [Matoza et al., 2017].
 This implies using "offline", portable, and available for research purposes tools, so the calculations could be performed by any scientist in their personal workstation machine, but could also scale to a large research computation center.
