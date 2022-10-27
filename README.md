@@ -45,9 +45,11 @@ interesting cases.
 
 
 ## Requisites
-- All external repos (see below) in place and hopefully individually tested (thorugh makefiles inside each one). 
+- All external repos (see below) in place and hopefully individually tested (through makefiles inside each one). 
 - Fortran and c++ compilers (check `makefile` to define Fortran compiler in first line)
-  - For NRMLSIS2.0 you'll need gfortran version 4.8.5 or 6.3.0 or 8.1.0
+  - For NRMLSIS2.0 you'll need gfortran version 4.8.5 or 6.3.0 or 8.1.0. 
+    
+    **Note for Ubuntu**: this means using Ubuntu 20.04 to be able to install the gfortran-8 libraries. I have not figured out a way to install older libraries in the latest stable version (22.04) without risking your workstation.
   - For HWM14 you'll need fftw3 (libfftw3-dev in Ubuntu; fftw-3 with port in MacOS).
 - Python 3.9 Conda: follow instructions here https://docs.conda.io/en/latest/miniconda.html
   - Create the `arcade` envinroment with `$ conda env create -f environment_cross_platform.yml`    
