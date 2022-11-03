@@ -198,10 +198,17 @@ def main_rng_dep():
         lvls_mWin = pandas.read_csv(base_dir+"_meridionalWinds_new.csv")
 
         #=== discretization points from 'request_era5_profiles.py'
-        lon0 = disc_param['ecmwf']['min_lon']
-        lon1 = disc_param['ecmwf']['max_lon']
-        lat0 = disc_param['ecmwf']['min_lat']
-        lat1 = disc_param['ecmwf']['max_lat']
+        lon0, lon1, lat0, lat1 = 0, 0, 0, 0
+        if disc_param['ecmwf']['auto_area'] == False:
+            lon0 = disc_param['ecmwf']['min_lon']
+            lon1 = disc_param['ecmwf']['max_lon']
+            lat0 = disc_param['ecmwf']['min_lat']
+            lat1 = disc_param['ecmwf']['max_lat']
+        else:
+            lon0 = int(np.min([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) - 2*dlon
+            lon1 = int(np.max([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) + 2*dlon
+            lat0 = int(np.min([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) - 2*dlat
+            lat1 = int(np.max([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) + 2*dlat
         dlon = disc_param['ecmwf']['dlon']  # grid step in degrees
         dlat = disc_param['ecmwf']['dlat']
         lons = np.arange(lon0-360., lon1-360.+dlon, dlon)
