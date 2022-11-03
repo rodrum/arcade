@@ -199,6 +199,8 @@ def main_rng_dep():
 
         #=== discretization points from 'request_era5_profiles.py'
         lon0, lon1, lat0, lat1 = 0, 0, 0, 0
+        dlon = disc_param['ecmwf']['dlon']  # grid step in degrees
+        dlat = disc_param['ecmwf']['dlat']
         if disc_param['ecmwf']['auto_area'] == False:
             lon0 = disc_param['ecmwf']['min_lon']
             lon1 = disc_param['ecmwf']['max_lon']
@@ -209,8 +211,6 @@ def main_rng_dep():
             lon1 = int(np.max([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) + 2*dlon
             lat0 = int(np.min([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) - 2*dlat
             lat1 = int(np.max([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) + 2*dlat
-        dlon = disc_param['ecmwf']['dlon']  # grid step in degrees
-        dlat = disc_param['ecmwf']['dlat']
         lons = np.arange(lon0-360., lon1-360.+dlon, dlon)
         lats = np.arange(lat1, lat0-dlat, -dlat)  # decreasing in latitude following data
 
