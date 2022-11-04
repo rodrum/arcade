@@ -390,10 +390,7 @@ def rng_dep_ecmwf():
     print("../output/profiles/nodes-lat.loc saved.")
 
     doy_sou_sta = []
-    # for doy in doys:  
-    doy =  params['doys'][0] # NOTE: only one day implemented for now 
-    iyd = (year%1000)*1000+doy
-
+    #doy =  params['doys'][0] # NOTE: only one day implemented for now 
     #=== get fixed altitudes from levels file (taken from 'interpolate_ecmwd.py')
     # load levels 1/to/137
     levels_file = join("../input", 'ECMWF - L137 model level definitions.csv')
@@ -402,36 +399,36 @@ def rng_dep_ecmwf():
     geom_alt = levels['Geometric Altitude [m]'].to_numpy() 
     geom_alt_flip = np.flip(geom_alt)/1000.  # to km
 
-    #for doy in doys:   
-    iyd = (year%1000)*1000+doy
-    print(f"-> idy={iyd}")
-    for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
-        for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
-            print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
-            doy_sou_sta.append([doy, isou, ista])
-            for ilon, lon in enumerate(lons):
-                for ilat, lat in enumerate(lats):
-                    climt_out = f"nodes_climt_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
-                        +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
-                    ecmwf_out = f"nodes_ecmwf_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
-                        +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
-                    print(f"    --> ilat, ilon={ilat+1:04d}, {ilon+1:04d}")
-                    for file_out, alts_new in [(ecmwf_out, geom_alt_flip), (climt_out, alts)]:
-                        with open(join(out_path, file_out), 'w') as f:
-                            for alt in alts_new:
-                                f.write(
-                                    f"{int(iyd):>5d} "
-                                    f"{int(sec):>5d} "
-                                    f"{alt:>9.4f} "
-                                    f"{lat:>6.1f} " 
-                                    f"{lon:>6.1f} "
-                                    f"{stl:>6.2f} "
-                                    f"{f107a:>6.1f} "
-                                    f"{f107:>6.1f} "
-                                    f"{apd:>6.1f} "
-                                    f"{aph:6.1f}\n"
-                                    )
-                            print(f"--> saved {join(out_path, file_out)}")
+    for doy in doys:   
+        iyd = (year%1000)*1000+doy
+        print(f"-> idy={iyd}")
+        for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
+            for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
+                print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
+                doy_sou_sta.append([doy, isou, ista])
+                for ilon, lon in enumerate(lons):
+                    for ilat, lat in enumerate(lats):
+                        climt_out = f"nodes_climt_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
+                            +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
+                        ecmwf_out = f"nodes_ecmwf_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
+                            +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
+                        print(f"    --> ilat, ilon={ilat+1:04d}, {ilon+1:04d}")
+                        for file_out, alts_new in [(ecmwf_out, geom_alt_flip), (climt_out, alts)]:
+                            with open(join(out_path, file_out), 'w') as f:
+                                for alt in alts_new:
+                                    f.write(
+                                        f"{int(iyd):>5d} "
+                                        f"{int(sec):>5d} "
+                                        f"{alt:>9.4f} "
+                                        f"{lat:>6.1f} " 
+                                        f"{lon:>6.1f} "
+                                        f"{stl:>6.2f} "
+                                        f"{f107a:>6.1f} "
+                                        f"{f107:>6.1f} "
+                                        f"{apd:>6.1f} "
+                                        f"{aph:6.1f}\n"
+                                        )
+                                print(f"--> saved {join(out_path, file_out)}")
 
 
     # =========================================================
