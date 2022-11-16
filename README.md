@@ -44,7 +44,7 @@ narrow down some effects, or you want more accurate values after identiying
 interesting cases.
 
 ## Related publications
-- De Negri, R. S., Rose, K. M., Matoza, R. S., Hupe, P., & Ceranna, L. (2022). Long-range multi-year infrasonic detection of eruptive activity at Mount Michael volcano, South Sandwich Islands. Geophysical Research Letters, 49, e2021GL096061. https://doi. org/10.1029/2021GL096061
+- De Negri, R. S., Rose, K. M., Matoza, R. S., Hupe, P., & Ceranna, L. (2022). Long-range multi-year infrasonic detection of eruptive activity at Mount Michael volcano, South Sandwich Islands. Geophysical Research Letters, 49, e2021GL096061. https://doi.org/10.1029/2021GL096061
 
 
 ## Requisites
