@@ -51,38 +51,39 @@ def pres(dens, temp, R=287.058):
     return dens*1.0e1*R*temp
 
 def rng_ind_clim():
-    doy_sou_sta = []
-    for doy in doys:   
-        iyd = (year%1000)*1000+doy
-        print(f"-> iyd={iyd}")
-        for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
-            for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
-                file_out = f"nodes_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
-                print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
-                with open(join(out_path, file_out), 'w') as f:
-                    # calculate nodes along arc
-                    l = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
-                    # along arc discretization
-                    nl = int(np.ceil(l.s13/ds/1000))  # number of points
-                    # to save for later
-                    doy_sou_sta.append([doy, isou, ista, nl])
-                    arc = np.linspace(0, l.s13, nl)
-                    for alt in alts:
-                        for s in arc:
-                            g = l.Position(s, Geodesic.STANDARD | Geodesic.LONG_UNROLL)
-                            f.write(
-                                f"{int(iyd):>5d} "
-                                f"{int(sec):>5d} "
-                                f"{alt:>6.1f} "
-                                f"{g['lat2']:>6.1f} " 
-                                f"{g['lon2']:>6.1f} "
-                                f"{stl:>6.2f} "
-                                f"{f107a:>6.1f} "
-                                f"{f107:>6.1f} "
-                                f"{apd:>6.1f} "
-                                f"{aph:6.1f}\n"
-                                )
-                    print(f"--> saved {join(out_path, file_out)}")
+    sec_doy_sou_sta = []
+    for sec in secs:
+        for doy in doys:   
+            iyd = (year%1000)*1000+doy
+            print(f"-> iyd={iyd}")
+            for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
+                for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
+                    file_out = f"nodes_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+                    print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
+                    with open(join(out_path, file_out), 'w') as f:
+                        # calculate nodes along arc
+                        l = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
+                        # along arc discretization
+                        nl = int(np.ceil(l.s13/ds/1000))  # number of points
+                        # to save for later
+                        sec_doy_sou_sta.append([sec, doy, isou, ista, nl])
+                        arc = np.linspace(0, l.s13, nl)
+                        for alt in alts:
+                            for s in arc:
+                                g = l.Position(s, Geodesic.STANDARD | Geodesic.LONG_UNROLL)
+                                f.write(
+                                    f"{int(iyd):>5d} "
+                                    f"{int(sec):>5d} "
+                                    f"{alt:>6.1f} "
+                                    f"{g['lat2']:>6.1f} " 
+                                    f"{g['lon2']:>6.1f} "
+                                    f"{stl:>6.2f} "
+                                    f"{f107a:>6.1f} "
+                                    f"{f107:>6.1f} "
+                                    f"{apd:>6.1f} "
+                                    f"{aph:6.1f}\n"
+                                    )
+                        print(f"--> saved {join(out_path, file_out)}")
 
     # =========================================================
     # Run calculate_sph_nodes 
@@ -94,16 +95,16 @@ def rng_ind_clim():
     outs = outs.decode('UTF-8')
     print(outs)
 
-    for doy, isou, ista, nl in doy_sou_sta:
-        file_in = f"descr_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+    for sec, doy, isou, ista, nl in sec_doy_sou_sta:
+        file_in = f"descr_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
         file_path_in = join(out_path, file_in)
         prof = np.loadtxt(file_path_in)
         print(f"Loaded\n\t{file_path_in}")
 
         # Idea of creating this profiles for two beams before running arcade
         #file_out = f"prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
-        file_out_1 = f"1_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
-        file_out_2 = f"2_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
+        file_out_1 = f"1_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
+        file_out_2 = f"2_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
         #file_path_out = join(out_path_prof, file_out)
         file_path_out_1 = join(out_path_prof, file_out_1)
         file_path_out_2 = join(out_path_prof, file_out_2)
@@ -130,7 +131,7 @@ def rng_ind_ecmwf():
     import interpolate_ecmwf
     interpolate_ecmwf.main_rng_ind()
 
-    #=== get fixed altitudes from levels file (taken from 'interpolate_ecmwd.py')
+    #=== get fixed altitudes from levels file (taken from 'interpolate_ecmwf.py')
     # load levels 1/to/137
     levels_file = join("../input", 'ECMWF - L137 model level definitions.csv')
     levels = pandas.read_csv(levels_file, header=1)
@@ -143,47 +144,48 @@ def rng_ind_ecmwf():
     # ind = np.where(alts>max_geom_alt)[0]
     # new_alts = np.append(geom_alt_flip, alts[ind])
     
-    doy_sou_sta = []
+    sec_doy_sou_sta = []
     # for doy in doys:  
     #doy =  params['doys'][0] # NOTE: only one day implemented for now 
 
-    for doy in doys:
-        iyd = (year%1000)*1000+doy
-        print(f"-> idy={iyd}")
-        for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
-            for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
-                climt_out = f"nodes_climt_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
-                ecmwf_out = f"nodes_ecmwf_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
-                print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
-                # aux = 0
-                for file_out, alts_new in [(ecmwf_out, geom_alt_flip), (climt_out, alts)]:
-                    with open(join(out_path, file_out), 'w') as f:
-                        # calculate nodes along arc
-                        l = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
-                        # along arc discretization
-                        nl = int(np.ceil(l.s13/ds/1000))  # number of points
-                        # to save for later
-                        # if aux == 0:
-                            # doy_sou_sta.append([doy, isou, ista, nl])
-                        # aux += 1
-                        doy_sou_sta.append([doy, isou, ista, nl])
-                        arc = np.linspace(0, l.s13, nl)
-                        for alt in alts_new:
-                            for s in arc:
-                                g = l.Position(s, Geodesic.STANDARD | Geodesic.LONG_UNROLL)
-                                f.write(
-                                    f"{int(iyd):>5d} "
-                                    f"{int(sec):>5d} "
-                                    f"{alt:>9.4f} "
-                                    f"{g['lat2']:>6.1f} " 
-                                    f"{g['lon2']:>6.1f} "
-                                    f"{stl:>6.2f} "
-                                    f"{f107a:>6.1f} "
-                                    f"{f107:>6.1f} "
-                                    f"{apd:>6.1f} "
-                                    f"{aph:6.1f}\n"
-                                    )
-                        print(f"--> saved {join(out_path, file_out)}")
+    for sec in secs:
+        for doy in doys:
+            iyd = (year%1000)*1000+doy
+            print(f"-> idy={iyd}")
+            for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
+                for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
+                    climt_out = f"nodes_climt_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+                    ecmwf_out = f"nodes_ecmwf_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+                    print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
+                    # aux = 0
+                    for file_out, alts_new in [(ecmwf_out, geom_alt_flip), (climt_out, alts)]:
+                        with open(join(out_path, file_out), 'w') as f:
+                            # calculate nodes along arc
+                            l = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
+                            # along arc discretization
+                            nl = int(np.ceil(l.s13/ds/1000))  # number of points
+                            # to save for later
+                            # if aux == 0:
+                                # doy_sou_sta.append([doy, isou, ista, nl])
+                            # aux += 1
+                            sec_doy_sou_sta.append([sec, doy, isou, ista, nl])
+                            arc = np.linspace(0, l.s13, nl)
+                            for alt in alts_new:
+                                for s in arc:
+                                    g = l.Position(s, Geodesic.STANDARD | Geodesic.LONG_UNROLL)
+                                    f.write(
+                                        f"{int(iyd):>5d} "
+                                        f"{int(sec):>5d} "
+                                        f"{alt:>9.4f} "
+                                        f"{g['lat2']:>6.1f} " 
+                                        f"{g['lon2']:>6.1f} "
+                                        f"{stl:>6.2f} "
+                                        f"{f107a:>6.1f} "
+                                        f"{f107:>6.1f} "
+                                        f"{apd:>6.1f} "
+                                        f"{aph:6.1f}\n"
+                                        )
+                            print(f"--> saved {join(out_path, file_out)}")
 
     # =========================================================
     # Run complete_ecmwf
@@ -197,9 +199,9 @@ def rng_ind_ecmwf():
     outs = outs.decode('UTF-8')
     print(outs)   
 
-    for doy, isou, ista, nl in doy_sou_sta:
-        ecmwf_in = f"descr_ecmwf_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
-        climt_in = f"descr_climt_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+    for sec, doy, isou, ista, nl in sec_doy_sou_sta:
+        ecmwf_in = f"descr_ecmwf_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+        climt_in = f"descr_climt_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
         file_ecmwf_in = join(out_path, ecmwf_in)
         file_climt_in = join(out_path, climt_in)
 
@@ -209,9 +211,9 @@ def rng_ind_ecmwf():
 
             ptype = 'ecmwf' if fnum == 0 else 'climt'
             alts_new = geom_alt_flip if fnum == 0 else alts
-            # Idea of creating this profiles for two beams before runing arcade
+            # Idea of creating this profiles for two beams before running arcade
             #file_out = f"prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
-            file_out = f"prof_{ptype}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+            file_out = f"prof_{ptype}_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
             #file_path_out = join(out_path_prof, file_out)
             file_path_out = join(out_path_prof, file_out)
 
@@ -222,7 +224,7 @@ def rng_ind_ecmwf():
                     ave_dens = np.average(prof[lay_ind:lay_ind+nl, 5])
                     ave_temp = np.average(prof[lay_ind:lay_ind+nl, 6])
                     # note: for ecmwf the average is done for same values, 
-                    #       giving same result. This could be avoided, altough
+                    #       giving same result. This could be avoided, although
                     #       it works as it is.
                     ave_merw = np.average(prof[lay_ind:lay_ind+nl, 7]) # meridional winds [m/s]
                     ave_zonw = np.average(prof[lay_ind:lay_ind+nl, 8]) # zonal winds [m/s]
@@ -237,12 +239,12 @@ def rng_ind_ecmwf():
             for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
                 ecmwf_file = join(
                     out_path_prof,
-                    f"prof_ecmwf_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+                    f"prof_ecmwf_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
                     )
                 ecmwf_data = np.loadtxt(ecmwf_file)
                 climt_file = join( 
                     out_path_prof,
-                    f"prof_climt_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
+                    f"prof_climt_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
                     )
                 climt_data = np.loadtxt(climt_file)
                 h1 = params['ecmwf']['h1'] # km
@@ -263,7 +265,7 @@ def rng_ind_ecmwf():
                 for i in range(1,3):
                     mixed_file = join( 
                         "../output/profiles",
-                        f"{i}_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}_mix.met"
+                        f"{i}_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}_mix.met"
                         )
                     np.savetxt(mixed_file, mixed_data, fmt='%9.4E')
                 print("Saved {0}".format(mixed_file))
@@ -285,34 +287,35 @@ def rng_dep_clim():
     np.savetxt("../output/profiles/nodes-lat.loc", lats)
     print("../output/profiles/nodes-lat.loc saved.")
 
-    doy_sou_sta = []
-    for doy in doys:   
-        iyd = (year%1000)*1000+doy
-        print(f"-> idy={iyd}")
-        for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
-            for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
-                print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
-                doy_sou_sta.append([doy, isou, ista])
-                for ilon, lon in enumerate(lons):
-                    for ilat, lat in enumerate(lats):
-                        file_out = f"nodes_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
-                            +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
-                        print(f"    --> ilat, ilon={ilat+1:04d}, {ilon+1:04d}")
-                        with open(join(out_path, file_out), 'w') as f:
-                            for alt in alts:
-                                f.write(
-                                    f"{int(iyd):>5d} "
-                                    f"{int(sec):>5d} "
-                                    f"{alt:>9.4f} "
-                                    f"{lat:>6.1f} " 
-                                    f"{lon:>6.1f} "
-                                    f"{stl:>6.2f} "
-                                    f"{f107a:>6.1f} "
-                                    f"{f107:>6.1f} "
-                                    f"{apd:>6.1f} "
-                                    f"{aph:6.1f}\n"
-                                    )
-                            print(f"--> saved {join(out_path, file_out)}")
+    sec_doy_sou_sta = []
+    for sec in secs:
+        for doy in doys:   
+            iyd = (year%1000)*1000+doy
+            print(f"-> idy={iyd}")
+            for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
+                for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
+                    print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
+                    sec_doy_sou_sta.append([sec, doy, isou, ista])
+                    for ilon, lon in enumerate(lons):
+                        for ilat, lat in enumerate(lats):
+                            file_out = f"nodes_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
+                                +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
+                            print(f"    --> ilat, ilon={ilat+1:04d}, {ilon+1:04d}")
+                            with open(join(out_path, file_out), 'w') as f:
+                                for alt in alts:
+                                    f.write(
+                                        f"{int(iyd):>5d} "
+                                        f"{int(sec):>5d} "
+                                        f"{alt:>9.4f} "
+                                        f"{lat:>6.1f} " 
+                                        f"{lon:>6.1f} "
+                                        f"{stl:>6.2f} "
+                                        f"{f107a:>6.1f} "
+                                        f"{f107:>6.1f} "
+                                        f"{apd:>6.1f} "
+                                        f"{aph:6.1f}\n"
+                                        )
+                                print(f"--> saved {join(out_path, file_out)}")
 
 
     # =========================================================
@@ -328,20 +331,20 @@ def rng_dep_clim():
     out_path_prof = "../output/profiles/"
     if not isdir(out_path_prof):
         mkdir(out_path_prof)
-    for doy, isou, ista in doy_sou_sta:
+    for sec, doy, isou, ista in sec_doy_sou_sta:
         prof_num = 0
         for ilon, lon in enumerate(lons):
             for ilat, lat in enumerate(lats):
-                file_in = f"descr_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
+                file_in = f"descr_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
                         + f"_{ilat+1:04d}_{ilon+1:04d}.txt"
                 file_path_in = join(out_path, file_in)
                 prof = np.loadtxt(file_path_in)
                 print(f"Loaded\n\t{file_path_in}")
 
-                file_out_1 = f"1_prof_{doy:03d}_{isou+1:05d}"\
+                file_out_1 = f"1_prof_{sec:05d}_{doy:03d}_{isou+1:05d}"\
                         + f"_{ista+1:04d}"\
                         + f"_{prof_num:d}.met"
-                file_out_2 = f"2_prof_{doy:03d}_{isou+1:05d}"\
+                file_out_2 = f"2_prof_{sec:05d}_{doy:03d}_{isou+1:05d}"\
                         + f"_{ista+1:04d}"\
                         + f"_{prof_num:d}.met"
                 file_path_out_1 = join(out_path_prof, file_out_1)
@@ -389,7 +392,7 @@ def rng_dep_ecmwf():
     np.savetxt("../output/profiles/nodes-lat.loc", lats)
     print("../output/profiles/nodes-lat.loc saved.")
 
-    doy_sou_sta = []
+    sec_doy_sou_sta = []
     #doy =  params['doys'][0] # NOTE: only one day implemented for now 
     #=== get fixed altitudes from levels file (taken from 'interpolate_ecmwd.py')
     # load levels 1/to/137
@@ -399,36 +402,37 @@ def rng_dep_ecmwf():
     geom_alt = levels['Geometric Altitude [m]'].to_numpy() 
     geom_alt_flip = np.flip(geom_alt)/1000.  # to km
 
-    for doy in doys:   
-        iyd = (year%1000)*1000+doy
-        print(f"-> idy={iyd}")
-        for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
-            for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
-                print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
-                doy_sou_sta.append([doy, isou, ista])
-                for ilon, lon in enumerate(lons):
-                    for ilat, lat in enumerate(lats):
-                        climt_out = f"nodes_climt_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
-                            +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
-                        ecmwf_out = f"nodes_ecmwf_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
-                            +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
-                        print(f"    --> ilat, ilon={ilat+1:04d}, {ilon+1:04d}")
-                        for file_out, alts_new in [(ecmwf_out, geom_alt_flip), (climt_out, alts)]:
-                            with open(join(out_path, file_out), 'w') as f:
-                                for alt in alts_new:
-                                    f.write(
-                                        f"{int(iyd):>5d} "
-                                        f"{int(sec):>5d} "
-                                        f"{alt:>9.4f} "
-                                        f"{lat:>6.1f} " 
-                                        f"{lon:>6.1f} "
-                                        f"{stl:>6.2f} "
-                                        f"{f107a:>6.1f} "
-                                        f"{f107:>6.1f} "
-                                        f"{apd:>6.1f} "
-                                        f"{aph:6.1f}\n"
-                                        )
-                                print(f"--> saved {join(out_path, file_out)}")
+    for sec in secs:
+        for doy in doys:   
+            iyd = (year%1000)*1000+doy
+            print(f"-> idy={iyd}")
+            for isou, (sou_lat, sou_lon) in enumerate(sou_pos):
+                for ista, (sta_lat, sta_lon) in enumerate(sta_pos):
+                    print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
+                    sec_doy_sou_sta.append([sec, doy, isou, ista])
+                    for ilon, lon in enumerate(lons):
+                        for ilat, lat in enumerate(lats):
+                            climt_out = f"nodes_climt_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
+                                +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
+                            ecmwf_out = f"nodes_ecmwf_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
+                                +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
+                            print(f"    --> ilat, ilon={ilat+1:04d}, {ilon+1:04d}")
+                            for file_out, alts_new in [(ecmwf_out, geom_alt_flip), (climt_out, alts)]:
+                                with open(join(out_path, file_out), 'w') as f:
+                                    for alt in alts_new:
+                                        f.write(
+                                            f"{int(iyd):>5d} "
+                                            f"{int(sec):>5d} "
+                                            f"{alt:>9.4f} "
+                                            f"{lat:>6.1f} " 
+                                            f"{lon:>6.1f} "
+                                            f"{stl:>6.2f} "
+                                            f"{f107a:>6.1f} "
+                                            f"{f107:>6.1f} "
+                                            f"{apd:>6.1f} "
+                                            f"{aph:6.1f}\n"
+                                            )
+                                    print(f"--> saved {join(out_path, file_out)}")
 
 
     # =========================================================
@@ -454,13 +458,13 @@ def rng_dep_ecmwf():
     if not isdir(out_path_prof):
         mkdir(out_path_prof)
 
-    for doy, isou, ista in doy_sou_sta:
+    for sec, doy, isou, ista in sec_doy_sou_sta:
         prof_num = 0
         for ilon, lon in enumerate(lons):
             for ilat, lat in enumerate(lats):
-                climt_in = f"descr_climt_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
+                climt_in = f"descr_climt_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
                         + f"_{ilat+1:04d}_{ilon+1:04d}.txt"
-                ecmwf_in = f"descr_ecmwf_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
+                ecmwf_in = f"descr_ecmwf_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
                         + f"_{ilat+1:04d}_{ilon+1:04d}.txt"
                 climt_path_in = join(out_path, climt_in)
                 ecmwf_path_in = join(out_path, ecmwf_in)
@@ -514,7 +518,7 @@ def rng_dep_ecmwf():
                 for i in range(1,3):
                     mixed_file = join( 
                         "../output/profiles",
-                        f"{i}_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
+                        f"{i}_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
                         f"_{prof_num:d}.met"
                         )
                     np.savetxt(mixed_file, mixed_data, fmt='%9.4E')
@@ -530,7 +534,7 @@ if __name__ == '__main__':
 
     year = params['year'] 
     doys = params['doys']
-    sec = params['sec']
+    secs = params['sec']
     hmin = params['hmin']
     hmax = params['hmax']
     dh = params['dh']
@@ -545,6 +549,7 @@ if __name__ == '__main__':
     stl = 0.0
     mass = 0
 
+    print(f"Times of the day (hrs.): {secs/3600}")
     print(f"Number of days: {len(doys)}")
     print(f"-> {doys}")
     print(f"Number of sources: {len(sou_pos)}")
@@ -556,8 +561,9 @@ if __name__ == '__main__':
 
     geod = Geodesic.WGS84
 
-    # In one run I want to have the possibility of calculating different DOYS,
-    #   sources, and stations
+    # In one run I want to have the possibility of calculating different times,
+    # DOYS, sources, and stations
+    sec_num = len(secs)
     doy_num = len(doys)
     sou_num = len(sou_pos)
     sta_num = len(sta_pos)
@@ -577,6 +583,9 @@ if __name__ == '__main__':
         mkdir(out_path_prof)
 
     # For correct read of files of calculate_sph_nodes.f90
+    with open("../input/secs.txt", "w") as f:
+        for sec in secs:
+            f.write(f"{sec:d}\n")
     with open("../input/doys.txt", 'w') as f:
         for doy in doys:
             f.write(f"{doy:d}\n")

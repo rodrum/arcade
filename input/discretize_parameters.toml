@@ -5,7 +5,7 @@
 #=== PCCVC
 year = 2011
 doys = [155] # June 4, day of eruption
-sec = 68400 # 19:00 UTC, ~start of eruption
+sec = [0, 21600] # 00:00:00 UTC, 06:00:00 UTC...
 
 hmin = 0.0 # km
 hmax = 170.0 # km
