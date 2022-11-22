@@ -393,7 +393,6 @@ def rng_dep_ecmwf():
     print("../output/profiles/nodes-lat.loc saved.")
 
     sec_doy_sou_sta = []
-    #doy =  params['doys'][0] # NOTE: only one day implemented for now 
     #=== get fixed altitudes from levels file (taken from 'interpolate_ecmwf.py')
     # load levels 1/to/137
     levels_file = join("../input", 'ECMWF - L137 model level definitions.csv')
