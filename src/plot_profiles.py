@@ -25,6 +25,7 @@ path_input = "./input"
 path_profiles = "./output/profiles"
 path_figures = "./output/figures"
 
+secs = np.loadtxt(join(path_input, 'secs.txt'), dtype='int', ndmin=1)
 doys = np.loadtxt(join(path_input, 'doys.txt'), dtype='int', ndmin=1)
 sources = np.loadtxt(join(path_input, 'sources.txt'), ndmin=2)
 stations = np.loadtxt(join(path_input, 'stations.txt'), ndmin=2)
@@ -36,11 +37,8 @@ except FileExistsError:
     print(f"Folder {path_figures} already there")
 
 if plot_profiles == True:
-
-
-
-    if plot_profiles == True:
-        profile_num = 0
+    profile_num = 0
+    for sec in secs:
         for doy in doys:
             for isou, (sou_lat, sou_lon) in enumerate(sources):
                 for ista, (sta_lat, sta_lon) in enumerate(stations):
@@ -122,7 +120,7 @@ if plot_profiles == True:
                     ax1.axis('off')
 
                     # Save fig
-                    namefig = f"glob_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
+                    namefig = f"glob_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
                     out_fig_path = join(path_figures, namefig)
                     plt.savefig(out_fig_path, dpi=300, bbox_inches='tight')
 
@@ -130,13 +128,14 @@ if plot_profiles == True:
                     profile_num += 1
                     print(f"   > Figure {out_fig_path} saved")
 
-        if params['range_dependent']['use_rng_dep'] == False:
-            end_str = '.met' if params['ecmwf']['use_ecmwf'] == False else '_mix.met'
-            profile_num = 0
+    if params['range_dependent']['use_rng_dep'] == False:
+        end_str = '.met' if params['ecmwf']['use_ecmwf'] == False else '_mix.met'
+        profile_num = 0
+        for sec in secs:
             for doy in doys:
                 for isou, (sou_lat, sou_lon) in enumerate(sources):
                     for ista, (sta_lat, sta_lon) in enumerate(stations):
-                        prof_name = f"1_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}{end_str}"
+                        prof_name = f"1_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}{end_str}"
                         prof_name_path = join(path_profiles, prof_name)
                         print(f"Processing {prof_name_path}")
                         prof = np.loadtxt(prof_name_path)
@@ -149,7 +148,7 @@ if plot_profiles == True:
                         # Perturbed profiles
                         pert_prof_name = join(
                             path_profiles,
-                            f"1_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}_pert.met"
+                            f"1_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}_pert.met"
                         )
                         if stat(pert_prof_name).st_size > 0:
                             pert_prof = np.loadtxt(pert_prof_name)
@@ -240,7 +239,7 @@ if plot_profiles == True:
 
 
                             # title
-                            title = f"Profile prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}{end_str}"\
+                            title = f"Profile prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}{end_str}"\
                                     +f" - DOY {doy:03d} "
                             plt.suptitle(title, fontsize=14)
 
@@ -269,14 +268,14 @@ if plot_profiles == True:
                             ax6.legend(loc=1)
 
                             # import
-                            namefig = f"glob_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
+                            namefig = f"glob_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
                             in_fig_path = join(path_figures, namefig)
                             img = mpimg.imread(in_fig_path)
                             imgplot = ax_globe.imshow(img)
                             print(f"   > Figure {in_fig_path} loaded") 
 
                             # save
-                            namefig = f"prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
+                            namefig = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
                             out_fig_path = join(path_figures, namefig)
                             plt.savefig(out_fig_path, dpi=300, bbox_inches='tight')
 
@@ -338,7 +337,7 @@ if plot_profiles == True:
                             ax0.set_ylabel("Height [km]")
 
                             # title
-                            title = f"Profile prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"\
+                            title = f"Profile prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"\
                                     +f" - DOY {doy:03d} "
                             plt.suptitle(title, fontsize=14)
 
@@ -357,49 +356,49 @@ if plot_profiles == True:
                             ax4.plot(pres, h)
 
                             # import
-                            namefig = f"glob_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
+                            namefig = f"glob_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
                             in_fig_path = join(path_figures, namefig)
                             img = mpimg.imread(in_fig_path)
                             imgplot = ax_globe.imshow(img)
                             print(f"   > Figure {in_fig_path} loaded") 
 
                             # save
-                            namefig = f"prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
+                            namefig = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
                             out_fig_path = join(path_figures, namefig)
                             plt.savefig(out_fig_path, dpi=300, bbox_inches='tight')
 
                             plt.close(fig) 
                             profile_num += 1
                             print(f"   > Figure {out_fig_path} saved")
-        else:
-            print("\nNote: this plot type has been implemented only for a case of one ")
-            print("      station, one source, and one day of the year. Trying more")
-            print("      than one of each could create unexpected output plots.\n")
+    else:
+        print("\nNote: this plot type has been implemented only for a case of one ")
+        print("      station, one source, and one day of the year. Trying more")
+        print("      than one of each could create unexpected output plots.\n")
 
-            def get_wind_values(x_points, y_points, ndoy, nsou, nsta, num_h=50):
-                zonw_values = np.zeros(shape=(x_points.shape[0], y_points.shape[0]))
-                merw_values = np.zeros(shape=(x_points.shape[0], y_points.shape[0]))
-                prof_num = 0
-                for xi in range(x_points.shape[0]):
-                    for yi in range(y_points.shape[0]):
-                        prof_name = f"1_prof_{ndoy:03d}_{nsou+1:05d}_{nsta+1:04d}_{prof_num}.met"
-                        prof_vals = np.loadtxt(f"./output/profiles/{prof_name}")
-                        zonw_values[xi, yi] = prof_vals[num_h, 2]
-                        merw_values[xi, yi] = prof_vals[num_h, 3] 
-                        prof_num += 1
-                return zonw_values, merw_values
+        def get_wind_values(x_points, y_points, nsec, ndoy, nsou, nsta, num_h=50):
+            zonw_values = np.zeros(shape=(x_points.shape[0], y_points.shape[0]))
+            merw_values = np.zeros(shape=(x_points.shape[0], y_points.shape[0]))
+            prof_num = 0
+            for xi in range(x_points.shape[0]):
+                for yi in range(y_points.shape[0]):
+                    prof_name = f"1_prof_{nsec:05d}_{ndoy:03d}_{nsou+1:05d}_{nsta+1:04d}_{prof_num}.met"
+                    prof_vals = np.loadtxt(f"./output/profiles/{prof_name}")
+                    zonw_values[xi, yi] = prof_vals[num_h, 2]
+                    merw_values[xi, yi] = prof_vals[num_h, 3] 
+                    prof_num += 1
+            return zonw_values, merw_values
 
-            x_points = np.loadtxt('./output/profiles/nodes-lon.loc')
-            y_points = np.loadtxt('./output/profiles/nodes-lat.loc')
-            grid_x, grid_y = np.meshgrid(x_points, y_points)
+        x_points = np.loadtxt('./output/profiles/nodes-lon.loc')
+        y_points = np.loadtxt('./output/profiles/nodes-lat.loc')
+        grid_x, grid_y = np.meshgrid(x_points, y_points)
 
-            profile_num = 0
-            nr, nc = 2, 3
-            alts = [25, 50, 75, 100, 125, 150]
+        profile_num = 0
+        nr, nc = 2, 3
+        alts = [25, 50, 75, 100, 125, 150]
+        for nsec in secs:
             for ndoy in doys:
                 for nsou, (sou_lat, sou_lon) in enumerate(sources):
                     for nsta, (sta_lat, sta_lon) in enumerate(stations):
-
                         # Azimuth from source to station
                         _, a12, _ = gps2dist_azimuth(sou_lat, sou_lon, sta_lat, sta_lon)
                         print(f"a12={a12:.2f} deg.")
@@ -416,7 +415,7 @@ if plot_profiles == True:
                         for i in range(nr):
                             for j in range(nc):
                                 zonw, merw = get_wind_values(
-                                    x_points, y_points, ndoy, nsou, nsta, alts[alti]*2
+                                    x_points, y_points, nsec, ndoy, nsou, nsta, alts[alti]*2
                                     )
                                 zonw_vals.append(zonw)
                                 merw_vals.append(merw)
@@ -503,8 +502,8 @@ if plot_profiles == True:
                         ax10.set_ylabel('Latitude [$^{\circ}$]')
 
                         # title
-                        title = f"Profile prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"\
-                                +f" - DOY {doy:03d} "
+                        title = f"Profile prof_{nsec:05d}_{ndoy:03d}_{nsou+1:05d}_{nsta+1:04d}.met"\
+                                +f" - DOY {ndoy:03d} "
                         plt.suptitle(
                             title,
                             fontsize=14
@@ -525,7 +524,6 @@ if plot_profiles == True:
                             for j in range(nc):
                                 zonw, merw = zonw_vals[k], merw_vals[k]
                                 # Generate data with a range that varies from one plot to the next.
-                                #images.append(axs[i,j].contourf(x_points, y_points, ceff_values, cmap="viridis_r"))
                                 q = axs[i,j].quiver(grid_x, grid_y, zonw, merw, along_coef[k],
                                             pivot='tail',
                                             units='xy',
@@ -575,14 +573,14 @@ if plot_profiles == True:
                             )
 
                         # import
-                        namefig = f"glob_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
+                        namefig = f"glob_{nsec:05d}_{ndoy:03d}_{nsou+1:05d}_{nsta+1:04d}.png"
                         in_fig_path = join(path_figures, namefig)
                         img = mpimg.imread(in_fig_path)
                         imgplot = ax_globe.imshow(img)
                         print(f"   > Figure {in_fig_path} loaded") 
 
                         # save
-                        namefig = f"prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
+                        namefig = f"prof_{nsec:05d}_{ndoy:03d}_{nsou+1:05d}_{nsta+1:04d}.png"
                         out_fig_path = join(path_figures, namefig)
 
                         plt.savefig(
