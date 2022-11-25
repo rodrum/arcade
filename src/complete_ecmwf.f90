@@ -148,7 +148,7 @@ do ilin = 1, nrec
     write(*,*) "Done reading."
 enddo
 
-deallocate(doy_vec)
+deallocate(rec_vec)
 
 contains
     function Count_Lines(FileNum)

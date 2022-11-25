@@ -5,9 +5,6 @@ use msis_init, only : msisinit
 implicit none
 
 integer :: nrec, nrec2
-integer :: num_sou
-integer :: num_sta
-integer :: num_doy, num_sec
 integer :: num_lat
 integer :: num_lon
 ! to deal with NRLMSIS2.0 input/output
