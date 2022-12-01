@@ -8,13 +8,7 @@ echo Project folder: $1
 
 cp -R ../input $1
 echo ../input folder copied to $1
-rm ../input/baz_dev.txt
-rm ../input/bullfilelist*.txt
-rm ../input/doys.txt
-rm ../input/sources.txt
-rm ../input/stations.txt
-rm ../input/stationlist.txt
-
+rm ../input/secs_doys_sources_stations.txt
 if test -d "$1/output"; then
     echo "$1/output exists, stopping..."
 else
