@@ -56,8 +56,8 @@ def rng_ind_clim():
     for sec, doy, isou, ista in all_comb:
         iyd = (year%1000)*1000+doy
         print(f"-> iyd={iyd}")
-        sou_lat, sou_lon = sou_pos[isou]
-        sta_lat, sta_lon = sta_pos[ista]
+        sou_lat, sou_lon = sou_pos[isou][0], sou_pos[isou][1]
+        sta_lat, sta_lon = sta_pos[ista][0], sta_pos[ista][1]
         file_out = f"nodes_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
         print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
         with open(join(out_path, file_out), 'w') as f:
@@ -75,7 +75,7 @@ def rng_ind_clim():
                         f"{int(iyd):>5d} "
                         f"{int(sec):>5d} "
                         f"{alt:>6.1f} "
-                        f"{g['lat2']:>6.1f} " 
+                        f"{g['lat2']:>6.1f} "
                         f"{g['lon2']:>6.1f} "
                         f"{stl:>6.2f} "
                         f"{f107a:>6.1f} "
@@ -86,7 +86,7 @@ def rng_ind_clim():
             print(f"--> saved {join(out_path, file_out)}")
 
     # =========================================================
-    # Run calculate_sph_nodes 
+    # Run calculate_sph_nodes
     # =========================================================
     print("\nRunning: calculate_sph_modes")
     print("============================")
@@ -136,7 +136,7 @@ def rng_ind_ecmwf():
     levels_file = join("../input", 'ECMWF - L137 model level definitions.csv')
     levels = pandas.read_csv(levels_file, header=1)
     # get altitudes (levels are from top to bottom, and it's in [m])
-    geom_alt = levels['Geometric Altitude [m]'].to_numpy() 
+    geom_alt = levels['Geometric Altitude [m]'].to_numpy()
     geom_alt_flip = np.flip(geom_alt)/1000.  # to km
 
     sec_doy_sou_sta = []
@@ -144,8 +144,8 @@ def rng_ind_ecmwf():
     for sec, doy, isou, ista in all_comb:
         iyd = (year%1000)*1000+doy
         print(f"-> idy={iyd}")
-        sou_lat, sou_lon = sou_pos[isou]
-        sta_lat, sta_lon = sta_pos[ista]
+        sou_lat, sou_lon = sou_pos[isou][0], sou_pos[isou][1]
+        sta_lat, sta_lon = sta_pos[ista][0], sta_pos[ista][1]
         climt_out = f"nodes_climt_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
         ecmwf_out = f"nodes_ecmwf_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
         print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
@@ -165,7 +165,7 @@ def rng_ind_ecmwf():
                             f"{int(iyd):>5d} "
                             f"{int(sec):>5d} "
                             f"{alt:>9.4f} "
-                            f"{g['lat2']:>6.1f} " 
+                            f"{g['lat2']:>6.1f} "
                             f"{g['lon2']:>6.1f} "
                             f"{stl:>6.2f} "
                             f"{f107a:>6.1f} "
@@ -177,7 +177,7 @@ def rng_ind_ecmwf():
 
     # =========================================================
     # Run complete_ecmwf
-    # NOTE: range dependent (sph) 
+    # NOTE: range dependent (sph)
     # =========================================================
     print("")
     print("Running: complete_ecmwf")
@@ -185,7 +185,7 @@ def rng_ind_ecmwf():
     outs, errs = Popen(['bash', '-c', "./complete_ecmwf"],
         stdout=PIPE, stderr=PIPE).communicate()
     outs = outs.decode('UTF-8')
-    print(outs)   
+    print(outs)
 
     for sec, doy, isou, ista, nl in sec_doy_sou_sta:
         ecmwf_in = f"descr_ecmwf_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
@@ -209,7 +209,7 @@ def rng_ind_ecmwf():
                 for i in range(alts_new.shape[0]):
                     ave_dens = np.average(prof[lay_ind:lay_ind+nl, 5])
                     ave_temp = np.average(prof[lay_ind:lay_ind+nl, 6])
-                    # note: for ecmwf the average is done for same values, 
+                    # note: for ecmwf the average is done for same values,
                     #       giving same result. This could be avoided, although
                     #       it works as it is.
                     ave_merw = np.average(prof[lay_ind:lay_ind+nl, 7]) # meridional winds [m/s]
@@ -226,7 +226,7 @@ def rng_ind_ecmwf():
             f"prof_ecmwf_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
             )
         ecmwf_data = np.loadtxt(ecmwf_file)
-        climt_file = join( 
+        climt_file = join(
             out_path_prof,
             f"prof_climt_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
             )
@@ -241,13 +241,13 @@ def rng_ind_ecmwf():
             else:
                 mixed_data.append(
                     (h2-height)/(h2-h1)*ecmwf_data[i]+ \
-                    (height-h1)/(h2-h1)*climt_data[int(height/0.5)] 
+                    (height-h1)/(h2-h1)*climt_data[int(height/0.5)]
                     )
         for i in range(int(h2/0.5), climt_data.shape[0]):
             mixed_data.append(climt_data[i])
         mixed_data = np.asarray(mixed_data)
         for i in range(1,3):
-            mixed_file = join( 
+            mixed_file = join(
                 "../output/profiles",
                 f"{i}_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}_mix.met"
                 )
@@ -255,8 +255,8 @@ def rng_ind_ecmwf():
         print("Saved {0}".format(mixed_file))
 
 def rng_dep_clim():
-    dlat = params['range_dependent']['dlat'] 
-    dlon = params['range_dependent']['dlon'] 
+    dlat = params['range_dependent']['dlat']
+    dlon = params['range_dependent']['dlon']
     all_lats = [l[0] for l in (sou_pos+sta_pos)]
     all_lons = [l[1] for l in (sou_pos+sta_pos)]
     min_lat = np.min(all_lats) - 2*dlat
@@ -275,8 +275,8 @@ def rng_dep_clim():
     for sec, doy, isou, ista in all_comb:
         iyd = (year%1000)*1000+doy
         print(f"-> idy={iyd}")
-        sou_lat, sou_lon = sou_pos[isou]
-        sta_lat, sta_lon = sta_pos[ista]
+        sou_lat, sou_lon = sou_pos[isou][0], sou_pos[isou][1]
+        sta_lat, sta_lon = sta_pos[ista][0], sta_pos[ista][1]
         print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
         sec_doy_sou_sta.append([sec, doy, isou, ista])
         for ilon, ilat in product(range(len(lons)), range(len(lats))):
@@ -291,7 +291,7 @@ def rng_dep_clim():
                         f"{int(iyd):>5d} "
                         f"{int(sec):>5d} "
                         f"{alt:>9.4f} "
-                        f"{lat:>6.1f} " 
+                        f"{lat:>6.1f} "
                         f"{lon:>6.1f} "
                         f"{stl:>6.2f} "
                         f"{f107a:>6.1f} "
@@ -302,7 +302,7 @@ def rng_dep_clim():
                 print(f"--> saved {join(out_path, file_out)}")
 
     # =========================================================
-    # Run calculate_rngdep_nodes 
+    # Run calculate_rngdep_nodes
     # =========================================================
     print("\nRunning: calculate_rngdep_modes")
     print("===============================")
@@ -353,15 +353,15 @@ def rng_dep_clim():
                             f"{ave_pres:>10.2e}\n")
             prof_num += 1
             print(f"Done.")
-                
+
 def rng_dep_ecmwf():
     import request_era5_profiles
     request_era5_profiles.main()
     import interpolate_ecmwf
     interpolate_ecmwf.main_rng_dep()
 
-    dlat = params['range_dependent']['dlat'] 
-    dlon = params['range_dependent']['dlon'] 
+    dlat = params['range_dependent']['dlat']
+    dlon = params['range_dependent']['dlon']
     all_lats = [l[0] for l in (sou_pos+sta_pos)]
     all_lons = [l[1] for l in (sou_pos+sta_pos)]
     min_lat = np.min(all_lats) - 2*dlat
@@ -382,18 +382,18 @@ def rng_dep_ecmwf():
     levels_file = join("../input", 'ECMWF - L137 model level definitions.csv')
     levels = pandas.read_csv(levels_file, header=1)
     # get altitudes (levels are from top to bottom, and it's in [m])
-    geom_alt = levels['Geometric Altitude [m]'].to_numpy() 
+    geom_alt = levels['Geometric Altitude [m]'].to_numpy()
     geom_alt_flip = np.flip(geom_alt)/1000.  # to km
 
     for sec, doy, isou, ista in all_comb:
         iyd = (year%1000)*1000+doy
         print(f"-> idy={iyd}")
-        sou_lat, sou_lon = sou_pos[isou]
-        sta_lat, sta_lon = sta_pos[ista]
+        sou_lat, sou_lon = sou_pos[isou][0], sou_pos[isou][1]
+        sta_lat, sta_lon = sta_pos[ista][0], sta_pos[ista][1]
         print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
         sec_doy_sou_sta.append([sec, doy, isou, ista])
         for ilon, ilat in product(range(len(lons)), range(len(lats))):
-            lon = lons[ilon] 
+            lon = lons[ilon]
             lat = lats[ilat]
             climt_out = f"nodes_climt_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
                 +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
@@ -407,7 +407,7 @@ def rng_dep_ecmwf():
                             f"{int(iyd):>5d} "
                             f"{int(sec):>5d} "
                             f"{alt:>9.4f} "
-                            f"{lat:>6.1f} " 
+                            f"{lat:>6.1f} "
                             f"{lon:>6.1f} "
                             f"{stl:>6.2f} "
                             f"{f107a:>6.1f} "
@@ -419,7 +419,7 @@ def rng_dep_ecmwf():
 
 
     # =========================================================
-    # Run calculate_rngdep_nodes_ecmwf 
+    # Run calculate_rngdep_nodes_ecmwf
     # =========================================================
     print("")
     print("Running: calculate_rngdep_modes_ecmwf")
@@ -430,11 +430,11 @@ def rng_dep_ecmwf():
     outs = outs.decode('UTF-8')
     print(outs)
 
-    """ 
+    """
     1. Load 'descr_climt_{doy}_{isou}_{ista}_{ilat}_{ilon}.txt and
        'descr_ecmwf_{doy}_{isou}_{ista}_{ilat}_{ilon}.txt.
     2. Load 'descr_climt_...' and 'descr_ecmwf_...' and stich together,
-       saving 
+       saving
         "{1,2}_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}_{prof_num}.met"
     """
     out_path_prof = "../output/profiles/"
@@ -467,7 +467,7 @@ def rng_dep_ecmwf():
                 climt_data_row = climt_data[int(height*2)].copy()
                 #f.write(f"{alts_new[i]:>9.4f} {ave_temp:>7.2f} {ave_zonw:>7.2f} {ave_merw:>7.2f} {ave_dens:>10.2e} {ave_pres:>10.2e}\n")
                 if height <= h1:
-                    mixed_data.append([ 
+                    mixed_data.append([
                         height,
                         ecmwf_data_row[2],
                         ecmwf_data_row[4],
@@ -477,7 +477,7 @@ def rng_dep_ecmwf():
                     ])
                 else:
                     new_vals = (h2-height)/(h2-h1)*ecmwf_data_row+ \
-                        (height-h1)/(h2-h1)*climt_data_row 
+                        (height-h1)/(h2-h1)*climt_data_row
                     mixed_data.append([
                         height,
                         new_vals[2],
@@ -500,7 +500,7 @@ def rng_dep_ecmwf():
             mixed_data = np.asarray(mixed_data)
             #=== save both copies
             for i in range(1,3):
-                mixed_file = join( 
+                mixed_file = join(
                     "../output/profiles",
                     f"{i}_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
                     f"_{prof_num:d}.met"
@@ -516,7 +516,7 @@ if __name__ == '__main__':
 
     params = toml.load("../input/discretize_parameters.toml")
 
-    year = params['year'] 
+    year = params['year']
     doys = params['doys']
     secs = params['sec']
     hmin = params['hmin']
@@ -533,7 +533,8 @@ if __name__ == '__main__':
     stl = 0.0
     mass = 0
 
-    print(f"Times of the day (hrs.): {secs/3600}")
+    print(f"Times of the day (hrs.):")
+    for sec in secs: print(f"-> {sec/3600}")
     print(f"Number of days: {len(doys)}")
     print(f"-> {doys}")
     print(f"Number of sources: {len(sou_pos)}")
@@ -569,12 +570,12 @@ if __name__ == '__main__':
     # For correct read of files of calculate_sph_nodes.f90
     # the 'product' of all combinations
     all_comb = [combi for combi in product(secs, doys, range(len(sou_pos)), range(len(sta_pos)))]
-    with open("../input/secs_doys_sources_stations.txt") as f:
+    with open("../input/secs_doys_sources_stations.txt", "w") as f:
         for nsec, ndoy, isou, ista in all_comb:
-            f.write(f"{nsec:5d} {ndoy:3d} {isou:5d} {ista:4d}\n") 
+            f.write(f"{nsec:5d} {ndoy:3d} {isou+1:5d} {ista+1:4d}\n")
 
     use_rng_dep = params['range_dependent']['use_rng_dep']
-    use_ecmwf = params['ecmwf']['use_ecmwf'] 
+    use_ecmwf = params['ecmwf']['use_ecmwf']
 
     if not use_rng_dep:
         print("\n-> Range Independent (infraga-sph) 3D ray-tracing")

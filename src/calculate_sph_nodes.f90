@@ -17,6 +17,10 @@ integer :: iyd
 real(4) :: sec, alt, glat, glon, stl, f107a, f107
 
 integer, dimension(:, :), allocatable :: rec_vec
+integer, dimension(:), allocatable :: sec_vec
+integer, dimension(:), allocatable :: doy_vec
+integer, dimension(:), allocatable :: sou_vec
+integer, dimension(:), allocatable :: sta_vec
 
 ! dummy variables
 integer :: idoy, isou, ista, ilin, ilin2, isec
@@ -35,7 +39,11 @@ if (OpenStatus > 0) STOP "*** Cannot open file ***"
 nrec = Count_Lines(10)
 allocate(rec_vec(nrec, 4))
 do ilin = 1, nrec
-    read(10, '(I5, A1, I3, A1, I5, A1, I4)') rec_vec(nrec, 1), rec_vec(nrec, 2), rec_vec(nrec, 3), rec_vec(nrec, 4)
+    read(10, '(I5, 1X, I3, 1X, I5, 1X, I4)') rec_vec(ilin,1),   &
+                                             rec_vec(ilin,2),   &
+                                             rec_vec(ilin,3),   &
+                                             rec_vec(ilin,4)
+    write(*,*) rec_vec(ilin,1), rec_vec(ilin,2), rec_vec(ilin,3), rec_vec(ilin,4)
 enddo
 close(10)
 
@@ -49,6 +57,7 @@ do ilin = 1, nrec
     ista = rec_vec(ilin, 4)
     write(nodes_in, 100) "../output/nodes/nodes_",  & 
                             isec, "_", idoy, "_", isou, "_", ista, ".txt"
+    write(*,*) " Reading (non trim) ", nodes_in
     write(*,*) "Reading ", trim(nodes_in)
     open (10, FILE=trim(nodes_in), STATUS="OLD", ACTION="read",        &
         POSITION="rewind", IOSTAT=OpenStatus)

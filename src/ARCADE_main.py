@@ -72,7 +72,7 @@ def ang_dist(phi1, phi2, rad=False):
         mid_p = phi1 - ang_d/2.0  # weird, why phi1? works if mid_p can be < 0
     return ang_d*swap, mid_p
 
-def get_profiles(work_path, pert_flag=False, mix_flag=False):
+def get_profiles(pert_flag=False, mix_flag=False):
     """
     Returns: (sta_lat, sta_lon, sou_lat, sou_lon, prof_name)
     where
@@ -84,20 +84,21 @@ def get_profiles(work_path, pert_flag=False, mix_flag=False):
     """
     print("\n[get_profiles] Adding profiles to list...")
     profiles = []
-    secs = np.loadtxt('../input/secs.txt', dtype='int', ndmin=1)
-    doys = np.loadtxt('../input/doys.txt', dtype='int', ndmin=1)
-    sources = np.loadtxt('../input/sources.txt', ndmin=2)
-    stations = np.loadtxt('../input/stations.txt', ndmin=2)
+    secs = discretize_params['sec']
+    doys = discretize_params['doys']
+    sources = discretize_params['sou_pos']
+    stations = discretize_params['sta_pos']
+
 
     end_str = '.met'
-    if pert_flag == True and mix_flag == False: 
+    if pert_flag == True and mix_flag == False:
         end_str = '_pert.met'
-    elif pert_flag == False and mix_flag == True: 
+    elif pert_flag == False and mix_flag == True:
         end_str = '_mix.met'
     elif pert_flag == True and mix_flag == True:
         end_str = '_pert.met'
         # NOTE: this case is new, this is a test
-    
+
     for sec, doy, isou, ista in product(secs, doys, range(len(sources)), range(len(stations))):
         sou_lat, sou_lon = sources[isou]
         sta_lat, sta_lon = stations[ista]
@@ -112,18 +113,18 @@ def get_profiles(work_path, pert_flag=False, mix_flag=False):
                 prof_name))
             print(f"   > {prof_name} added.")
         else:  # file is empty, default to normal case
-            prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met" 
+            prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
             if pert_flag == True: # overwrite as mix
-                prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}_mix.met" 
+                prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}_mix.met"
             profiles.append((
                 sta_lat, sta_lon,
                 sou_lat, sou_lon,
                 prof_name))
-            print("Using profile without perturbation") 
+            print("Using profile without perturbation")
             print(f"   > {prof_name} added.")
     return profiles
 
-def get_profiles_rngdep(work_path):
+def get_profiles_rngdep():
     """
     Returns: (sta_lat, sta_lon, sou_lat, sou_lon, prof_name)
     where
@@ -138,17 +139,17 @@ def get_profiles_rngdep(work_path):
     """
     print("\n[get_profiles_rngdep] Adding profiles to list...")
     profiles = []
-    secs = np.loadtxt('../input/secs.txt', dtype='int', ndmin=1)
-    doys = np.loadtxt('../input/doys.txt', dtype='int', ndmin=1)
-    sources = np.loadtxt('../input/sources.txt', ndmin=2)
-    stations = np.loadtxt('../input/stations.txt', ndmin=2)
+    secs = discretize_params['sec']
+    doys = discretize_params['doys']
+    sources = discretize_params['sou_pos']
+    stations = discretize_params['sta_pos']
 
     end_str = '.met'
-    # Below some flags I don't use right not, but will be useful later when 
+    # Below some flags I don't use right not, but will be useful later when
     # including perturbations to range dependent profiles
-    # if pert_flag == True: 
+    # if pert_flag == True:
     #     end_str = '_pert.met'
-    # elif pert_flag == False and mix_flag == True: 
+    # elif pert_flag == False and mix_flag == True:
     #     end_str = '_mix.met'
 
     for sec, doy, isou, ista in product(
@@ -223,7 +224,7 @@ def create_launch_rngdep(launch_parameters):
     """
     print("[create_launch_rngdep] Creating launch string...")
     launch = []
-    prof = launch_parameters['prof_name'].split('_')  
+    prof = launch_parameters['prof_name'].split('_')
     ndoy = prof[1]
     isou = prof[2]
     ista = prof[3]
@@ -348,7 +349,7 @@ def filter_stratoThermo(results_tab, filtered_grdInt, thresh_height, prof):
         print(f"    std baz = {thermo_tup[4]:9.4f}")
     return strato_tup, thermo_tup
 
-def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False, 
+def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False,
     atten_th=-120, save_arrivals=False, save_raypaths=False):
     # Create launch
     launch = ''
@@ -375,7 +376,7 @@ def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False,
         rays_1_out = '1_'+launch_parameters['prof_name'].split('.')[0]+'.raypaths.dat'
         rays_2_out = '2_'+launch_parameters['prof_name'].split('.')[0]+'.raypaths.dat'
     else:
-        prof = launch_parameters['prof_name'].split('_')  
+        prof = launch_parameters['prof_name'].split('_')
         prof = prof[0]+"_"+prof[1]+"_"+prof[2]+"_"+prof[3]+"_" # everything but prof num
         prof_1 = '1_'+prof+'.arrivals.dat'
         prof_2 = '2_'+prof+'.arrivals.dat'
@@ -385,11 +386,11 @@ def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False,
 
     if save_arrivals == True:
         # Copy output to folders that will be saved, adding the run number to name
-        # to keep track of the process. 
+        # to keep track of the process.
         subprocess.check_output(
                             [
-                                'cp', 
-                                out_results+prof_1, 
+                                'cp',
+                                out_results+prof_1,
                                 '../output/proc/arrv/'+f"{run_num-1}-"+\
                                 prof_1
                             ]
@@ -397,8 +398,8 @@ def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False,
         print(f"  -> File {prof_1} copied to ../output/proc/arrv/")
         subprocess.check_output(
                             [
-                                'cp', 
-                                out_results+prof_2, 
+                                'cp',
+                                out_results+prof_2,
                                 '../output/proc/arrv/'+f"{run_num-1}-"+\
                                 prof_2
                             ]
@@ -409,8 +410,8 @@ def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False,
     if save_raypaths == True:
         subprocess.check_output(
                             [
-                                'cp', 
-                                out_results+rays_1_out, 
+                                'cp',
+                                out_results+rays_1_out,
                                 '../output/proc/rays/'+f"{run_num-1}-"+\
                                 rays_1_out
                             ]
@@ -418,14 +419,14 @@ def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False,
         print(f"  -> File {rays_1_out} copied to ../output/proc/rays/")
         subprocess.check_output(
                             [
-                                'cp', 
-                                out_results+rays_2_out, 
+                                'cp',
+                                out_results+rays_2_out,
                                 '../output/proc/rays/'+f"{run_num-1}-"+\
                                 rays_2_out
                             ]
                         )
         print(f"  -> File {rays_2_out} copied to ../output/proc/rays/")
-    else: 
+    else:
         print("--> Note: intermediate-process raypaths will not be saved.")
 
     # Filter ground intercepts near the station with a radius of 'dw'
@@ -482,7 +483,7 @@ def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False,
             )
     return run_num, strato_tup1, thermo_tup1, strato_tup2, thermo_tup2
 
-def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=False):
+def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
     '''
     # Load, and copy duplicates of profiles (.met files)
     # Obtained profile is called 'profile_00001.met', then copied
@@ -491,7 +492,7 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
     # This is to be able to save two different results files (different names)
     # with infraga-sph.
     '''
-    
+
     # Test profile name
     prof_name = ''
     out_file_name = ''
@@ -499,8 +500,8 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
         prof_name = my_profiles[profInd][4]
         out_file_name = f"{prof_name.split('.')[0]}_out.txt"
     else:
-        prof = my_profiles[profInd][4].split('_')  
-        prof_name = prof[0]+"_"+prof[1]+"_"+prof[2]+"_"+prof[3]+"_" # everything but prof num
+        prof = my_profiles[profInd][4].split('_')
+        prof_name = prof[0]+"_"+prof[1]+"_"+prof[2]+"_"+prof[3]+"_"+prof[4]+"_" # everything but prof num
         out_file_name = f"{prof_name}out.txt"
     # Out variables
     bphi1_s, bphi1_t = 0, 0
@@ -588,7 +589,7 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                                          # the min and max launch azimuths
             ill_flag = False       # Flag to know if case falls into the two
                                    # possible ill cases
-            use_thermo = arcade_conf['use_thermo']     
+            use_thermo = arcade_conf['use_thermo']
                                     # By default, do not consider thermospheric
                                     # arrivals to calculate the backazimuth
             atten_th = arcade_conf['atten_th']
@@ -599,9 +600,9 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                 # Obtain ground intercepts
                 run_num, strato_tup1, thermo_tup1, strato_tup2, thermo_tup2 =\
                     run_launch(
-                        launch_parameters, 
-                        grid_params, 
-                        run_num, 
+                        launch_parameters,
+                        grid_params,
+                        run_num,
                         profInd,
                         rngdep,
                         atten_th,
@@ -677,7 +678,7 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                     print("  WARNING: No ground intercepts for profile")
                     # dw = dw*2
                     # print(f"           Trying with dw={dw:.2f} km.")
-                    # grid_params = [gridLat, gridLon, staLat, staLon, dw]  
+                    # grid_params = [gridLat, gridLon, staLat, staLon, dw]
                     phi_min = float('nan')  # phi_min and phi_max are
                     phi_max = float('nan')  # set up as python 'nan' values
                     bisect = [False, False]
@@ -685,7 +686,7 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                     break
 
                 # ==============================================================
-                # Decision scheme 
+                # Decision scheme
                 # ==============================================================
                 # Obtain apparent azimuth with ground intercepts that fall in area
                 _, az1, _ = gps2dist_azimuth(gridLat, gridLon, lat_av1, lon_av1)
@@ -815,9 +816,9 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                                 # be the same. There will not be a new run for phi2.
                                 run_num, strato_tup1, thermo_tup1, strato_tup2, thermo_tup2 =\
                                         run_launch(
-                                            launch_parameters, 
-                                            grid_params, 
-                                            run_num, 
+                                            launch_parameters,
+                                            grid_params,
+                                            run_num,
                                             profInd,
                                             rngdep,
                                             atten_th,
@@ -860,9 +861,9 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                                 launch_parameters['prof_inds'] = [2]
                                 run_num, strato_tup1, thermo_tup1, strato_tup2, thermo_tup2 = \
                                         run_launch(
-                                            launch_parameters, 
-                                            grid_params, 
-                                            run_num, 
+                                            launch_parameters,
+                                            grid_params,
+                                            run_num,
                                             profInd,
                                             rngdep,
                                             atten_th,
@@ -976,16 +977,20 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                     std_av = np.nan
                 table_name = '../output/azimuth_deviation_table.txt'
 
-                year = toml.load("../input/discretize_parameters.toml")['year'] 
+                year = toml.load("../input/discretize_parameters.toml")['year']
 
-                doy = int(prof_name[5:8])
-                gridNum = int(prof_name[9:14])
-                staNum = int(prof_name[15:19])
+                # E.g., prof_21600_155_00001_0001
+                #            5   9 1 3 5   9 1  4
+                #       0123456789012345678901234
+                sec     = int(prof_name[5:10])
+                doy     = int(prof_name[11:14])
+                gridNum = int(prof_name[15:20])
+                staNum  = int(prof_name[21:25])
                 if not os.path.isfile(table_name):
                     with open(table_name, "w") as f:
-                        header_lst = ["Year", "DOY", "SouNum", "StaNum",
-                                      "TrueBaz", "BazDevS", "#BazDS", "BazDevT",
-                                      "#BazDT", "BazDevA", "StdBDA", "Ill"]
+                        header_lst = ["Year", "DOY", "Seconds", "SouNum", 
+                            "StaNum", "TrueBaz", "BazDevS", "#BazDS", 
+                            "BazDevT", "#BazDT", "BazDevA", "StdBDA", "Ill"]
                         header_str = ""
                         for i, head in enumerate(header_lst):
                             if i == 0:
@@ -1003,6 +1008,7 @@ def calculate_profiles(work_path, my_profiles, arcade_conf, profInd=0, rngdep=Fa
                 with open(table_name, "a") as f:
                     f.write(f"{year:>7d} "
                             f"{doy:>7d} "
+                            f"{sec:>7d} "
                             f"{gridNum:>7d} "
                             f"{staNum:>7d} "
                             f"{baz:>7.2f} "
@@ -1025,7 +1031,7 @@ if __name__ == '__main__':
 
     # Set working path
     os.chdir("./bin")
-    work_path = os.getcwd()
+    print(f"-> Changed to working directory ./bin")
 
     list_of_folders = [
         "../output/proc",
@@ -1042,9 +1048,7 @@ if __name__ == '__main__':
 
     # Check for paths that should exist
     list_of_paths = [
-        "../input/doys.txt",
-        "../input/sources.txt",
-        "../input/stations.txt",
+        "../input/secs_doys_sources_stations.txt",
         "../input/arcade_config.toml"
         ]
 
@@ -1059,7 +1063,7 @@ if __name__ == '__main__':
     arcade_conf = toml.load("../input/arcade_config.toml")
     discretize_params = toml.load("../input/discretize_parameters.toml")
     # =====================================================
-    
+
 
     perc_cpu = arcade_conf['launch_parameters']['perc_cpu']
     min_dist_arrv = arcade_conf['min_dist_arrv']
@@ -1067,26 +1071,25 @@ if __name__ == '__main__':
 
 
     use_rng_dep = discretize_params['range_dependent']['use_rng_dep']
-    
+
     if use_rng_dep == True:
-        profiles = [] 
+        profiles = []
         lons = np.loadtxt("../output/profiles/nodes-lon.loc", dtype='float', ndmin=1)
         lats = np.loadtxt("../output/profiles/nodes-lat.loc", dtype='float', ndmin=1)
-        profiles = get_profiles_rngdep(work_path)
+        profiles = get_profiles_rngdep()
         # Run with multiprocessing =============================================
         num_cpu = int(mp.cpu_count()/perc_cpu)
         pool = mp.Pool(num_cpu)
         results = []
         print(f"- {len(profiles)} profiles fill be calculated with {num_cpu} cores")
         results = pool.starmap_async(
-            calculate_profiles, 
-            [(work_path, profiles, arcade_conf, i, use_rng_dep) for i in range(len(profiles))]).get()
+            calculate_profiles,
+            [(profiles, arcade_conf, i, use_rng_dep) for i in range(len(profiles))]).get()
         pool.close()
     else:
         profiles = []
         profiles = get_profiles(
-            work_path, 
-            pert_flag = run_type == 'pert', 
+            pert_flag = run_type == 'pert',
             mix_flag  = discretize_params['ecmwf']['use_ecmwf'] == True
         )
 
@@ -1096,8 +1099,8 @@ if __name__ == '__main__':
         results = []
         print(f"- {len(profiles)} profiles fill be calculated with {num_cpu} cores")
         results = pool.starmap_async(
-            calculate_profiles, 
-            [(work_path, profiles, arcade_conf, i, use_rng_dep) for i in range(len(profiles))]).get()
+            calculate_profiles,
+            [(profiles, arcade_conf, i, use_rng_dep) for i in range(len(profiles))]).get()
         pool.close()
 
     os.chdir("../src")
@@ -1122,7 +1125,7 @@ if __name__ == '__main__':
     print("========================")
     subprocess.check_output(
         [
-            'bash', 
+            'bash',
             'wrap_project.sh',
             os.path.join(
                     arcade_conf['project_info']['path'],

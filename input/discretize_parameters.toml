@@ -4,7 +4,7 @@
 #sec = 75600 # 21:00 UTC, ~start of eruption
 #=== PCCVC
 year = 2011
-doys = [155] # June 4, day of eruption
+doys = [155, 156] # June 4, day of eruption
 sec = [0, 21600] # 00:00:00 UTC, 06:00:00 UTC...
 
 hmin = 0.0 # km
@@ -55,12 +55,12 @@ ds = 50.0 # km
 
 # If using RngDep
 [range_dependent]
-use_rng_dep = false
-dlat = 3.0
-dlon = 3.0
+use_rng_dep = true
+dlat = 0.25
+dlon = 0.25
 
 [ecmwf]
-use_ecmwf = false
+use_ecmwf = true
 auto_area = true
 min_lon = -110 # to define area for grid
 max_lon = -10

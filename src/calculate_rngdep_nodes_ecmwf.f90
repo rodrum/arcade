@@ -36,9 +36,12 @@ open (10, FILE="../input/secs_doys_sources_stations.txt", STATUS="OLD",     &
     ACTION="read", POSITION="rewind", IOSTAT=OpenStatus)
 if (OpenStatus > 0) STOP "*** Cannot open file ***"
 nrec = Count_Lines(10)
-allocate(rec_vec(nrec))
+allocate(rec_vec(nrec,4))
 do ilin = 1, nrec
-    read(10, '(I5, A1, I3, A1, I5, A1, I4)') rec_vec(nrec, 1), rec_vec(nrec, 2), rec_vec(nrec, 3), rec_vec(nrec, 4)
+    read(10, '(I5, 1X, I3, 1X, I5, 1X, I4)')    rec_vec(ilin, 1), &
+                                                rec_vec(ilin, 2), &
+                                                rec_vec(ilin, 3), &
+                                                rec_vec(ilin, 4)
 enddo
 close(10)
 
