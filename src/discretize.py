@@ -576,6 +576,7 @@ if __name__ == '__main__':
 
     use_rng_dep = params['range_dependent']['use_rng_dep']
     use_ecmwf = params['ecmwf']['use_ecmwf']
+    recycle_discretization = params['range_dependent']['recycle']
 
     if not use_rng_dep:
         print("\n-> Range Independent (infraga-sph) 3D ray-tracing")
@@ -592,4 +593,7 @@ if __name__ == '__main__':
             rng_dep_clim()
         else:
             print("-> Hybrid ECMWF ERA 5 reanalysis (~0-80 km) + HWM14/MSIS2.0 (>~80 km) atmospheric descriptions")
-            rng_dep_ecmwf()
+            if recycle_discretization == True:
+                print("--> Discretization skipped, using previous one.")
+            else:
+                rng_dep_ecmwf()

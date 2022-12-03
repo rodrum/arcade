@@ -225,10 +225,11 @@ def create_launch_rngdep(launch_parameters):
     print("[create_launch_rngdep] Creating launch string...")
     launch = []
     prof = launch_parameters['prof_name'].split('_')
-    ndoy = prof[1]
-    isou = prof[2]
-    ista = prof[3]
-    prof = f"prof_{ndoy}_{isou}_{ista}_" # everything but prof num
+    nsec = prof[1]
+    ndoy = prof[2]
+    isou = prof[3]
+    ista = prof[4]
+    prof = f"prof_{nsec}_{ndoy}_{isou}_{ista}_" # everything but prof num
     for azimuth, prof_ind in zip(launch_parameters['azimuth'],
                                  launch_parameters['prof_inds']):
         launch_txt = f"./infraga-sph-rngdep -prop ../output/profiles/{str(prof_ind)}_{prof} "\

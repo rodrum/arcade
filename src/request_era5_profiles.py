@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import cdsapi
 from os import mkdir
-from os.path import join
+from os.path import join, isfile
 import toml
 import datetime 
 import subprocess
@@ -16,6 +16,17 @@ def format_csv(in_file, out_file):
                 if line[0:8] != "Latitude":
                     f_out.write(','.join(line.split()) + '\n')
     print("Formatted {0} --> {1}".format(in_file, out_file))
+
+def check_downloads(output_name):
+    """Check if profiles have already been downloaded"""
+    is_downloaded = []
+    temp_name = f"{output_name}_temperature.grib"
+    is_downloaded.append(isfile(temp_name))
+    zonal_name = f"{output_name}_zonalWinds.grib"
+    is_downloaded.append(isfile(zonal_name))
+    merid_name = f"{output_name}_meridionalWinds.grib"
+    is_downloaded.append(isfile(merid_name))
+    return is_downloaded
 
 def main():
     c = cdsapi.Client()
@@ -70,60 +81,71 @@ def main():
             print(f"Output file : {output_name}")
             print("")
 
-
-            # temperature [K]
-            print("-> Requesting temperatures...")
+            # check if profiles have already been downloaded
+            print("-> Checking for downloaded profiles...")
             temp_name = f"{output_name}_temperature.grib"
-            c.retrieve('reanalysis-era5-complete', {
-                'class': 'ea',
-                'date': date_str,
-                'expver': '0001',
-                'levelist': '1/to/137',
-                'levtype': 'ml',
-                'param': '130',
-                'stream': 'oper',
-                'time': time_str,
-                'type': 'an',
-                'area': f"{max_lat}/{min_lon}/{min_lat}/{max_lon}", # North, West, South, East.
-                'grid': f"{dlat}/{dlon}",
-                'format': 'grib'
-            }, temp_name)
-
-            # u-wind (zonal) [m/s]
-            print("-> Requesting zonal winds...")
             zonal_name = f"{output_name}_zonalWinds.grib"
-            c.retrieve('reanalysis-era5-complete', {
-                'class': 'ea',
-                'date': date_str,
-                'expver': '0001',
-                'levelist': '1/to/137',
-                'levtype': 'ml',
-                'param': '131',
-                'stream': 'oper',
-                'time': time_str,
-                'type': 'an',
-                'area': f"{max_lat}/{min_lon}/{min_lat}/{max_lon}",
-                'grid': f"{dlat}/{dlon}",
-                'format': 'grib'
-            }, zonal_name)
-
-            # v-wind (meridonial) [m/s]
-            print("-> Requesting meridional winds...")
             merid_name = f"{output_name}_meridionalWinds.grib"
-            c.retrieve('reanalysis-era5-complete', {
-                'class': 'ea',
-                'date': date_str,
-                'expver': '0001',
-                'levelist': '1/to/137',
-                'levtype': 'ml',
-                'param': '132',
-                'stream': 'oper',
-                'time': time_str,
-                'type': 'an',
-                'area': f"{max_lat}/{min_lon}/{min_lat}/{max_lon}",
-                'grid': f"{dlat}/{dlon}",
-                'format': 'grib'
-            }, merid_name)
+            is_downloaded = check_downloads(output_name)
+            if is_downloaded[0] == True:
+                print(f"--> Skipping download of {output_name}_temperature.grib")
+            else:
+                # temperature [K]
+                print("-> Requesting temperatures...")
+                c.retrieve('reanalysis-era5-complete', {
+                    'class': 'ea',
+                    'date': date_str,
+                    'expver': '0001',
+                    'levelist': '1/to/137',
+                    'levtype': 'ml',
+                    'param': '130',
+                    'stream': 'oper',
+                    'time': time_str,
+                    'type': 'an',
+                    'area': f"{max_lat}/{min_lon}/{min_lat}/{max_lon}", # North, West, South, East.
+                    'grid': f"{dlat}/{dlon}",
+                    'format': 'grib'
+                }, temp_name)
+
+            if is_downloaded[1] == True:
+                print(f"--> Skipping download of {output_name}_zonalWinds.grib")
+            else:
+                # u-wind (zonal) [m/s]
+                print("-> Requesting zonal winds...")
+                c.retrieve('reanalysis-era5-complete', {
+                    'class': 'ea',
+                    'date': date_str,
+                    'expver': '0001',
+                    'levelist': '1/to/137',
+                    'levtype': 'ml',
+                    'param': '131',
+                    'stream': 'oper',
+                    'time': time_str,
+                    'type': 'an',
+                    'area': f"{max_lat}/{min_lon}/{min_lat}/{max_lon}",
+                    'grid': f"{dlat}/{dlon}",
+                    'format': 'grib'
+                }, zonal_name)
+
+            if is_downloaded[2] == True:
+                print(f"--> Skipping download of {output_name}_meridionalWinds.grib")
+            else:
+                # v-wind (meridonial) [m/s]
+                print("-> Requesting meridional winds...")
+                c.retrieve('reanalysis-era5-complete', {
+                    'class': 'ea',
+                    'date': date_str,
+                    'expver': '0001',
+                    'levelist': '1/to/137',
+                    'levtype': 'ml',
+                    'param': '132',
+                    'stream': 'oper',
+                    'time': time_str,
+                    'type': 'an',
+                    'area': f"{max_lat}/{min_lon}/{min_lat}/{max_lon}",
+                    'grid': f"{dlat}/{dlon}",
+                    'format': 'grib'
+                }, merid_name)
 
             #=== convert from grib to pre-csv
             f = open(f"{output_name}_temperature.csv", "w")
