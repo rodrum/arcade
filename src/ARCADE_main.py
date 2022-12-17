@@ -378,7 +378,8 @@ def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False,
         rays_2_out = '2_'+launch_parameters['prof_name'].split('.')[0]+'.raypaths.dat'
     else:
         prof = launch_parameters['prof_name'].split('_')
-        prof = prof[0]+"_"+prof[1]+"_"+prof[2]+"_"+prof[3]+"_" # everything but prof num
+        # name of profile: prof_00000_001_00001_00001
+        prof = prof[0]+"_"+prof[1]+"_"+prof[2]+"_"+prof[3]+"_"+prof[4]+"_" # everything but prof num
         prof_1 = '1_'+prof+'.arrivals.dat'
         prof_2 = '2_'+prof+'.arrivals.dat'
         # To save input for processing values
