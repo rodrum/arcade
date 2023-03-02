@@ -4,8 +4,8 @@
 #sec = 75600 # 21:00 UTC, ~start of eruption
 #=== PCCVC
 year = 2011
-doys = [155] # June 4, day of eruption
-sec = 68400 # 19:00 UTC, ~start of eruption
+doys = [155, 156] # June 4, day of eruption
+sec = [0, 21600] # 00:00:00 UTC, 06:00:00 UTC...
 
 hmin = 0.0 # km
 hmax = 170.0 # km
@@ -23,26 +23,26 @@ sou_pos = [
 ]
 
 sta_pos = [
-    [-40.7,	-70.6], # I01AR
+#    [-40.7,	-70.6], # I01AR
 #   [-54.6  , -67.3], #I02AR
 #    [-16.2  , -68.5], #I08BO
 #    [-15.6 , -48.0], #I09BR
 #    [-27.1  , -109.4], #I13CL
 #    [-33.7  , -78.8], #I14CL
 #    [-70.7   , -8.3], #I27DE
-#    [-26.3  , -57.3], #I41PY
+    [-26.3  , -57.3], #I41PY
 #    [-37.1  , -12.3] #I49GB
 ]
 
 sta_nam = [ 
-    "IS01",
+#    "IS01",
 #   "IS02",
 #    "IS08",
 #    "IS09",
 #    "IS13",
 #    "IS14",
 #    "IS27",
-#    "IS41",
+    "IS41",
 #    "IS49"
 ]
 
@@ -55,12 +55,13 @@ ds = 50.0 # km
 
 # If using RngDep
 [range_dependent]
-use_rng_dep = false
-dlat = 3.0
-dlon = 3.0
+use_rng_dep = true
+recycle = true
+dlat = 0.25
+dlon = 0.25
 
 [ecmwf]
-use_ecmwf = false
+use_ecmwf = true
 auto_area = true
 min_lon = -110 # to define area for grid
 max_lon = -10
