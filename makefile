@@ -9,6 +9,7 @@ SRC = ./src
 OUT = ./output
 # other files
 ARCADE_OUT = run_arcade_out.txt
+EIGENSEARCH_OUT = run_eigensearch_out.txt
 
 requisites:
 	mkdir -p $(BIN)
@@ -93,5 +94,12 @@ run-arcade:
 	@echo "ARCADE_main.py" >> $(OUT)/proc/$(ARCADE_OUT)
 	@echo "--------------" >> $(OUT)/proc/$(ARCADE_OUT)
 	@{ time python $(SRC)/ARCADE_main.py ; } 2>> $(OUT)/proc/$(ARCADE_OUT)
+
+eigen_search:
+	mkdir -p $(OUT)/proc
+	@echo "==========================================" >> $(OUT)/proc/$(EIGENSEARCH_OUT)
+	@date >> $(OUT)/proc/$(EIGENSEARCH_OUT)
+	@{ time python $(SRC)/eigen_search_infraGA.py ; } 2>> $(OUT)/proc/$(EIGENSEARCH_OUT)
+	@echo "" >> $(OUT)/proc/$(EIGENSEARCH_OUT)
 
 
