@@ -45,6 +45,7 @@ interesting cases.
 
 ## Related publications
 - De Negri, R. S., Rose, K. M., Matoza, R. S., Hupe, P., & Ceranna, L. (2022). Long-range multi-year infrasonic detection of eruptive activity at Mount Michael volcano, South Sandwich Islands. Geophysical Research Letters, 49, e2021GL096061. https://doi.org/10.1029/2021GL096061
+- De Negri, R., & Matoza, R. S. (2023). Rapid location of remote volcanic infrasound using 3D ray tracing and empirical climatologies: Application to the 2011 Cordón Caulle and 2015 Calbuco eruptions, Chile. Journal of Geophysical Research: Solid Earth, 128, e2022JB025735. https://doi.org/10.1029/2022JB025735
 
 
 ## Requisites
