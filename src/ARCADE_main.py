@@ -88,7 +88,7 @@ def get_profiles(pert_flag=False, mix_flag=False):
     doys = discretize_params['doys']
     sources = discretize_params['sou_pos']
     stations = discretize_params['sta_pos']
-
+    stations_name = discretize_params['sta_nam']
 
     end_str = '.met'
     if pert_flag == True and mix_flag == False:
@@ -102,6 +102,7 @@ def get_profiles(pert_flag=False, mix_flag=False):
     for sec, doy, isou, ista in product(secs, doys, range(len(sources)), range(len(stations))):
         sou_lat, sou_lon = sources[isou]
         sta_lat, sta_lon = stations[ista]
+        sta_name = stations_name[ista]
         prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}" \
                     +f"{end_str}"
         prof_name_1 = f"../output/profiles/1_{prof_name}"
@@ -110,7 +111,7 @@ def get_profiles(pert_flag=False, mix_flag=False):
             profiles.append((
                 sta_lat, sta_lon,
                 sou_lat, sou_lon,
-                prof_name))
+                sta_name, prof_name))
             print(f"   > {prof_name} added.")
         else:  # file is empty, default to normal case
             prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
@@ -119,7 +120,7 @@ def get_profiles(pert_flag=False, mix_flag=False):
             profiles.append((
                 sta_lat, sta_lon,
                 sou_lat, sou_lon,
-                prof_name))
+                sta_name, prof_name))
             print("Using profile without perturbation")
             print(f"   > {prof_name} added.")
     return profiles
@@ -143,6 +144,7 @@ def get_profiles_rngdep():
     doys = discretize_params['doys']
     sources = discretize_params['sou_pos']
     stations = discretize_params['sta_pos']
+    stations_name = discretize_params['sta_nam']
 
     end_str = '.met'
     # Below some flags I don't use right not, but will be useful later when
@@ -160,7 +162,7 @@ def get_profiles_rngdep():
         profiles.append((
             stations[ista][0], stations[ista][1],
             sources[isou][0], sources[isou][1],
-            prof_name))
+            stations_name[ista], prof_name))
         print(f"   > {prof_name} added.")
     return profiles
 
@@ -499,11 +501,11 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
     prof_name = ''
     out_file_name = ''
     if rngdep == False:
-        prof_name = my_profiles[profInd][4]
+        prof_name = my_profiles[profInd][5]
         out_file_name = f"{prof_name.split('.')[0]}_out.txt"
     else:
-        prof = my_profiles[profInd][4].split('_')
-        prof_name = prof[0]+"_"+prof[1]+"_"+prof[2]+"_"+prof[3]+"_"+prof[4]+"_" # everything but prof num
+        prof = my_profiles[profInd][5].split('_')
+        prof_name = prof[0]+"_"+prof[1]+"_"+prof[2]+"_"+prof[3]+"_"+prof[5]+"_" # everything but prof num
         out_file_name = f"{prof_name}out.txt"
     # Out variables
     bphi1_s, bphi1_t = 0, 0
@@ -519,6 +521,8 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
             gridLat = my_profiles[profInd][2]
             gridLon = my_profiles[profInd][3]
 
+            sta_name = my_profiles[profInd][4]
+
             # ==================================================================
             # Find distance (meters), azimuth, and back azimuth
             # from grid node to current station
@@ -531,6 +535,7 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
             print("====================================\n")
             print("Source            : ({0}, {1})".format(gridLat, gridLon))
             print("Receiver          : ({0}, {1})".format(staLat, staLon))
+            print("Name              : {}".format(sta_name))
             print("Distance [km]     : {}".format(d))
             print("Azimuth [deg]     : {}".format(az))
             print("Back Azimuth [deg]: {}".format(baz))
@@ -991,13 +996,13 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                 if not os.path.isfile(table_name):
                     with open(table_name, "w") as f:
                         header_lst = ["Year", "DOY", "Seconds", "SouNum", 
-                            "StaNum", "TrueBaz", "BazDevS", "#BazDS", 
+                            "StaNum", "StaNam", "TrueBaz", "BazDevS", "#BazDS",
                             "BazDevT", "#BazDT", "BazDevA", "StdBDA", "Ill"]
                         header_str = ""
                         for i, head in enumerate(header_lst):
                             if i == 0:
                                 header_str += f"{head:>7}"
-                            elif i == 10:
+                            elif i == 11:
                                 # scientific notation
                                 header_str += f" {head:>8}"
                             elif i == len(header_lst)-1:
@@ -1008,11 +1013,12 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                         f.write(header_str)
 
                 with open(table_name, "a") as f:
-                    f.write(f"{year:>7d} "
+                    f.write(f"{year:>7} "
                             f"{doy:>7d} "
                             f"{sec:>7d} "
                             f"{gridNum:>7d} "
                             f"{staNum:>7d} "
+                            f"{sta_name:>9}"
                             f"{baz:>7.2f} "
                             f"{float(baz_dev_s):>7.2f} "
                             f"{num1_s+num2_s:>7d} "
