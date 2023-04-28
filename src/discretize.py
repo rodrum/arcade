@@ -360,6 +360,7 @@ def rng_dep_ecmwf():
     import interpolate_ecmwf
     interpolate_ecmwf.main_rng_dep()
 
+    dh = params['dh']
     dlat = params['range_dependent']['dlat']
     dlon = params['range_dependent']['dlon']
     all_lats = [l[0] for l in (sou_pos+sta_pos)]
@@ -486,7 +487,7 @@ def rng_dep_ecmwf():
                         new_vals[1],
                         pres(new_vals[1], new_vals[2])
                     ])
-            for i in range(int(h2/0.5), climt_data.shape[0]):
+            for i in range(int(h2/dh), climt_data.shape[0]):
                 climt_data_row = climt_data[i].copy()
                 mixed_data.append([
                     climt_data_row[0],
