@@ -182,7 +182,7 @@ def main_rng_dep():
 
     for sec, doy, nsou, nsta in all_comb:
         soulat, soulon = sources[nsou]
-        stalat, stalon = sources[nsta]
+        stalat, stalon = stations[nsta]
         date_time = datetime.datetime.strptime(f"{year:04d} {doy:03d}", "%Y %j")
         date_str = date_time.strftime('%Y-%m-%d')  # "2016-06-10"
         hours = int(sec/3600)
@@ -198,24 +198,40 @@ def main_rng_dep():
         lvls_zWin = pandas.read_csv(base_dir+"_zonalWinds_new.csv")
         lvls_mWin = pandas.read_csv(base_dir+"_meridionalWinds_new.csv")
 
-        #=== discretization points from 'request_era5_profiles.py'
-        lon0, lon1, lat0, lat1 = 0, 0, 0, 0
-        dlon = disc_param['ecmwf']['dlon']  # grid step in degrees
-        dlat = disc_param['ecmwf']['dlat']
-        if disc_param['ecmwf']['auto_area'] == False:
-            lon0 = disc_param['ecmwf']['min_lon']
-            lon1 = disc_param['ecmwf']['max_lon']
-            lat0 = disc_param['ecmwf']['min_lat']
-            lat1 = disc_param['ecmwf']['max_lat']
-        else:
-            lon0 = int(np.min([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) - 2*dlon
-            lon1 = int(np.max([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) + 2*dlon
-            lat0 = int(np.min([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) - 2*dlat
-            lat1 = int(np.max([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) + 2*dlat
-        lons = np.arange(lon0-360., lon1-360.+dlon, dlon)
-        lats = np.arange(lat1, lat0-dlat, -dlat)  # decreasing in latitude following data
+        #=== min_lat, max_lat from request
+        req_lats = lvls_zWin['Latitude'].to_numpy()
+        min_lat = np.min(req_lats)
+        max_lat = np.max(req_lats)
+        #=== min_lon, max_lon from request
+        req_lons = lvls_zWin['Longitude'].to_numpy()
+        min_lon = np.min(req_lons)
+        max_lon = np.max(req_lons)
 
-        nlon, nlat = int(((lon1-lon0)/dlon+1)), int(((lat1-lat0)/dlat+1))
+        #=== discretization points from 'request_era5_profiles.py'
+        #lon0, lon1, lat0, lat1 = 0, 0, 0, 0
+        #dlon = disc_param['ecmwf']['dlon']  # grid step in degrees
+        #dlat = disc_param['ecmwf']['dlat']
+        #if disc_param['ecmwf']['auto_area'] == False:
+        #    lon0 = disc_param['ecmwf']['min_lon']
+        #    lon1 = disc_param['ecmwf']['max_lon']
+        #    lat0 = disc_param['ecmwf']['min_lat']
+        #    lat1 = disc_param['ecmwf']['max_lat']
+        #else:
+        #    lon0 = np.min([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])]) - 1
+        #    lon1 = np.max([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])]) + 1
+        #    lat0 = np.min([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])]) - 1
+        #    lat1 = np.max([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])]) + 1
+        #lons = np.arange(lon0-360., lon1-360.+dlon, dlon)
+        #lats = np.arange(lat1, lat0-dlat, -dlat)  # decreasing in latitude following data
+        lons = np.asarray(list(set([i for i in req_lons])))
+        lats = np.asarray(list(set([i for i in req_lats])))
+        lats = lats[::-1] # decreasing as data
+        print(f"\n-> lons={lons}")
+        print(f"-> lats={lats}")
+
+        #nlon, nlat = int(((lon1-lon0)/dlon+1)), int(((lat1-lat0)/dlat+1))
+        nlon, nlat = len(lons), len(lats)
+        print(f"-> nlon, nlat ={nlon}, {nlat}")
         npts = nlon * nlat
 
         #=== calculate columns on specified discretized points
