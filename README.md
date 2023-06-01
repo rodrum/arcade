@@ -58,6 +58,8 @@ interesting cases.
 - Python 3.9 Conda: follow instructions here https://docs.conda.io/en/latest/miniconda.html
   - Create the `arcade` envinroment with `$ conda env create -f environment_cross_platform.yml`    
   - When running the calculations, activate the environment with `$ conda activate arcade`. **NOTE:** If using hybrid models, you need to install the dependencies here too (see below).
+ 
+- A Dockerfile and Docker image are available to ease the installation process. Please refer to the section [Using Docker](#using-docker) if you want to use this solution.
 
 ### External repos
 
@@ -213,6 +215,59 @@ The results are organized as follows:
     - `arrv/` - contains the arrivals for each iteration and profile (output of 3d rat tracing infraGA). As the number of files could be huge, this feature should be disabled for large combinations of sources and stations. The format of each file name is `NUM-A_prof_XXX_YYYYY_ZZZZ.arrivals.dat`, where `NUM` is the run number (iteration number), and `A` could be `1` or `2` depending on the launch azimuth used to enclose the target station (see PAPER TBD). Use these files to understand the iteration process, or even make a video as each files is a snapshot of the resulting 3d ray tracing calculations. Note that the plot `arrv_XXX_YYYYY_ZZZZ.png` is actually the last snapshot of the profile `XXX_YYYYY_ZZZZ`.
     - `rays/` - contains the 3D ray paths for each iteration and profile (also output of infraGA). The format is similar to the files in `arrv/`. You can use this files to plot the 3D rays.
   - `profiles/` contains the atmospheric descriptions for the source-station direction. The files `.met` are the descriptions that infraGA uses to run 3D ray tracing.
+
+## Using Docker
+
+We published a Docker image to simplify the installation process of ARCADE. By using Docker, you can quickly set up the required environment without worrying about the dependency installations.
+
+### Prerequisites
+
+Before you begin, ensure that you have Docker installed on your system. You can download and install Docker by following the instructions provided in the [Docker documentation](https://docs.docker.com/get-docker/).
+
+### Installation Steps
+
+1. Pull the Docker image from the GitHub Container Registry (ghcr.io) by running the following command in your terminal:
+```bash
+docker pull ghcr.io/rodrum/arcade:main
+```
+2. Once the Docker image is successfully downloaded, you can create a new container and start the software using the following command:
+
+```bash
+docker run -it --name arcade ghcr.io/rodrum/arcade:main
+```
+	This will start interactively a new docker container based on the previously downloaded image and named "arcade". All the dependencies are already installed and you can start using the software. Nano is installed by defaults and you can use it to modify the input files. **Note that you don't need to run `conda activate arcade` before `make run-arcade`, the environment is activated by defaults.**
+3. After exiting the container, you can restart it using:
+
+```bash
+docker start -i arcade
+```
+
+### Retrieving results
+
+To retrieve the results of ARCADE, you have two solutions. 
+1. Using `docker cp`: This solution should be used if you want to retrieve results from small runs or only the result table.
+2. Using bind mounts: This solution should be used if you want to retrieve all the data from the output folder in case of long runs.
+
+#### Using `docker cp`:
+
+In a terminal type:
+```bash
+docker cp arcade:/app/results/path/to/folder /path/to/destination
+```
+
+This will copy the file or folder specified to the given destination.
+
+#### Using bind mounts:
+
+`docker cp` can be quite  especially when copying large folders/files. We propose another solution: [bind mounts](https://docs.docker.com/storage/bind-mounts/).
+
+**Note that bind mounts may slow down file access on MacOS and Windows with WSL2 platforms.**
+
+Bind mounts allow the docker container to directly write on the host instead of inside the docker container. To use a bind mount, you need to run the container with the following command:
+
+```bash
+docker run -it --name arcade --mount type=bind,source=/path/on/the/host,target=/app/results ghcr.io/username/docker-image:tag
+```
 
 ## Thanks to...
 - Robin Matoza: concept, analisis, and many ideas
