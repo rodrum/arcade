@@ -235,7 +235,8 @@ docker pull ghcr.io/rodrum/arcade:main
 ```bash
 docker run -it --name arcade ghcr.io/rodrum/arcade:main
 ```
-This will start interactively a new docker container based on the previously downloaded image and named "arcade". All the dependencies are already installed and you can start using the software. Nano is installed by defaults and you can use it to modify the input files. **Note that you don't need to run `conda activate arcade` before `make run-arcade`, the environment is activated by default.**
+This will start interactively a new docker container based on the previously downloaded image and named "arcade". All the dependencies are already installed and you can start using the software. Nano is installed by defaults and you can use it to modify the input files. **Note that you don't need to run `conda activate arcade` before `make run-arcade`, the environment is activated by default.**   
+
 3. After exiting the container, you can restart it using:
 
 ```bash
