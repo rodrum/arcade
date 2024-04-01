@@ -7,7 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Update and install system packages
 RUN apt-get update && \
-    apt-get install -y gfortran-8 libfftw3-dev python3-dev curl git tar wget build-essential cmake time nano && \
+    apt-get install -y gfortran-8 libfftw3-dev python3-dev curl git tar wget build-essential cmake time nano vim && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
