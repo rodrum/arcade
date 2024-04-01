@@ -271,5 +271,6 @@ docker run -it --name arcade --mount type=bind,source=/path/on/the/host,target=/
 ```
 
 ## Thanks to...
-- Robin Matoza: concept, analisis, and many ideas
-- Jeremy Francoeur: proofreading, testing 
+- Robin Matoza: concept, analysis, and many ideas
+- Jeremy Francoeur: proofreading, testing
+- Vincent Boulenger: dealing with docker image and making output better 
