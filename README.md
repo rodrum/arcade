@@ -222,7 +222,7 @@ We published a Docker image to simplify the installation process of ARCADE. By u
 
 ### Prerequisites
 
-Before you begin, ensure that you have Docker installed on your system. You can download and install Docker by following the instructions provided in the [Docker documentation](https://docs.docker.com/get-docker/).
+Before you begin, ensure that you have Docker engine installed on your system. You can download and install Docker engine by following the instructions provided in the [Docker documentation](https://docs.docker.com/engine/install/).
 
 ### Installation Steps
 
