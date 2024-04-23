@@ -54,6 +54,9 @@ perc_cpu = 1 # as num_cpu/perc_cpu
 save_raypaths = false
 # Save arrivals? Arrivals are smaller than raypaths, but still could grow big
 save_arrivals = false
+
+# Default frequency for Sutherland and Bass (2004) TL
+freq = 0.1
     
 # Project info ############################################
 [project_info]

@@ -189,7 +189,8 @@ def create_launch(launch_parameters):
                     " src_lon={9}"\
                     " src_alt={10}"\
                     " write_atmo={11}"\
-                    " calc_amp={12}".format(
+                    " calc_amp={12}"\
+                    " freq={13}".format(
                         './infraga-sph',
                         '../output/profiles/'+str(prof_ind)+'_'+prof,
                         launch_parameters['incl_min'],
@@ -202,7 +203,8 @@ def create_launch(launch_parameters):
                         launch_parameters['src_lon'],
                         launch_parameters['src_alt'],
                         launch_parameters['write_atmo'],
-                        launch_parameters['calc_amp']
+                        launch_parameters['calc_amp'],
+                        launch_parameters['freq']
                         )
         launch.append(launch_txt)
     return launch
@@ -564,6 +566,7 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                 'src_alt'   : arcade_conf['launch_parameters']['src_alt'],
                 'write_atmo': arcade_conf['launch_parameters']['write_atmo'],
                 'calc_amp'  : arcade_conf['launch_parameters']['calc_amp'],
+                'freq'      : arcade_conf['launch_parameters']['freq']
                 }
             for key in launch_parameters:
                 print("{0:11}:{1}".format(key, launch_parameters[key]))
@@ -995,7 +998,7 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                 staNum  = int(prof_name[21:25])
                 if not os.path.isfile(table_name):
                     with open(table_name, "w") as f:
-                        header_lst = ["Year", "DOY", "Seconds", "SouNum", 
+                        header_lst = ["Year", "DOY", "Seconds", "SouNum",
                             "StaNum", "StaNam", "TrueBaz", "BazDevS", "#BazDS",
                             "BazDevT", "#BazDT", "BazDevA", "StdBDA", "Ill"]
                         header_str = ""
