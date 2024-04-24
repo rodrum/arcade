@@ -147,34 +147,43 @@ def main():
                     'format': 'grib'
                 }, merid_name)
 
-            #=== convert from grib to pre-csv
-            f = open(f"{output_name}_temperature.csv", "w")
-            subprocess.call(['grib_get_data', temp_name], stdout=f)
-            f.close()
+            # do this only if end output are not already present
+            new_files = isfile(f"{output_name}_temperature_new.csv") \
+                        and \
+                        isfile(f"{output_name}_zonalWinds_new.csv") \
+                        and \
+                        isfile(f"{output_name}_meridionalWinds_new.csv")
+            if not new_files:
+                #=== convert from grib to pre-csv
+                f = open(f"{output_name}_temperature.csv", "w")
+                subprocess.call(['grib_get_data', temp_name], stdout=f)
+                f.close()
 
-            f = open(f"{output_name}_zonalWinds.csv", "w")
-            subprocess.call(['grib_get_data', zonal_name], stdout=f)
-            f.close()
+                f = open(f"{output_name}_zonalWinds.csv", "w")
+                subprocess.call(['grib_get_data', zonal_name], stdout=f)
+                f.close()
 
-            f = open(f"{output_name}_meridionalWinds.csv", "w")
-            subprocess.call(['grib_get_data', merid_name], stdout=f)
-            f.close()
+                f = open(f"{output_name}_meridionalWinds.csv", "w")
+                subprocess.call(['grib_get_data', merid_name], stdout=f)
+                f.close()
 
-            #=== convert to proper CSV
-            format_csv(
-                f"{output_name}_temperature.csv",
-                f"{output_name}_temperature_new.csv"
-                )
+                #=== convert to proper CSV
+                format_csv(
+                    f"{output_name}_temperature.csv",
+                    f"{output_name}_temperature_new.csv"
+                    )
 
-            format_csv(
-                f"{output_name}_zonalWinds.csv",
-                f"{output_name}_zonalWinds_new.csv"
-                )
+                format_csv(
+                    f"{output_name}_zonalWinds.csv",
+                    f"{output_name}_zonalWinds_new.csv"
+                    )
 
-            format_csv(
-                f"{output_name}_meridionalWinds.csv",
-                f"{output_name}_meridionalWinds_new.csv"
-                )
+                format_csv(
+                    f"{output_name}_meridionalWinds.csv",
+                    f"{output_name}_meridionalWinds_new.csv"
+                    )
+            else:
+                print("-> CSV files present, skipping...")
 
 if __name__ == '__main__':
     main()
