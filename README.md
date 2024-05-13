@@ -48,8 +48,11 @@ interesting cases.
 - De Negri, R. S., Rose, K. M., Matoza, R. S., Hupe, P., & Ceranna, L. (2022). Long-range multi-year infrasonic detection of eruptive activity at Mount Michael volcano, South Sandwich Islands. Geophysical Research Letters, 49, e2021GL096061. https://doi.org/10.1029/2021GL096061
 
 
-## Requisites
-- All external repos (see below) in place and hopefully individually tested (through makefiles inside each one). 
+## Installation on your computer
+
+If choosing to install on your computer, you will need to manually deal with installing the necessary dependencies.
+Ensure that you have:
+
 - Fortran and c++ compilers (check `makefile` to define Fortran compiler in first line)
   - For NRMLSIS2.0 you'll need gfortran version 4.8.5 or 6.3.0 or 8.1.0. 
     
@@ -58,10 +61,9 @@ interesting cases.
 - Python 3.9 Conda: follow instructions here https://docs.conda.io/en/latest/miniconda.html
   - Create the `arcade` envinroment with `$ conda env create -f environment_cross_platform.yml`    
   - When running the calculations, activate the environment with `$ conda activate arcade`. **NOTE:** If using hybrid models, you need to install the dependencies here too (see below).
- 
-- A Dockerfile and Docker image are available to ease the installation process. Please refer to the section [Using Docker](#using-docker) if you want to use this solution.
-
-### External repos
+- All external repos (see below) in place (inside `repos`) and hopefully individually tested (through makefiles inside each one).
+  
+### External repositories
 
 The climatologies used are the Horizontal Wind Model (HWM14) [Drob et al., 2014] 
 to estimate horizonal winds in height, and NRLMSIS2.0 [Emmert et al., 2021] to 
@@ -90,9 +92,89 @@ The hybrid models need the Climate Data Store (CDS) infrastructure and API modul
 #### ecCodes to decode data
 In order to decode the downloaded data and use it automatically for ray tracing with infraGA, it is necessary to install `ecCodes` provided by ECMWF. Please follow the instructions here https://confluence.ecmwf.int/display/ECC/ecCodes+installation. I recommend to use the Python binding installation (https://confluence.ecmwf.int/display/UDOC/How+to+install+ecCodes+with+Python+bindings+in+conda+-+ecCodes+FAQ).
 
-## How to run
+## Installation using Docker 
+We published a Docker image to simplify the installation process of ARCADE. By using Docker, you can quickly set up the required environment without worrying about the dependency installations.
+**Note:** At the moment, this image is a couple of commits behind. However, once your docker image is up and running, you can manually download the latest version and use it inside the docker image if you want.
 
-1. Inside repo, run `$ make all-prep`. 
+### Prerequisites
+
+Before you begin, ensure that you have Docker engine installed on your system. You can download and install Docker engine by following the instructions provided in the [Docker documentation](https://docs.docker.com/engine/install/).
+
+### Installation Steps
+
+1. Pull the Docker image from the GitHub Container Registry (ghcr.io) by running the following command in your terminal:
+```bash
+docker pull ghcr.io/rodrum/arcade:main
+```
+2. Once the Docker image is successfully downloaded, you can create a new container and start the software using the following command:
+
+```bash
+docker run -it --name arcade ghcr.io/rodrum/arcade:main
+```
+This will start interactively a new docker container based on the previously downloaded image and named "arcade". All the dependencies are already installed and you can start using the software. Nano is installed by defaults and you can use it to modify the input files. **Note that you don't need to run `conda activate arcade` before `make run-arcade`, the environment is activated by default.**   
+
+3. After exiting the container, you can restart it using:
+
+```bash
+docker start -i arcade
+```
+
+### Retrieving results
+
+To retrieve the results of ARCADE, you have two solutions. 
+1. Using `docker cp`: This solution should be used if you want to retrieve results from small runs or only the result table.
+2. Using bind mounts: This solution should be used if you want to retrieve all the data from the output folder in case of long runs.
+
+#### Using `docker cp`:
+
+In a terminal type:
+```bash
+docker cp arcade:/app/results/path/to/folder /path/to/destination
+```
+
+This will copy the file or folder specified to the given destination.
+
+#### Using bind mounts:
+
+`docker cp` can be quite slow especially when copying large folders/files. We propose another solution: [bind mounts](https://docs.docker.com/storage/bind-mounts/).
+
+**Note that bind mounts may slow down file access on MacOS and Windows with WSL2 platforms.**
+
+Bind mounts allow the docker container to directly write on the host instead of inside the docker container. To use a bind mount, you need to run the container with the following command:
+
+```bash
+docker run -it --name arcade --mount type=bind,source=/path/on/the/host,target=/app/results ghcr.io/username/docker-image:tag
+```
+
+## Installation using Nix
+
+This option uses the [Nix package manager](https://nixos.org/download/). This will allow you to create a temporary shell session with `nix-shell` that will have the necessary dependencies installed (`gfortran`, `fftw`, etc) to tun ARCADE.
+
+To run the first time, follow these steps:
+
+1. Download this repo in your computer. Open a terminal inside this the project folder.
+2. Download extenral repos in arcade/repos and unzip with the right names (HWM14, infraGA-master, NRLMSIS2.0)
+3. Modify the `makefile` if necessary to match the names of the external repositories in `repos`. Modify the makefile to say `GFORT = gfortran` (instead of `GFORT = gfortran-8`).
+4. Install conda and recreate environment in file `environment_cross_platform.yml` with `conda env create -f environment_cross_platform.yml`. 
+5. Open a terminal and run `nix-shell` as:
+   ```bash
+   $ nix-shell --packages gfortran8 rocmPackages.llvm.clang conda fftw gnumake
+   ```
+   This will temporarily install the needed packages in the shell session to ba able to run ARCADE.
+6. Run `$ conda activate arcade`.
+7. Inside the project folder (`arcade`) run `$ make all-prep`.
+8. Modify `input/arcade_config.toml` and `input/discretize_parameters.toml`.
+9. Now you can run ARCADE with `make run-arcade` (inside `arcade`).
+
+If you want to run ARCADE again later, the process will be simpler:
+1. If you closed the shell, re-create it with `nix-shell` as before: `$ nix-shell --packages gfortran8 rocmPackages.llvm.clang conda fftw gnumake`
+2. Use `conda activate arcade`
+3. Modify `input/arcade_config.toml` and `input/discretize_parameters.toml`
+4. Use `make run-arcade`
+
+## How to run in general
+
+1. Inside repo, run `$ make all-prep` (not needed if using the docker image). 
 2. Modify the input files `arcade_config.toml` and `discretize_parameters.toml`
 to suit your model. (Currently it is setup with an example run for Puyehue-Cordon Caulle to IS02 on 2011-06-04 at 19:00:00 UTC)
 3. Run `$ make run-arcade` to calculate the azimuth deviations.
@@ -216,59 +298,6 @@ The results are organized as follows:
     - `rays/` - contains the 3D ray paths for each iteration and profile (also output of infraGA). The format is similar to the files in `arrv/`. You can use this files to plot the 3D rays.
   - `profiles/` contains the atmospheric descriptions for the source-station direction. The files `.met` are the descriptions that infraGA uses to run 3D ray tracing.
 
-## Using Docker
-
-We published a Docker image to simplify the installation process of ARCADE. By using Docker, you can quickly set up the required environment without worrying about the dependency installations.
-
-### Prerequisites
-
-Before you begin, ensure that you have Docker engine installed on your system. You can download and install Docker engine by following the instructions provided in the [Docker documentation](https://docs.docker.com/engine/install/).
-
-### Installation Steps
-
-1. Pull the Docker image from the GitHub Container Registry (ghcr.io) by running the following command in your terminal:
-```bash
-docker pull ghcr.io/rodrum/arcade:main
-```
-2. Once the Docker image is successfully downloaded, you can create a new container and start the software using the following command:
-
-```bash
-docker run -it --name arcade ghcr.io/rodrum/arcade:main
-```
-This will start interactively a new docker container based on the previously downloaded image and named "arcade". All the dependencies are already installed and you can start using the software. Nano is installed by defaults and you can use it to modify the input files. **Note that you don't need to run `conda activate arcade` before `make run-arcade`, the environment is activated by default.**   
-
-3. After exiting the container, you can restart it using:
-
-```bash
-docker start -i arcade
-```
-
-### Retrieving results
-
-To retrieve the results of ARCADE, you have two solutions. 
-1. Using `docker cp`: This solution should be used if you want to retrieve results from small runs or only the result table.
-2. Using bind mounts: This solution should be used if you want to retrieve all the data from the output folder in case of long runs.
-
-#### Using `docker cp`:
-
-In a terminal type:
-```bash
-docker cp arcade:/app/results/path/to/folder /path/to/destination
-```
-
-This will copy the file or folder specified to the given destination.
-
-#### Using bind mounts:
-
-`docker cp` can be quite  especially when copying large folders/files. We propose another solution: [bind mounts](https://docs.docker.com/storage/bind-mounts/).
-
-**Note that bind mounts may slow down file access on MacOS and Windows with WSL2 platforms.**
-
-Bind mounts allow the docker container to directly write on the host instead of inside the docker container. To use a bind mount, you need to run the container with the following command:
-
-```bash
-docker run -it --name arcade --mount type=bind,source=/path/on/the/host,target=/app/results ghcr.io/username/docker-image:tag
-```
 
 ## Thanks to...
 - Robin Matoza: concept, analysis, and many ideas
