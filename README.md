@@ -59,8 +59,8 @@ Ensure that you have:
     **Note for Ubuntu**: this means using Ubuntu 20.04 to be able to install the gfortran-8 libraries. I have not figured out a way to install older libraries in the latest stable version (22.04) without risking your workstation.
   - For HWM14 you'll need fftw3 (libfftw3-dev in Ubuntu; fftw-3 with port in MacOS).
 - Python 3.9 Conda: follow instructions here https://docs.conda.io/en/latest/miniconda.html
-  - Create the `arcade` envinroment with `$ conda env create -f environment_cross_platform.yml`    
-  - When running the calculations, activate the environment with `$ conda activate arcade`. **NOTE:** If using hybrid models, you need to install the dependencies here too (see below).
+  - Create the `arcade` envinroment with `conda env create -f environment_cross_platform.yml`    
+  - When running the calculations, activate the environment with `conda activate arcade`. **NOTE:** If using hybrid models, you need to install the dependencies here too (see below).
 - All external repos (see below) in place (inside `repos`) and hopefully individually tested (through makefiles inside each one).
   
 ### External repositories
@@ -158,26 +158,26 @@ To run the first time, follow these steps:
 4. Install conda and recreate environment in file `environment_cross_platform.yml` with `conda env create -f environment_cross_platform.yml`. 
 5. Open a terminal and run `nix-shell` as:
    ```bash
-   $ nix-shell --packages gfortran8 rocmPackages.llvm.clang conda fftw gnumake
+   nix-shell --packages gfortran8 rocmPackages.llvm.clang conda fftw gnumake
    ```
    This will temporarily install the needed packages in the shell session to ba able to run ARCADE.
-6. Run `$ conda activate arcade`.
-7. Inside the project folder (`arcade`) run `$ make all-prep`.
+6. Run ` conda activate arcade`.
+7. Inside the project folder (`arcade`) run `make all-prep`.
 8. Modify `input/arcade_config.toml` and `input/discretize_parameters.toml`.
 9. Now you can run ARCADE with `make run-arcade` (inside `arcade`).
 
 If you want to run ARCADE again later, the process will be simpler:
-1. If you closed the shell, re-create it with `nix-shell` as before: `$ nix-shell --packages gfortran8 rocmPackages.llvm.clang conda fftw gnumake`
-2. Use `conda activate arcade`
-3. Modify `input/arcade_config.toml` and `input/discretize_parameters.toml`
-4. Use `make run-arcade`
+1. If you closed the shell, re-create it with `nix-shell` as before: `nix-shell --packages gfortran8 rocmPackages.llvm.clang conda fftw gnumake`
+3. Use `conda activate arcade`
+4. Modify `input/arcade_config.toml` and `input/discretize_parameters.toml`
+5. Use `make run-arcade`
 
 ## How to run in general
 
-1. Inside repo, run `$ make all-prep` (not needed if using the docker image). 
+1. Inside repo, run `make all-prep` (not needed if using the docker image). 
 2. Modify the input files `arcade_config.toml` and `discretize_parameters.toml`
 to suit your model. (Currently it is setup with an example run for Puyehue-Cordon Caulle to IS02 on 2011-06-04 at 19:00:00 UTC)
-3. Run `$ make run-arcade` to calculate the azimuth deviations.
+3. Run `make run-arcade` to calculate the azimuth deviations.
 4. After the modeling ends, the input configuration files and output figures
 and results will be saved in the directory `path`/`name`, which is set in
 `arcade_config.toml`. Inside `./output`, the text file `azimuth_deviation_table.txt` has the summary of results.
