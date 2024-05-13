@@ -158,7 +158,7 @@ To run the first time, follow these steps:
 4. Install conda and recreate environment in file `environment_cross_platform.yml` with `conda env create -f environment_cross_platform.yml`. 
 5. Open a terminal and run `nix-shell` as:
    ```bash
-   nix-shell --packages gfortran8 rocmPackages.llvm.clang conda fftw gnumake
+   nix-shell --packages gfortran8 rocmPackages.llvm.clang fftw gnumake
    ```
    This will temporarily install the needed packages in the shell session to ba able to run ARCADE.
 6. Run ` conda activate arcade`.
@@ -167,7 +167,7 @@ To run the first time, follow these steps:
 9. Now you can run ARCADE with `make run-arcade` (inside `arcade`).
 
 If you want to run ARCADE again later, the process will be simpler:
-1. If you closed the shell, re-create it with `nix-shell` as before: `nix-shell --packages gfortran8 rocmPackages.llvm.clang conda fftw gnumake`
+1. If you closed the shell, re-create it with `nix-shell` as before: `nix-shell --packages gfortran8 rocmPackages.llvm.clang fftw gnumake`
 3. Use `conda activate arcade`
 4. Modify `input/arcade_config.toml` and `input/discretize_parameters.toml`
 5. Use `make run-arcade`
