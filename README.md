@@ -150,7 +150,7 @@ docker run -it --name arcade --mount type=bind,source=/path/on/the/host,target=/
 
 This option uses the [Nix package manager](https://nixos.org/download/). This will allow you to create a temporary shell session with `nix-shell` that will have the necessary dependencies installed (`gfortran`, `fftw`, etc) to tun ARCADE.
 
-Here we use `nix-shell` to create a temporary create a shell loaded with all the dependencies needed. The file `arcade.nix` contains the needed instructions to create this thell. Just do:
+Here we use `nix-shell` to create a temporary create a shell loaded with all the dependencies needed. The file `arcade.nix` contains the needed instructions to create this thell (based on example from [this blog] (http://ghedam.at/15978/an-introduction-to-nix-shell)). Just do:
 
 ```bash
 nix-shell arcade.nix
