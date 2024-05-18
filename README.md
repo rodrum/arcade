@@ -150,27 +150,13 @@ docker run -it --name arcade --mount type=bind,source=/path/on/the/host,target=/
 
 This option uses the [Nix package manager](https://nixos.org/download/). This will allow you to create a temporary shell session with `nix-shell` that will have the necessary dependencies installed (`gfortran`, `fftw`, etc) to tun ARCADE.
 
-To run the first time, follow these steps:
+Here we use `nix-shell` to create a temporary create a shell loaded with all the dependencies needed. The file `arcade.nix` contains the needed instructions to create this thell. Just do:
 
-1. Download this repo in your computer. Open a terminal inside this the project folder.
-2. Download extenral repos in arcade/repos and unzip with the right names (HWM14, infraGA-master, NRLMSIS2.0)
-3. Modify the `makefile` if necessary to match the names of the external repositories in `repos`. Modify the makefile to say `GFORT = gfortran` (instead of `GFORT = gfortran-8`).
-4. Install conda and recreate environment in file `environment_cross_platform.yml` with `conda env create -f environment_cross_platform.yml`. 
-5. Open a terminal and run `nix-shell` as:
-   ```bash
-   nix-shell --packages gfortran8 rocmPackages.llvm.clang fftw gnumake
-   ```
-   This will temporarily install the needed packages in the shell session to ba able to run ARCADE.
-6. Run ` conda activate arcade`.
-7. Inside the project folder (`arcade`) run `make all-prep`.
-8. Modify `input/arcade_config.toml` and `input/discretize_parameters.toml`.
-9. Now you can run ARCADE with `make run-arcade` (inside `arcade`).
+```bash
+nix-shell arcade.nix
+```
 
-If you want to run ARCADE again later, the process will be simpler:
-1. If you closed the shell, re-create it with `nix-shell` as before: `nix-shell --packages gfortran8 rocmPackages.llvm.clang fftw gnumake`
-3. Use `conda activate arcade`
-4. Modify `input/arcade_config.toml` and `input/discretize_parameters.toml`
-5. Use `make run-arcade`
+And after the program ends the configuration process, the shell you are using should have all what you need. Now you can proceed to the next section to run arcade.
 
 ## How to run in general
 
