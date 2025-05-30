@@ -1042,7 +1042,7 @@ if __name__ == '__main__':
 
     # Set working path
     os.chdir("./bin")
-    print(f"-> Changed to working directory ./bin")
+    print("-> Changed to working directory ./bin")
 
     list_of_folders = [
         "../output/proc",
