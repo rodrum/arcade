@@ -218,7 +218,7 @@ def rng_ind_ecmwf():
                     # Write in file
                     f.write(f"{alts_new[i]:>9.4f} {ave_temp:>7.2f} {ave_zonw:>7.2f} {ave_merw:>7.2f} {ave_dens:>10.2e} {ave_pres:>10.2e}\n")
                     lay_ind += nl
-            print(f"Done.")
+            print("Done.")
 
         #=== load both output profiles (climat and ecmwf) and merge
         ecmwf_file = join(
@@ -352,7 +352,7 @@ def rng_dep_clim():
                             f"{ave_dens:>10.2e} "
                             f"{ave_pres:>10.2e}\n")
             prof_num += 1
-            print(f"Done.")
+            print("Done.")
 
 def rng_dep_ecmwf():
     import request_era5_profiles
@@ -509,7 +509,7 @@ def rng_dep_ecmwf():
                 np.savetxt(mixed_file, mixed_data, fmt='%9.4E')
             print("Saved {0}".format(mixed_file))
             prof_num += 1
-            print(f"Done.")
+            print("Done.")
 
 if __name__ == '__main__':
     # setting working directory from ../bin
@@ -534,7 +534,7 @@ if __name__ == '__main__':
     stl = 0.0
     mass = 0
 
-    print(f"Times of the day (hrs.):")
+    print("Times of the day (hrs.):")
     for sec in secs: print(f"-> {sec/3600}")
     print(f"Number of days: {len(doys)}")
     print(f"-> {doys}")
