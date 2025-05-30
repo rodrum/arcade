@@ -354,8 +354,7 @@ def filter_stratoThermo(results_tab, filtered_grdInt, thresh_height, prof):
         print(f"    std baz = {thermo_tup[4]:9.4f}")
     return strato_tup, thermo_tup
 
-def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False,
-    atten_th=-120, save_arrivals=False, save_raypaths=False):
+def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False, atten_th=-120, save_arrivals=False, save_raypaths=False):
     # Create launch
     launch = ''
     if rngdep == False:
