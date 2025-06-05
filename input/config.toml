@@ -1,0 +1,129 @@
+[project_info]
+name = "PCCVC-Clim-Norm-StratoThermo"
+path = "FILLME"
+
+[model]
+atmo = 'ncpag2s' # options: 'ncpag2s', 'clim', 'hybrid'
+type = 'norm' # options: 'norm', 'pert'
+
+[discretization]
+year = 2011  # NOTE: only one year for now, could be multi-year
+doys = [155, 156] # day of year
+sec = [0, 21600] # seconds, 00:00:00 UTC, 06:00:00 UTC...
+
+
+hmin = 0.0 # km
+hmax = 170.0 # km
+dh = 0.5 # km
+
+ds = 50.0 # km, horizontal space from source to station?
+
+[discretization.sources]
+# source altitude in km
+name = ['PCCVC']
+alt_km = [2.236]
+pos_latlon = [-40.59, -72.117]
+
+[discretization.stations]
+
+name = [
+    'I01AR',
+    'I02AR',
+    'I08BO',
+    'I09BR',
+    'I13CL',
+    'I14CL',
+    'I27DE',
+    'I41PY',
+    'I49GB',
+]
+
+pos_latlon = [
+    [-40.7,-70.6],
+    [-54.6, -67.3],
+    [-16.2, -68.5],
+    [-15.6, -48.0],
+    [-27.1, -109.4],
+    [-33.7, -78.8],
+    [-70.7, -8.3],
+    [-26.3, -57.3],
+    [-37.1, -12.3]
+]
+
+
+[discretization.clim]
+f107a = 150 # moderate solar activity
+f107 = 150
+apd = 4 # quiet geomagnetic activity
+aph = 4
+
+# If using RngDep
+[discretization.range_dependent]
+use_rng_dep = true
+recycle = true
+dlat = 0.25
+dlon = 0.25
+
+[discretization.ecmwf]
+use_ecmwf = true
+auto_area = true
+min_lon = -110 # to define area for grid
+max_lon = -10
+min_lat = -80
+max_lat = 0
+dlon = 1.0  # grid step in degrees
+dlat = 1.0
+h1 = 60.0 # km, heights to start and end merge
+h2 = 80.0
+
+[launch]
+# use thermospheric arrivals to determine azimuth deviation
+use_thermo = true
+# maximum number of runs before giving up
+max_run = 40
+# attenuation filter threshold
+atten_th = -1000.0
+# to filter arrivals
+min_dist_arrv = 50 # km
+# threshold distance in degrees to consider ground intercepts near the station
+daz = 0.5
+# aperture in degrees for launching rays around azimuth
+dphi = 1.5
+# parameter to weight dphi asd dphi/scale
+scale = 8.0
+# threshold to decide when to declare ground
+#   intercepts near enough (in deg) after first
+#   threshold has been satisfied
+thresh = 0.1
+# serves to scale the adaptative perturbation
+#   that is given to the launch azimuth while
+#   trying to improve the accuracy of the arrivals
+k = 0.1 # as (phi2-phi1)/2 * k
+# min vertical angle in degrees (0=horizontal)
+incl_min = 0.5
+# max vertical angle
+incl_max = 45.0
+incl_step = 0.5
+# maximum range as range+drng in km
+drng = 100.0
+# maximum number of bounces for ground intercepts
+bounces = 40
+# write atmospheric profiles output for GeoAC
+# Flags for main run
+perc_cpu = 1 # as num_cpu/perc_cpu
+# Default frequency for Sutherland and Bass (2004) TL
+freq = 0.1
+
+[other]
+# Plot profiles
+plot_profiles = false
+# Plot arrivals
+plot_arrivals = false
+write_atmo = false
+# calculate the amplitude of the rays for GeoAC
+# note: true slows down the calculations significatively
+calc_amp = false
+# Save raypaths? Raypaths could be very heavy files
+save_raypaths = false
+# Save arrivals? Arrivals are smaller than raypaths, but still could grow big
+save_arrivals = false
