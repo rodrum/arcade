@@ -38,6 +38,8 @@ from subprocess import Popen, PIPE
 import pandas
 from itertools import product
 
+geod = Geodesic.WGS84
+
 # Load and convert description nodes to profiles as input for infraGA
 def pres(dens, temp, R=287.058):
     """
@@ -51,7 +53,13 @@ def pres(dens, temp, R=287.058):
     """
     return dens*1.0e1*R*temp
 
-def rng_ind_clim():
+def rng_ind_clim(ds, alts, clim_params, all_comb, sou_pos, sta_pos, out_path):
+    stl     = clim_params['stl']
+    f107a   = clim_params['f107a']
+    f107    = clim_params['f107']
+    apd     = clim_params['apd']
+    aph     = clim_params['aph']
+
     sec_doy_sou_sta = []
     for sec, doy, isou, ista in all_comb:
         iyd = (year%1000)*1000+doy
@@ -62,15 +70,15 @@ def rng_ind_clim():
         print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
         with open(join(out_path, file_out), 'w') as f:
             # calculate nodes along arc
-            l = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
+            line = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
             # along arc discretization
-            nl = int(np.ceil(l.s13/ds/1000))  # number of points
+            nl = int(np.ceil(line.s13/ds/1000))  # number of points
             # to save for later
             sec_doy_sou_sta.append([sec, doy, isou, ista, nl])
-            arc = np.linspace(0, l.s13, nl)
+            arc = np.linspace(0, line.s13, nl)
             for alt in alts:
                 for s in arc:
-                    g = l.Position(s, Geodesic.STANDARD | Geodesic.LONG_UNROLL)
+                    g = line.Position(s, Geodesic.STANDARD | Geodesic.LONG_UNROLL)
                     f.write(
                         f"{int(iyd):>5d} "
                         f"{int(sec):>5d} "
@@ -101,11 +109,11 @@ def rng_ind_clim():
         prof = np.loadtxt(file_path_in)
         print(f"Loaded\n\t{file_path_in}")
 
-        # Idea of creating this profiles for two beams before running arcade
-        #file_out = f"prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
+        # =======================================================
+        # Two launch angles will require two intependent profiles
+        # =======================================================
         file_out_1 = f"1_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
         file_out_2 = f"2_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
-        #file_path_out = join(out_path_prof, file_out)
         file_path_out_1 = join(out_path_prof, file_out_1)
         file_path_out_2 = join(out_path_prof, file_out_2)
 
@@ -114,17 +122,29 @@ def rng_ind_clim():
             print(f"Writing to\n\t{file_path_out}")
             with open(file_path_out, 'w') as f:
                 for i in range(alts.shape[0]):
+                    # Average density [g/m^3]
                     ave_dens = np.average(prof[lay_ind:lay_ind+nl, 5])
+                    # Average tempereture [K]
                     ave_temp = np.average(prof[lay_ind:lay_ind+nl, 6])
-                    ave_merw = np.average(prof[lay_ind:lay_ind+nl, 7]) # meridional winds [m/s]
-                    ave_zonw = np.average(prof[lay_ind:lay_ind+nl, 8]) # zonal winds [m/s]
+                    # Meridional winds [m/s]
+                    ave_merw = np.average(prof[lay_ind:lay_ind+nl, 7])
+                    # Zonal winds [m/s]
+                    ave_zonw = np.average(prof[lay_ind:lay_ind+nl, 8])
+                    # Average pressure [Pa]
                     ave_pres = pres(ave_dens, ave_temp)
                     # Write in file
-                    f.write(f"{alts[i]:>5.1f} {ave_temp:>7.2f} {ave_zonw:>7.2f} {ave_merw:>7.2f} {ave_dens:>10.2e} {ave_pres:>10.2e}\n")
+                    f.write(f"{alts[i]:>5.1f} {ave_temp:>7.2f} {ave_zonw:>7.2f} "
+                            f"{ave_merw:>7.2f} {ave_dens:>10.2e} {ave_pres:>10.2e}\n")
                     lay_ind += nl
     print("Done.")
 
-def rng_ind_ecmwf():
+def rng_ind_ecmwf(year, ds, h1, h2, alts, clim_params, all_comb, sou_pos, sta_pos, out_path):
+    stl     = clim_params['stl']
+    f107a   = clim_params['f107a']
+    f107    = clim_params['f107']
+    apd     = clim_params['apd']
+    aph     = clim_params['aph']
+
     print("-> Hybrid profile with ECMWF ERA 5 lower ~80 km values")
     import request_era5_profiles
     request_era5_profiles.main()
@@ -152,15 +172,15 @@ def rng_ind_ecmwf():
         for file_out, alts_new in [(ecmwf_out, geom_alt_flip), (climt_out, alts)]:
             with open(join(out_path, file_out), 'w') as f:
                 # calculate nodes along arc
-                l = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
+                line = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
                 # along arc discretization
-                nl = int(np.ceil(l.s13/ds/1000))  # number of points
+                nl = int(np.ceil(line.s13/ds/1000))  # number of points
                 # to save for later
                 sec_doy_sou_sta.append([sec, doy, isou, ista, nl])
-                arc = np.linspace(0, l.s13, nl)
+                arc = np.linspace(0, line.s13, nl)
                 for alt in alts_new:
                     for s in arc:
-                        g = l.Position(s, Geodesic.STANDARD | Geodesic.LONG_UNROLL)
+                        g = line.Position(s, Geodesic.STANDARD | Geodesic.LONG_UNROLL)
                         f.write(
                             f"{int(iyd):>5d} "
                             f"{int(sec):>5d} "
@@ -212,11 +232,14 @@ def rng_ind_ecmwf():
                     # note: for ecmwf the average is done for same values,
                     #       giving same result. This could be avoided, although
                     #       it works as it is.
-                    ave_merw = np.average(prof[lay_ind:lay_ind+nl, 7]) # meridional winds [m/s]
-                    ave_zonw = np.average(prof[lay_ind:lay_ind+nl, 8]) # zonal winds [m/s]
+                    # meridional winds [m/s]
+                    ave_merw = np.average(prof[lay_ind:lay_ind+nl, 7])
+                    # zonal winds [m/s]
+                    ave_zonw = np.average(prof[lay_ind:lay_ind+nl, 8])
                     ave_pres = pres(ave_dens, ave_temp)
                     # Write in file
-                    f.write(f"{alts_new[i]:>9.4f} {ave_temp:>7.2f} {ave_zonw:>7.2f} {ave_merw:>7.2f} {ave_dens:>10.2e} {ave_pres:>10.2e}\n")
+                    f.write(f"{alts_new[i]:>9.4f} {ave_temp:>7.2f} {ave_zonw:>7.2f} "
+                            f"{ave_merw:>7.2f} {ave_dens:>10.2e} {ave_pres:>10.2e}\n")
                     lay_ind += nl
             print("Done.")
 
@@ -231,8 +254,6 @@ def rng_ind_ecmwf():
             f"prof_climt_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
             )
         climt_data = np.loadtxt(climt_file)
-        h1 = params['ecmwf']['h1'] # km
-        h2 = params['ecmwf']['h2'] # km
         mixed_data = []
         for i in range(ecmwf_data.shape[0]):
             height = ecmwf_data[i,0]
@@ -254,11 +275,15 @@ def rng_ind_ecmwf():
             np.savetxt(mixed_file, mixed_data, fmt='%9.4E')
         print("Saved {0}".format(mixed_file))
 
-def rng_dep_clim():
-    dlat = params['range_dependent']['dlat']
-    dlon = params['range_dependent']['dlon']
-    all_lats = [l[0] for l in (sou_pos+sta_pos)]
-    all_lons = [l[1] for l in (sou_pos+sta_pos)]
+def rng_dep_clim(year, dlat, dlon, alts, clim_params, all_comb, sou_pos, sta_pos, out_path):
+    stl     = clim_params['stl']
+    f107a   = clim_params['f107a']
+    f107    = clim_params['f107']
+    apd     = clim_params['apd']
+    aph     = clim_params['aph']
+
+    all_lats = [d[0] for d in (sou_pos+sta_pos)]
+    all_lons = [d[1] for d in (sou_pos+sta_pos)]
     min_lat = np.min(all_lats) - 2*dlat
     min_lon = np.min(all_lons) - 2*dlon
     max_lat = np.max(all_lats) + 2*dlat
@@ -354,15 +379,18 @@ def rng_dep_clim():
             prof_num += 1
             print("Done.")
 
-def rng_dep_ecmwf():
+def rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params, sou_pos, sta_pos, out_path):
+    stl     = clim_params['stl']
+    f107a   = clim_params['f107a']
+    f107    = clim_params['f107']
+    apd     = clim_params['apd']
+    aph     = clim_params['aph']
+
     import request_era5_profiles
     request_era5_profiles.main()
     import interpolate_ecmwf
     interpolate_ecmwf.main_rng_dep()
 
-    dh = params['dh']
-    dlat = params['range_dependent']['dlat']
-    dlon = params['range_dependent']['dlon']
     all_lats = [l[0] for l in (sou_pos+sta_pos)]
     all_lons = [l[1] for l in (sou_pos+sta_pos)]
     min_lat = np.min(all_lats) - 2*dlat
@@ -459,14 +487,11 @@ def rng_dep_ecmwf():
             print(f"Loaded\n\t{ecmwf_path_in}")
 
             #=== stitch them
-            h1 = params['ecmwf']['h1'] # km
-            h2 = params['ecmwf']['h2'] # km
             mixed_data = []
             for i in range(ecmwf_data.shape[0]):
                 ecmwf_data_row = ecmwf_data[i].copy()
                 height = ecmwf_data_row[0]
                 climt_data_row = climt_data[int(height*2)].copy()
-                #f.write(f"{alts_new[i]:>9.4f} {ave_temp:>7.2f} {ave_zonw:>7.2f} {ave_merw:>7.2f} {ave_dens:>10.2e} {ave_pres:>10.2e}\n")
                 if height <= h1:
                     mixed_data.append([
                         height,
@@ -515,27 +540,44 @@ if __name__ == '__main__':
     # setting working directory from ../bin
     chdir("./bin")
 
-    params = toml.load("../input/discretize_parameters.toml")
+    params = toml.load("../input/config.toml")
 
-    year = params['year']
-    doys = params['doys']
-    secs = params['sec']
-    hmin = params['hmin']
-    hmax = params['hmax']
-    dh = params['dh']
-    f107a = params['f107a']
-    f107 = params['f107']
-    apd = params['apd']
-    aph = params['aph']
-    ds = params['ds']
-    sou_pos = params['sou_pos']
-    sta_pos = params['sta_pos']
-    # Nominal values for unused variables
+    year = params['discretization']['year']
+    doys = params['discretization']['doys']
+    secs = params['discretization']['sec']
+    hmin = params['discretization']['hmin']
+    hmax = params['discretization']['hmax']
+    dh   = params['discretization']['dh']
+    ds   = params['discretization']['ds']
+
+    # Climatological model parameters (solad and geomagnetic activity)
+    f107a   = params['discretization']['clim']['f107a']
+    f107    = params['discretization']['clim']['f107']
+    apd     = params['discretization']['clim']['apd']
+    aph     = params['discretization']['clim']['aph']
+    ## Nominal values for unused variables
     stl = 0.0
     mass = 0
+    clim_params = {
+        'f107a' : f107a,
+        'f107'  : f107,
+        'apd'   : apd,
+        'aph'   : aph,
+        'stl'   : stl
+        }
+
+    # Load sources
+    sou_nam = params['discretization']['sources']['name']
+    sou_alt = params['discretization']['sources']['alt_km']
+    sou_pos = params['discretization']['sources']['pos_latlon']
+
+    # Load stations
+    sta_nam = params['discretization']['stations']['name']
+    sta_pos = params['discretization']['stations']['pos_latlon']
 
     print("Times of the day (hrs.):")
-    for sec in secs: print(f"-> {sec/3600}")
+    for sec in secs:
+        print(f"-> {sec/3600}")
     print(f"Number of days: {len(doys)}")
     print(f"-> {doys}")
     print(f"Number of sources: {len(sou_pos)}")
@@ -545,56 +587,76 @@ if __name__ == '__main__':
     for lat, lon in sta_pos:
         print(f"-> ({lat:.2f}, {lon:.2f})")
 
-    geod = Geodesic.WGS84
 
-    # In one run I want to have the possibility of calculating different times,
-    # DOYS, sources, and stations
     sec_num = len(secs)
     doy_num = len(doys)
     sou_num = len(sou_pos)
     sta_num = len(sta_pos)
     alts = np.arange(hmin, hmax+dh, dh)
 
-    header_st = "{0:>5} {1:>5} {2:>6} {3:>6} {4:>6} {5:>6} {6:>6} {7:>6} {8:>6} {9:>6}".format(
-        "IYD", "SEC", "ALT", "GLAT", "GLON", "STL", "F107A", "F107", "APD", "APH")
+    header_st = \
+        "{0:>5} {1:>5} {2:>6} {3:>6} {4:>6} {5:>6} {6:>6} {7:>6} {8:>6} {9:>6}"\
+        .format(
+            "IYD", "SEC", "ALT", "GLAT", "GLON", "STL", "F107A", "F107", "APD", "APH"
+            )
     print(f"\nSaving profiles with\n{header_st}")
-    out_path = "../output/nodes"
 
+    # Check that output folder and its subfolders exists or create them
     if not isdir("../output"):
         mkdir("../output")
+    out_path = "../output/nodes"
     if not isdir(out_path):
         mkdir(out_path)
     out_path_prof = "../output/profiles/"
     if not isdir(out_path_prof):
         mkdir(out_path_prof)
 
-    # For correct read of files of calculate_sph_nodes.f90
-    # the 'product' of all combinations
-    all_comb = [combi for combi in product(secs, doys, range(len(sou_pos)), range(len(sta_pos)))]
+    # ==============================
+    # To facilitate read of files in
+    #    calculate_sph_nodes.f90
+    # ==============================
+    all_comb = [combi for combi in product(secs,
+                                           doys,
+                                           range(len(sou_pos)),
+                                           range(len(sta_pos)))]
     with open("../input/secs_doys_sources_stations.txt", "w") as f:
         for nsec, ndoy, isou, ista in all_comb:
             f.write(f"{nsec:5d} {ndoy:3d} {isou+1:5d} {ista+1:4d}\n")
 
-    use_rng_dep = params['range_dependent']['use_rng_dep']
-    use_ecmwf = params['ecmwf']['use_ecmwf']
-    recycle_discretization = params['range_dependent']['recycle']
 
-    if not use_rng_dep:
+    use_rngdep      = params['discretization']['range_dependent']['use_rng_dep']
+    recycle_rngdep  = params['discretization']['range_dependent']['recycle']
+    use_ecmwf       = params['discretization']['ecmwf']['use_ecmwf']
+
+    if use_rngdep is True:
         print("\n-> Range Independent (infraga-sph) 3D ray-tracing")
-        if not use_ecmwf:
+        if use_ecmwf is False:
             print("-> HWM14/MSIS2.0 atmospheric descriptions")
-            rng_ind_clim()
+            rng_ind_clim(ds, alts, clim_params, all_comb, sou_pos, sta_pos, out_path)
         else:
-            print("-> Hybrid ECMWF ERA 5 reanalysis (~0-80 km) + HWM14/MSIS2.0 (>~80 km) atmospheric descriptions")
-            rng_ind_ecmwf()
+            print("-> Hybrid ECMWF ERA 5 reanalysis (~0-80 km)"
+                  "+ HWM14/MSIS2.0 (>~80 km) atmospheric descriptions")
+            h1 = params['discretization']['ecmwf']['h1']
+            h2 = params['discretization']['ecmwf']['h2']
+            rng_ind_ecmwf(year, ds, h1, h2, alts, clim_params, all_comb,
+                          sou_pos, sta_pos, out_path)
     else:
         print("\n-> Range Dependent (infraga-sph-rngdep) 3D ray tracing")
         if not use_ecmwf:
             print("-> HSM14+MSIS2.0 atmospheric descriptions")
-            rng_dep_clim()
+            dlat = params['discretization']['range_dependent']['dlat']
+            dlon = params['discretization']['range_dependent']['dlon']
+            rng_dep_clim(year, dlat, dlon, alts, clim_params, all_comb, sou_pos,
+                         sta_pos, out_path)
         else:
-            print("-> Hybrid ECMWF ERA 5 reanalysis (~0-80 km) + HWM14/MSIS2.0 (>~80 km) atmospheric descriptions")
-            if recycle_discretization == True:
+            print("-> Hybrid ECMWF ERA 5 reanalysis (~0-80 km)"
+                  " + HWM14/MSIS2.0 (>~80 km) atmospheric descriptions")
+            if recycle_rngdep is True:
                 print("--> Discretization skipped, using previous one.")
             else:
-                rng_dep_ecmwf()
+                h1 = params['discretization']['ecmwf']['h1']
+                h2 = params['discretization']['ecmwf']['h2']
+                dlat = params['discretization']['range_dependent']['dlat']
+                dlon = params['discretization']['range_dependent']['dlon']
+                rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params,
+                              sou_pos, sta_pos, out_path)

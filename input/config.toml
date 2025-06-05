@@ -29,25 +29,11 @@ pos_latlon = [-40.59, -72.117]
 name = [
     'I01AR',
     'I02AR',
-    'I08BO',
-    'I09BR',
-    'I13CL',
-    'I14CL',
-    'I27DE',
-    'I41PY',
-    'I49GB',
 ]
 
 pos_latlon = [
     [-40.7,-70.6],
     [-54.6, -67.3],
-    [-16.2, -68.5],
-    [-15.6, -48.0],
-    [-27.1, -109.4],
-    [-33.7, -78.8],
-    [-70.7, -8.3],
-    [-26.3, -57.3],
-    [-37.1, -12.3]
 ]
 
 
@@ -59,13 +45,13 @@ aph = 4
 
 # If using RngDep
 [discretization.range_dependent]
-use_rng_dep = true
+use_rng_dep = false
 recycle = true
 dlat = 0.25
 dlon = 0.25
 
 [discretization.ecmwf]
-use_ecmwf = true
+use_ecmwf = false
 auto_area = true
 min_lon = -110 # to define area for grid
 max_lon = -10
