@@ -38,10 +38,10 @@ def main():
     except FileExistsError:
         print(f"Folder {output_dir} already there")
 
-    disc_param = toml.load("../input/discretize_parameters.toml")
-    year = disc_param['year']
-    doys = disc_param['doys']
-    secs = disc_param['sec']
+    config = toml.load("../input/config.toml")
+    year = config['discretization']['year']
+    doys = config['discretization']['doys']
+    secs = config['discretization']['sec']
     for sec in secs:
         for doy in doys:
             date_time = datetime.datetime.strptime(f"{year:04d} {doy:03d}", "%Y %j")
@@ -51,19 +51,21 @@ def main():
             seconds = int(sec-hours*3600-mins*60)
             time_str = f"{hours:02d}:{mins:02d}:{seconds:02d}"  # "14:00:00"
 
-            dlon = disc_param['ecmwf']['dlon']  # grid step in degrees
-            dlat = disc_param['ecmwf']['dlat']
+            dlon = config['discretization']['ecmwf']['dlon']  # grid step in degrees
+            dlat = config['discretization']['ecmwf']['dlat']
             min_lon, max_lon, min_lat, max_lat = 0, 0, 0, 0
-            if disc_param['ecmwf']['auto_area'] == False:
-                min_lon = disc_param['ecmwf']['min_lon']
-                max_lon = disc_param['ecmwf']['max_lon']
-                min_lat = disc_param['ecmwf']['min_lat']
-                max_lat = disc_param['ecmwf']['max_lat']
+            if config['discretization']['ecmwf']['auto_area'] is False:
+                min_lon = config['discretization']['ecmwf']['min_lon']
+                max_lon = config['discretization']['ecmwf']['max_lon']
+                min_lat = config['discretization']['ecmwf']['min_lat']
+                max_lat = config['discretization']['ecmwf']['max_lat']
             else:
-                min_lon = int(np.min([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) - 2*dlon
-                max_lon = int(np.max([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) + 2*dlon
-                min_lat = int(np.min([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) - 2*dlat
-                max_lat = int(np.max([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) + 2*dlat
+                sou_pos = config['discretization']['sources']['pos_latlon']
+                sta_pos = config['discretization']['stations']['pos_latlon']
+                min_lon = int(np.min([s[1] for s in (sou_pos+sta_pos)])) - 2*dlon
+                max_lon = int(np.max([s[1] for s in (sou_pos+sta_pos)])) + 2*dlon
+                min_lat = int(np.min([s[0] for s in (sou_pos+sta_pos)])) - 2*dlat
+                max_lat = int(np.max([s[0] for s in (sou_pos+sta_pos)])) + 2*dlat
 
             output_name = join(
                 output_dir,
@@ -87,7 +89,7 @@ def main():
             zonal_name = f"{output_name}_zonalWinds.grib"
             merid_name = f"{output_name}_meridionalWinds.grib"
             is_downloaded = check_downloads(output_name)
-            if is_downloaded[0] == True:
+            if is_downloaded[0] is True:
                 print(f"--> Skipping download of {output_name}_temperature.grib")
             else:
                 # temperature [K]
@@ -102,12 +104,12 @@ def main():
                     'stream': 'oper',
                     'time': time_str,
                     'type': 'an',
-                    'area': f"{max_lat}/{min_lon}/{min_lat}/{max_lon}", # North, West, South, East.
+                    'area': f"{max_lat}/{min_lon}/{min_lat}/{max_lon}", # N/W/S/E
                     'grid': f"{dlat}/{dlon}",
                     'format': 'grib'
                 }, temp_name)
 
-            if is_downloaded[1] == True:
+            if is_downloaded[1] is True:
                 print(f"--> Skipping download of {output_name}_zonalWinds.grib")
             else:
                 # u-wind (zonal) [m/s]
@@ -127,7 +129,7 @@ def main():
                     'format': 'grib'
                 }, zonal_name)
 
-            if is_downloaded[2] == True:
+            if is_downloaded[2] is True:
                 print(f"--> Skipping download of {output_name}_meridionalWinds.grib")
             else:
                 # v-wind (meridonial) [m/s]
