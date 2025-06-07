@@ -15,6 +15,7 @@ import datetime
 from itertools import product
 
 def main_rng_ind():
+    config = toml.load("../input/config.toml")
     #=== load levels 1/to/137
     levels_file = join("../input", 'ECMWF - L137 model level definitions.csv')
     levels = pandas.read_csv(levels_file, header=1)
@@ -28,12 +29,11 @@ def main_rng_ind():
     #=== get temperature and winds
     #>>> from 'request_era5_profiles.py'
     output_dir = "../output/ecmwf"
-    disc_param = toml.load("../input/discretize_parameters.toml")
-    year = disc_param['year']
-    secs =  disc_param['sec']
-    doys =  disc_param['doys']
-    sources = disc_param['sou_pos']
-    stations = disc_param['sta_pos']
+    year    = config['discretization']['year']
+    secs    = config['discretization']['sec']
+    doys    = config['discretization']['doys']
+    sources  = config['discretization']['sources']['pos_latlon']
+    stations = config['discretization']['stations']['pos_latlon']
     all_comb = product(secs, doys, range(len(sources)), range(len(stations)))
     for sec, doy, nsou, nsta in all_comb:
         soulat, soulon = sources[nsou]
@@ -54,25 +54,27 @@ def main_rng_ind():
         lvls_mWin = pandas.read_csv(base_dir+"_meridionalWinds_new.csv")
 
         #=== discretization points from 'request_era5_profiles.py'
-        dlon = disc_param['ecmwf']['dlon']  # grid step in degrees
-        dlat = disc_param['ecmwf']['dlat']
+        dlon = config['discretization']['ecmwf']['dlon']  # grid step in degrees
+        dlat = config['discretization']['ecmwf']['dlat']
         lon0, lon1, lat0, lat1 = 0, 0, 0, 0
-        if disc_param['ecmwf']['auto_area'] == False:
-            lon0 = disc_param['ecmwf']['min_lon']
-            lon1 = disc_param['ecmwf']['max_lon']
-            lat0 = disc_param['ecmwf']['min_lat']
-            lat1 = disc_param['ecmwf']['max_lat']
+        if config['discretization']['ecmwf']['auto_area'] is False:
+            lon0 = config['discretization']['ecmwf']['min_lon']
+            lon1 = config['discretization']['ecmwf']['max_lon']
+            lat0 = config['discretization']['ecmwf']['min_lat']
+            lat1 = config['discretization']['ecmwf']['max_lat']
         else:
-            lon0 = int(np.min([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) - 2*dlon
-            lon1 = int(np.max([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) + 2*dlon
-            lat0 = int(np.min([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) - 2*dlat
-            lat1 = int(np.max([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])])) + 2*dlat
+            sou_pos = config['discretization']['sources']['pos_latlon']
+            sta_pos = config['discretization']['stations']['pos_latlon']
+            lon0 = int(np.min([d[1] for d in (sou_pos+sta_pos)])) - 2*dlon
+            lon1 = int(np.max([d[1] for d in (sou_pos+sta_pos)])) + 2*dlon
+            lat0 = int(np.min([d[0] for d in (sou_pos+sta_pos)])) - 2*dlat
+            lat1 = int(np.max([d[0] for d in (sou_pos+sta_pos)])) + 2*dlat
 
         nlon, nlat = int(((lon1-lon0)/dlon+1)), int(((lat1-lat0)/dlat+1))
         npts = nlon * nlat
 
         #=== calculate profile
-        dl = kilometer2degrees(disc_param['ds']) # deg, discretization along prof.
+        dl = kilometer2degrees(config['discretization']['ds']) # deg, along prof
         lons = np.arange(lon0-360., lon1-360.+dlon, dlon)
         lats = np.arange(lat1, lat0-dlat, -dlat)  # decreasing in latitude following data
 
@@ -137,7 +139,8 @@ def main_rng_ind():
 
         # fill data table
         table_name = f"ecmwf_{sec:05d}_{doy:03d}_{nsou+1:05d}_{nsta+1:04d}.csv"
-        headerstr = ['Height [km]', 'Temperature [K]', 'Zonal wind [m/s]', 'Meridonial wind [m/s]']
+        headerstr = ['Height [km]', 'Temperature [K]',
+                     'Zonal wind [m/s]', 'Meridonial wind [m/s]']
         data_mat = np.zeros((geom_alt.shape[0], 4))
         data_mat[:, 0] = geom_alt_flip
         data_mat[:, 1] = av_temp
@@ -158,6 +161,7 @@ def main_rng_ind():
                     ))
 
 def main_rng_dep():
+    config = toml.load("../input/config.toml")
     #=== load levels 1/to/137
     levels_file = join("../input", 'ECMWF - L137 model level definitions.csv')
     levels = pandas.read_csv(levels_file, header=1)
@@ -171,13 +175,12 @@ def main_rng_dep():
     #=== get temperature and winds
     #>>> from 'request_era5_profiles.py'
     output_dir = "../output/ecmwf"
-    disc_param = toml.load("../input/discretize_parameters.toml")
-    year = disc_param['year']
-    secs =  disc_param['sec']
-    doys =  disc_param['doys']
+    year = config['discretization']['year']
+    secs = config['discretization']['sec']
+    doys = config['discretization']['doys']
     #=== source, receiver, discretization along... 
-    sources = disc_param['sou_pos']
-    stations = disc_param['sta_pos']
+    sources  = config['discretization']['sources']['sou_pos']
+    stations = config['discretization']['stations']['sta_pos']
     all_comb = product(secs, doys, range(len(sources)), range(len(stations)))
 
     for sec, doy, nsou, nsta in all_comb:
@@ -207,38 +210,21 @@ def main_rng_dep():
         min_lon = np.min(req_lons)
         max_lon = np.max(req_lons)
 
-        #=== discretization points from 'request_era5_profiles.py'
-        #lon0, lon1, lat0, lat1 = 0, 0, 0, 0
-        #dlon = disc_param['ecmwf']['dlon']  # grid step in degrees
-        #dlat = disc_param['ecmwf']['dlat']
-        #if disc_param['ecmwf']['auto_area'] == False:
-        #    lon0 = disc_param['ecmwf']['min_lon']
-        #    lon1 = disc_param['ecmwf']['max_lon']
-        #    lat0 = disc_param['ecmwf']['min_lat']
-        #    lat1 = disc_param['ecmwf']['max_lat']
-        #else:
-        #    lon0 = np.min([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])]) - 1
-        #    lon1 = np.max([l[1] for l in (disc_param['sou_pos']+disc_param['sta_pos'])]) + 1
-        #    lat0 = np.min([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])]) - 1
-        #    lat1 = np.max([l[0] for l in (disc_param['sou_pos']+disc_param['sta_pos'])]) + 1
-        #lons = np.arange(lon0-360., lon1-360.+dlon, dlon)
-        #lats = np.arange(lat1, lat0-dlat, -dlat)  # decreasing in latitude following data
         lons = np.asarray(list(set([i for i in req_lons])))
         lats = np.asarray(list(set([i for i in req_lats])))
         lats = lats[::-1] # decreasing as data
         print(f"\n-> lons={lons}")
         print(f"-> lats={lats}")
 
-        #nlon, nlat = int(((lon1-lon0)/dlon+1)), int(((lat1-lat0)/dlat+1))
         nlon, nlat = len(lons), len(lats)
         print(f"-> nlon, nlat ={nlon}, {nlat}")
         npts = nlon * nlat
 
         #=== calculate columns on specified discretized points
-        dlat_new = disc_param['range_dependent']['dlat'] # NOTE: different from above
-        dlon_new = disc_param['range_dependent']['dlon'] #   in lines 191 and 192
-        all_lats = [l[0] for l in (stations+sources)]
-        all_lons = [l[1] for l in (stations+sources)]
+        dlat_new = config['discretization']['range_dependent']['dlat']
+        dlon_new = config['discretization']['range_dependent']['dlon']
+        all_lats = [d[0] for d in (stations+sources)]
+        all_lons = [d[1] for d in (stations+sources)]
         min_lat = np.min(all_lats) - 2*dlat_new
         min_lon = np.min(all_lons) - 2*dlon_new
         max_lat = np.max(all_lats) + 2*dlat_new
@@ -325,8 +311,8 @@ def main_rng_dep():
                             )
 
 if __name__ == '__main__':
-    par_disc = toml.load("../input/discretize_parameters.toml")
-    if par_disc['range_dependent']['use_rng_dep'] == False:
+    config = toml.load("../input/config.toml")
+    if config['discretization']['range_dependent']['use_rng_dep'] is False:
         main_rng_ind()
-    elif par_disc['range_dependent']['use_rng_dep'] == True:
+    elif config['discretization']['range_dependent']['use_rng_dep'] is True:
         main_rng_dep()

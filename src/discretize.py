@@ -29,6 +29,7 @@ f107    Not used
 aph     current 3hr AP index
 """
 
+import sys
 from os import mkdir, chdir
 from os.path import join, isdir
 import toml
@@ -40,7 +41,6 @@ from itertools import product
 
 geod = Geodesic.WGS84
 
-# Load and convert description nodes to profiles as input for infraGA
 def pres(dens, temp, R=287.058):
     """
     R    : specific gas constant for dry air, in J/kg*K
@@ -63,11 +63,12 @@ def rng_ind_clim(ds, alts, clim_params, all_comb, sou_pos, sta_pos, out_path):
     sec_doy_sou_sta = []
     for sec, doy, isou, ista in all_comb:
         iyd = (year%1000)*1000+doy
-        print(f"-> iyd={iyd}")
+        # print(f"-> iyd={iyd}")
         sou_lat, sou_lon = sou_pos[isou][0], sou_pos[isou][1]
         sta_lat, sta_lon = sta_pos[ista][0], sta_pos[ista][1]
         file_out = f"nodes_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
-        print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
+        # print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
+        print(f"-> {sec} {doy} {isou} {ista}")
         with open(join(out_path, file_out), 'w') as f:
             # calculate nodes along arc
             line = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
@@ -91,7 +92,7 @@ def rng_ind_clim(ds, alts, clim_params, all_comb, sou_pos, sta_pos, out_path):
                         f"{apd:>6.1f} "
                         f"{aph:6.1f}\n"
                         )
-            print(f"--> saved {join(out_path, file_out)}")
+            # print(f"--> saved {join(out_path, file_out)}")
 
     # =========================================================
     # Run calculate_sph_nodes
@@ -163,12 +164,13 @@ def rng_ind_ecmwf(year, ds, h1, h2, alts, clim_params, all_comb, sou_pos, sta_po
 
     for sec, doy, isou, ista in all_comb:
         iyd = (year%1000)*1000+doy
-        print(f"-> idy={iyd}")
+        # print(f"-> idy={iyd}")
         sou_lat, sou_lon = sou_pos[isou][0], sou_pos[isou][1]
         sta_lat, sta_lon = sta_pos[ista][0], sta_pos[ista][1]
         climt_out = f"nodes_climt_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
         ecmwf_out = f"nodes_ecmwf_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.txt"
-        print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
+        # print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
+        print(f"-> {sec} {doy} {isou} {ista}")
         for file_out, alts_new in [(ecmwf_out, geom_alt_flip), (climt_out, alts)]:
             with open(join(out_path, file_out), 'w') as f:
                 # calculate nodes along arc
@@ -193,7 +195,7 @@ def rng_ind_ecmwf(year, ds, h1, h2, alts, clim_params, all_comb, sou_pos, sta_po
                             f"{apd:>6.1f} "
                             f"{aph:6.1f}\n"
                             )
-                print(f"--> saved {join(out_path, file_out)}")
+                # print(f"--> saved {join(out_path, file_out)}")
 
     # =========================================================
     # Run complete_ecmwf
@@ -299,17 +301,18 @@ def rng_dep_clim(year, dlat, dlon, alts, clim_params, all_comb, sou_pos, sta_pos
     sec_doy_sou_sta = []
     for sec, doy, isou, ista in all_comb:
         iyd = (year%1000)*1000+doy
-        print(f"-> idy={iyd}")
-        sou_lat, sou_lon = sou_pos[isou][0], sou_pos[isou][1]
-        sta_lat, sta_lon = sta_pos[ista][0], sta_pos[ista][1]
-        print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
+        # print(f"-> idy={iyd}")
+        # # sou_lat, sou_lon = sou_pos[isou][0], sou_pos[isou][1]
+        # sta_lat, sta_lon = sta_pos[ista][0], sta_pos[ista][1]
+        # print(f"--> ({sou_lat:.2f}, {sou_lon:.2f}) to ({sta_lat:.2f}, {sta_lon:.2f})")
         sec_doy_sou_sta.append([sec, doy, isou, ista])
+        print(f"-> {sec} {doy} {isou} {ista}")
         for ilon, ilat in product(range(len(lons)), range(len(lats))):
             lon = lons[ilon]
             lat = lats[ilat]
             file_out = f"nodes_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
                 +f"_{ilat+1:04d}_{ilon+1:04d}.txt"
-            print(f"    --> ilat, ilon={ilat+1:04d}, {ilon+1:04d}")
+            # print(f"    --> ilat, ilon={ilat+1:04d}, {ilon+1:04d}")
             with open(join(out_path, file_out), 'w') as f:
                 for alt in alts:
                     f.write(
@@ -324,7 +327,7 @@ def rng_dep_clim(year, dlat, dlon, alts, clim_params, all_comb, sou_pos, sta_pos
                         f"{apd:>6.1f} "
                         f"{aph:6.1f}\n"
                         )
-                print(f"--> saved {join(out_path, file_out)}")
+                # print(f"--> saved {join(out_path, file_out)}")
 
     # =========================================================
     # Run calculate_rngdep_nodes
@@ -537,6 +540,7 @@ def rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params, sou_pos, sta_
             print("Done.")
 
 if __name__ == '__main__':
+
     # setting working directory from ../bin
     chdir("./bin")
 
@@ -628,7 +632,7 @@ if __name__ == '__main__':
     recycle_rngdep  = params['discretization']['range_dependent']['recycle']
     use_ecmwf       = params['discretization']['ecmwf']['use_ecmwf']
 
-    if use_rngdep is True:
+    if use_rngdep is False:
         print("\n-> Range Independent (infraga-sph) 3D ray-tracing")
         if use_ecmwf is False:
             print("-> HWM14/MSIS2.0 atmospheric descriptions")

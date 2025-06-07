@@ -1,4 +1,4 @@
-GFORT = gfortran-8
+GFORT = gfortran
 # locations of external necessary repos
 MSISE = ./repos/NRLMSIS2.0
 HWM = ./repos/HWM14
@@ -102,4 +102,11 @@ eigen_search:
 	@{ time python $(SRC)/eigen_search_infraGA.py ; } 2>> $(OUT)/proc/$(EIGENSEARCH_OUT)
 	@echo "" >> $(OUT)/proc/$(EIGENSEARCH_OUT)
 
-
+# -----
+# Tests
+# -----
+test_discretize:
+	python $(SRC)/discretize.py
+test_clean:
+	rm -r $(OUT)
+	rm input/secs_doys_sources_stations.txt
