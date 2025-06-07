@@ -540,7 +540,7 @@ def rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params, sou_pos, sta_
             print("Done.")
 
 
-def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, out_path):
+def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path):
     for sec, doy, isou, ista in all_comb:
         # print(f"-> iyd={iyd}")
         sou_lat, sou_lon = sou_pos[isou][0], sou_pos[isou][1]
@@ -565,7 +565,7 @@ def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, out_path):
         print("Running: ncpag2s")
         print("================")
         print("")
-        outs, errs = Popen(["python ../repos/ncpag2s-clc-main/ncpag2s.py "
+        outs, errs = Popen([f"python {join('..',path_ncpag2s,'ncpag2s.py')} "
                             f"line --date {this_date_str} --hour {this_hour_str} "
                             f"--startlat {np.min([sou_lat, sta_lat])} "
                             f"--startlon {np.min([sou_lon, sta_lon])} "
@@ -729,7 +729,9 @@ if __name__ == '__main__':
             print("-> NCPA-G2S atmospheric descriptions")
             if not isdir(join(out_path_prof, 'ncpag2s')):
                 mkdir(join(out_path_prof, 'ncpag2s'))
-            rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, out_path_prof)
+            path_ncpag2s = params['discretization']['ncpag2s']['path']
+            rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s,
+                            out_path_prof)
         if use_ecmwf is False:
             print("-> HWM14/MSIS2.0 atmospheric descriptions")
             rng_ind_clim(ds, alts, clim_params, all_comb, sou_pos, sta_pos, out_path)

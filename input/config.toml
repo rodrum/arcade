@@ -66,6 +66,7 @@ h2 = 80.0
 
 [discretization.ncpag2s]
 use = true
+path = 'repos/ncpag2s-clc-main'
 
 [launch]
 # use thermospheric arrivals to determine azimuth deviation
