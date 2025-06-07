@@ -810,7 +810,7 @@ if __name__ == '__main__':
             if not isdir(join(out_path_prof, 'ncpag2s')):
                 mkdir(join(out_path_prof, 'ncpag2s'))
             path_ncpag2s = params['discretization']['ncpag2s']['path']
-            if params['discretization']['ncpag2s']['rng_dep'] is False:
+            if use_rngdep is False:
                 rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s,
                             join(out_path_prof, 'ncpag2s'))
             else:
