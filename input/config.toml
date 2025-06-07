@@ -49,8 +49,8 @@ aph = 4
 [discretization.range_dependent]
 use_rng_dep = false
 recycle = true
-dlat = 0.25
-dlon = 0.25
+dlat = 1.0
+dlon = 1.0
 
 [discretization.ecmwf]
 use_ecmwf = false
@@ -67,6 +67,7 @@ h2 = 80.0
 [discretization.ncpag2s]
 use = true
 path = 'repos/ncpag2s-clc-main'
+rng_dep = true
 
 [launch]
 # use thermospheric arrivals to determine azimuth deviation

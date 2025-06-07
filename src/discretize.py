@@ -29,7 +29,8 @@ f107    Not used
 aph     current 3hr AP index
 """
 
-from os import mkdir, chdir
+import shutil
+from os import mkdir, chdir, listdir
 from os.path import join, isdir
 import toml
 from geographiclib.geodesic import Geodesic
@@ -382,7 +383,7 @@ def rng_dep_clim(year, dlat, dlon, alts, clim_params, all_comb, sou_pos, sta_pos
             prof_num += 1
             print("Done.")
 
-def rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params, sou_pos, sta_pos, out_path):
+def rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params, all_comb, sou_pos, sta_pos, out_path):
     stl     = clim_params['stl']
     f107a   = clim_params['f107a']
     f107    = clim_params['f107']
@@ -572,7 +573,7 @@ def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path
                             f"--endlat {np.max([sou_lat, sta_lat])} "
                             f"--endlon {np.max([sou_lon, sta_lon])} "
                             f"--points {nl} "
-                            f"--output {join(out_path,'ncpag2s')} "
+                            f"--output {out_path} "
                             f"--outputformat ncpaprop"],
             shell=True, stdout=PIPE, stderr=PIPE).communicate()
         outs = outs.decode('UTF-8')
@@ -628,6 +629,85 @@ def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path
                             f"{ave_merw:>7.2f} {ave_dens:>10.2e} {ave_pres:>10.2e}\n")
     print("Done.")
 
+
+def rng_dep_ncpag2s(year, dlat, dlon, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path):
+    # create the grid
+    all_lats = [d[0] for d in (sou_pos+sta_pos)]
+    all_lons = [d[1] for d in (sou_pos+sta_pos)]
+    min_lat = np.min(all_lats) - 2*dlat
+    min_lon = np.min(all_lons) - 2*dlon
+    max_lat = np.max(all_lats) + 2*dlat
+    max_lon = np.max(all_lons) + 2*dlon
+    lats = np.arange(min_lat, max_lat+dlat, dlat)
+    lons = np.arange(min_lon, max_lon+dlon, dlon)
+
+    for sec, doy, isou, ista in all_comb:
+        # Transform year-doy-sec to YYYY-MM-DD HOUR
+        this_date = datetime(year, 1, 1) + timedelta(doy - 1)
+        this_date_str = f"{this_date.year:d}-{this_date.month:02d}-{this_date.day:02d}"
+        this_hour_str = f"{int(sec/3600):d}"
+
+        # =========================================================
+        # Run calculate_rngdep_nodes_ecmwf
+        # =========================================================
+        print("")
+        print("Running: ncpag2s rng-dep")
+        print("========================")
+        print("")
+        command =[f"python {join('..', path_ncpag2s, 'ncpag2s.py')} "
+                f"grid --date {this_date_str} --hour {this_hour_str} "
+                f"--startlat {min_lat} "
+                f"--startlon {min_lon} "
+                f"--endlat {max_lat} "
+                f"--endlon {max_lon} "
+                f"--latpoints {int(len(lats))} "
+                f"--lonpoints {int(len(lons))} "
+                f"--output {out_path} "
+                "--outputformat infraga"]
+        print(command)
+        outs, errs = Popen([f"python {join('..', path_ncpag2s, 'ncpag2s.py')} "
+                            f"grid --date {this_date_str} --hour {this_hour_str} "
+                            f"--startlat {min_lat} "
+                            f"--startlon {min_lon} "
+                            f"--endlat {max_lat} "
+                            f"--endlon {max_lon} "
+                            f"--latpoints {int(len(lats))} "
+                            f"--lonpoints {int(len(lons))} "
+                            f"--output {out_path} "
+                            "--outputformat infraga"],
+            shell=True, stdout=PIPE, stderr=PIPE).communicate()
+        outs = outs.decode('UTF-8')
+        print(outs)
+
+
+        # saving
+        #    "{1,2}_prof_{doy:03d}_{isou+1:05d}_{ista+1:04d}_{prof_num}.met"
+
+        # use lats.dat and lons.dat to rename the files
+        lats_dat = np.loadtxt(join(out_path, 'lats.dat'))
+        lons_dat = np.loadtxt(join(out_path, 'lons.dat'))
+
+        out_files = [f for f in listdir(out_path) if f.split('.')[-1]=='met']
+        prof_num = 0
+        for ilon, ilat in product(range(len(lons_dat)), range(len(lats_dat))):
+            # match file
+            for ifile in out_files:
+                ifile_yy = int(float(ifile[4:6])) == this_date.year%1000
+                ifile_mm = int(float(ifile[6:8])) == this_date.month
+                ifile_dd = int(float(ifile[8:10])) == this_date.day
+                ifile_hr = int(float(ifile[10:12])) == int(sec/3600)
+                ifile_num = int(float(ifile.split('_')[-1].split('.')[0])) == prof_num
+                if ifile_yy and ifile_mm and ifile_dd and ifile_hr and ifile_num:
+                    shutil.copy(join(out_path, ifile),
+                        join("../output/profiles",
+                        f"1_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
+                        f"_{prof_num:d}.met"))
+                    shutil.copy(join(out_path, ifile),
+                        join("../output/profiles",
+                        f"2_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
+                        f"_{prof_num:d}.met"))
+            prof_num += 1
+            print("Done.")
 
 if __name__ == '__main__':
 
@@ -730,8 +810,14 @@ if __name__ == '__main__':
             if not isdir(join(out_path_prof, 'ncpag2s')):
                 mkdir(join(out_path_prof, 'ncpag2s'))
             path_ncpag2s = params['discretization']['ncpag2s']['path']
-            rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s,
-                            out_path_prof)
+            if params['discretization']['ncpag2s']['rng_dep'] is False:
+                rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s,
+                            join(out_path_prof, 'ncpag2s'))
+            else:
+                dlat = params['discretization']['range_dependent']['dlat']
+                dlon = params['discretization']['range_dependent']['dlon']
+                rng_dep_ncpag2s(year, dlat, dlon, all_comb, sou_pos, sta_pos,
+                                path_ncpag2s, join(out_path_prof, 'ncpag2s'))
         if use_ecmwf is False:
             print("-> HWM14/MSIS2.0 atmospheric descriptions")
             rng_ind_clim(ds, alts, clim_params, all_comb, sou_pos, sta_pos, out_path)
@@ -761,4 +847,4 @@ if __name__ == '__main__':
                 dlat = params['discretization']['range_dependent']['dlat']
                 dlon = params['discretization']['range_dependent']['dlon']
                 rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params,
-                              sou_pos, sta_pos, out_path)
+                              all_comb, sou_pos, sta_pos, out_path)
