@@ -9,7 +9,7 @@ from obspy.geodetics.base import gps2dist_azimuth
 import toml
 from itertools import product
 
-params = toml.load("./input/discretize_parameters.toml")
+config = toml.load("./input/config.toml")
 
 # Parameters that we could define from outside later
 max_pert = 0.3
@@ -18,15 +18,17 @@ pert_hgt = 40 # km
 
 # Get DOY, number of sources, and number of stations
 #   (this means we already run 'discretize.py') 
-secs = params['sec']
-doys = params['doys']
-sources = params['sou_pos']
-stations = params['sta_pos']
+secs = config['discretization']['sec']
+doys = config['discretization']['doys']
+sources  = config['discretization']['sources']['sou_pos']
+stations = config['discretization']['stations']['sta_pos']
 all_comb = product(secs, doys, range(len(sources)), range(len(stations)))
 
 # Create the profile names following 'discretize.py'
-if params['range_dependent']['use_rng_dep'] == False:
-    end_str = '.met' if params['ecmwf']['use_ecmwf'] == False else '_mix.met'
+if config['discretization']['range_dependent']['use_rng_dep'] is False:
+    end_str = '.met' # default
+    if config['discretization']['ecmwf']['use_ecmwf'] is True:
+        end_str = '_mix.met'
     prof_names = []
 
     for sec, doy, isou, ista in all_comb:
@@ -79,9 +81,10 @@ if params['range_dependent']['use_rng_dep'] == False:
             c0 = max_pert*c_along_max
             wz = np.sqrt(2.0)*10.0 # this defines the widthas +-10 km around pert_hgt
             cz = c0*np.exp(-(h-pert_hgt)**2/wz**2)
-            # So u_pert*kx + v_pert*kx = u*kx + v*ky + cz; while keeping meridional winds intact
+            # So u_pert*kx + v_pert*kx = u*kx + v*ky + cz;
+            # while keeping meridional winds intact
             u_pert = u+cz/kx/1.0
-            v_pert = v#+cz/ky/2.0
+            v_pert = v+cz/ky/1.0
             # Save winds
             file_out_1 = join(
                 "./output/profiles", 

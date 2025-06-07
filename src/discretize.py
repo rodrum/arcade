@@ -29,7 +29,6 @@ f107    Not used
 aph     current 3hr AP index
 """
 
-import sys
 from os import mkdir, chdir
 from os.path import join, isdir
 import toml
@@ -38,6 +37,7 @@ import numpy as np
 from subprocess import Popen, PIPE
 import pandas
 from itertools import product
+from datetime import datetime, timedelta
 
 geod = Geodesic.WGS84
 
@@ -539,6 +539,96 @@ def rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params, sou_pos, sta_
             prof_num += 1
             print("Done.")
 
+
+def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, out_path):
+    for sec, doy, isou, ista in all_comb:
+        # print(f"-> iyd={iyd}")
+        sou_lat, sou_lon = sou_pos[isou][0], sou_pos[isou][1]
+        sta_lat, sta_lon = sta_pos[ista][0], sta_pos[ista][1]
+
+        # Transform year-doy-sec to YYYY-MM-DD HOUR
+        this_date = datetime(year, 1, 1) + timedelta(doy - 1)
+        this_date_str = f"{this_date.year:d}-{this_date.month:02d}-{this_date.day:02d}"
+        this_hour_str = f"{int(sec/3600):d}"
+
+        # Number of points based on ds
+        # calculate nodes along arc
+        line = geod.InverseLine(sou_lat, sou_lon, sta_lat, sta_lon)
+        # along arc discretization
+        nl = int(np.ceil(line.s13/ds/1000))  # number of points
+
+
+        # =========================================================
+        # Run ncpag2s.py
+        # =========================================================
+        print("")
+        print("Running: ncpag2s")
+        print("================")
+        print("")
+        outs, errs = Popen(["python ../repos/ncpag2s-clc-main/ncpag2s.py "
+                            f"line --date {this_date_str} --hour {this_hour_str} "
+                            f"--startlat {np.min([sou_lat, sta_lat])} "
+                            f"--startlon {np.min([sou_lon, sta_lon])} "
+                            f"--endlat {np.max([sou_lat, sta_lat])} "
+                            f"--endlon {np.max([sou_lon, sta_lon])} "
+                            f"--points {nl} "
+                            f"--output {join(out_path,'ncpag2s')} "
+                            f"--outputformat ncpaprop"],
+            shell=True, stdout=PIPE, stderr=PIPE).communicate()
+        outs = outs.decode('UTF-8')
+        print(outs)
+
+        # Read summary file to know the order of the names
+        summ_files = []
+        with open(join(out_path, 'ncpag2s', 'summary.dat'), 'r') as f:
+            for line in f.readlines():
+                summ_files.append(line.split())
+        # Get altitudes from one of the profile files
+        aux_prof = np.loadtxt(join(out_path, 'ncpag2s', summ_files[0][1]))
+        alts = aux_prof[:,0]
+
+        # =======================================================
+        # Two launch angles will require two independent profiles
+        # =======================================================
+        # NOTE: both profiles are the same. It's a good approximation
+        #       but it would be better to redefine them depending on the
+        #       launch angle...
+        file_out_1 = f"1_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
+        file_out_2 = f"2_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
+        file_path_out_1 = join(out_path_prof, file_out_1)
+        file_path_out_2 = join(out_path_prof, file_out_2)
+
+        for file_path_out in [file_path_out_1, file_path_out_2]:
+            print(f"Writing to\n\t{file_path_out}")
+            with open(file_path_out, 'w') as f:
+                for i in range(alts.shape[0]):
+                    ave_dens = 0
+                    ave_temp = 0
+                    ave_merw = 0
+                    ave_zonw = 0
+                    ave_pres = 0
+                    for dist_in, file_in in summ_files:
+                        prof_in = np.loadtxt(join(out_path, 'ncpag2s', file_in))
+                        # density [g/m^3]
+                        ave_dens += prof_in[i, 4]
+                        # tempereture [K]
+                        ave_temp += prof_in[i, 1]
+                        # Meridional winds [m/s]
+                        ave_merw += prof_in[i, 3]
+                        # Zonal winds [m/s]
+                        ave_zonw += prof_in[i, 2]
+                        # pressure [Pa]
+                        ave_pres += prof_in[i, 5]
+                    ave_dens = ave_dens/nl
+                    ave_temp = ave_temp/nl
+                    ave_merw = ave_merw/nl
+                    ave_zonw = ave_zonw/nl
+                    ave_pres = ave_pres/nl
+                    f.write(f"{alts[i]:>5.1f} {ave_temp:>7.2f} {ave_zonw:>7.2f} "
+                            f"{ave_merw:>7.2f} {ave_dens:>10.2e} {ave_pres:>10.2e}\n")
+    print("Done.")
+
+
 if __name__ == '__main__':
 
     # setting working directory from ../bin
@@ -631,9 +721,15 @@ if __name__ == '__main__':
     use_rngdep      = params['discretization']['range_dependent']['use_rng_dep']
     recycle_rngdep  = params['discretization']['range_dependent']['recycle']
     use_ecmwf       = params['discretization']['ecmwf']['use_ecmwf']
+    use_ncpag2s     = params['discretization']['ncpag2s']['use']
 
     if use_rngdep is False:
         print("\n-> Range Independent (infraga-sph) 3D ray-tracing")
+        if use_ncpag2s is True:
+            print("-> NCPA-G2S atmospheric descriptions")
+            if not isdir(join(out_path_prof, 'ncpag2s')):
+                mkdir(join(out_path_prof, 'ncpag2s'))
+            rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, out_path_prof)
         if use_ecmwf is False:
             print("-> HWM14/MSIS2.0 atmospheric descriptions")
             rng_ind_clim(ds, alts, clim_params, all_comb, sou_pos, sta_pos, out_path)

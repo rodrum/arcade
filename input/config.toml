@@ -3,7 +3,7 @@ name = "PCCVC-Clim-Norm-StratoThermo"
 path = "FILLME"
 
 [model]
-atmo = 'ncpag2s' # options: 'ncpag2s', 'clim', 'hybrid'
+atmo = 'clim' # options: 'ncpag2s', 'clim', 'hybrid'
 type = 'norm' # options: 'norm', 'pert'
 
 [discretization]
@@ -22,7 +22,9 @@ ds = 50.0 # km, horizontal space from source to station?
 # source altitude in km
 name = ['PCCVC']
 alt_km = [2.236]
-pos_latlon = [-40.59, -72.117]
+pos_latlon = [
+    [-40.59, -72.117],
+]
 
 [discretization.stations]
 
@@ -61,6 +63,9 @@ dlon = 1.0  # grid step in degrees
 dlat = 1.0
 h1 = 60.0 # km, heights to start and end merge
 h2 = 80.0
+
+[discretization.ncpag2s]
+use = true
 
 [launch]
 # use thermospheric arrivals to determine azimuth deviation
