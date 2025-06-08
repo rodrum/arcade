@@ -13,25 +13,26 @@ def main():
     rays_path = "../output/profiles"
     fig_path = "../output/figures/"
 
-    plot_arrivals = toml.load("../input/arcade_config.toml")['plot_arrivals']
-    params = toml.load("../input/discretize_parameters.toml")
+    params = toml.load("../input/config.toml")
+    plot_arrivals = params['other']['plot_arrivals']
 
-    if plot_arrivals == True:
-        secs = params['sec']
-        doys = params['doys']
-        sources = params['sou_pos']
-        stations = params['sta_pos']
-        all_comb = [combi for combi in product(secs, doys, range(len(sources)), range(len(stations)))]
-        run_type = toml.load("../input/arcade_config.toml")['run_type']
-        rng_dep = params['range_dependent']['use_rng_dep']
-        use_ecmwf = params['ecmwf']['use_ecmwf']
+    if plot_arrivals is True:
+        secs        = params['discretization']['sec']
+        doys        = params['discretization']['doys']
+        sources     = params['discretization']['sources']['sou_pos']
+        stations    = params['discretization']['stations']['sta_pos']
+        all_comb = [combi for combi in product(secs, doys, range(len(sources)),
+                                               range(len(stations)))]
+        run_type    = params['model']['type']
+        rng_dep     = params['discretization']['range_dependent']['use_rng_dep']
+        use_ecmwf   = params['discretization']['ecmwf']['use_ecmwf']
 
 
         end_str = ".arrivals.dat"
-        if rng_dep == False:
+        if rng_dep is False:
             if run_type == "pert":
                 end_str = "_pert.arrivals.dat"
-            elif use_ecmwf == True:
+            elif use_ecmwf is True:
                 end_str = "_mix.arrivals.dat"   
         else:
             end_str = "_.arrivals.dat"

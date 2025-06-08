@@ -22,7 +22,6 @@ Last modification on Thu Jul 11 14:06:19 PDT 2019:
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 import obspy as ob
 import sys
 import os
