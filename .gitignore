@@ -3,7 +3,6 @@
 profile*
 .*
 bin
-output
 GeographicLib-1.49_Fortran
 *.exe
 *pdf
