@@ -39,7 +39,7 @@ def main():
         print(f"Folder {output_dir} already there")
 
     config = toml.load("../input/config.toml")
-    year = config['discretization']['year']
+    year = config['discretization']['year'][0]  # NOTE: one year
     doys = config['discretization']['doys']
     secs = config['discretization']['sec']
     for sec in secs:
@@ -51,17 +51,17 @@ def main():
             seconds = int(sec-hours*3600-mins*60)
             time_str = f"{hours:02d}:{mins:02d}:{seconds:02d}"  # "14:00:00"
 
-            dlon = config['discretization']['ecmwf']['dlon']  # grid step in degrees
-            dlat = config['discretization']['ecmwf']['dlat']
+            dlon = config['atmospheric_model']['ecmwf']['dlon']  # grid step in degrees
+            dlat = config['atmospheric_model']['ecmwf']['dlat']
             min_lon, max_lon, min_lat, max_lat = 0, 0, 0, 0
-            if config['discretization']['ecmwf']['auto_area'] is False:
-                min_lon = config['discretization']['ecmwf']['min_lon']
-                max_lon = config['discretization']['ecmwf']['max_lon']
-                min_lat = config['discretization']['ecmwf']['min_lat']
-                max_lat = config['discretization']['ecmwf']['max_lat']
+            if config['atmospheric_model']['ecmwf']['auto_area'] is False:
+                min_lon = config['atmospheric_model']['ecmwf']['min_lon']
+                max_lon = config['atmospheric_model']['ecmwf']['max_lon']
+                min_lat = config['atmospheric_model']['ecmwf']['min_lat']
+                max_lat = config['atmospheric_model']['ecmwf']['max_lat']
             else:
-                sou_pos = config['discretization']['sources']['pos_latlon']
-                sta_pos = config['discretization']['stations']['pos_latlon']
+                sou_pos = config['discretization']['sou_pos']
+                sta_pos = config['discretization']['sta_pos']
                 min_lon = int(np.min([s[1] for s in (sou_pos+sta_pos)])) - 2*dlon
                 max_lon = int(np.max([s[1] for s in (sou_pos+sta_pos)])) + 2*dlon
                 min_lat = int(np.min([s[0] for s in (sou_pos+sta_pos)])) - 2*dlat

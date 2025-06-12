@@ -20,14 +20,14 @@ pert_hgt = 40 # km
 #   (this means we already run 'discretize.py') 
 secs = config['discretization']['sec']
 doys = config['discretization']['doys']
-sources  = config['discretization']['sources']['sou_pos']
-stations = config['discretization']['stations']['sta_pos']
+sources  = config['discretization']['sou_pos']
+stations = config['discretization']['sta_pos']
 all_comb = product(secs, doys, range(len(sources)), range(len(stations)))
 
 # Create the profile names following 'discretize.py'
-if config['discretization']['range_dependent']['use_rng_dep'] is False:
+if config['atmospheric_model']['prop_model'] == 'range_ind':
     end_str = '.met' # default
-    if config['discretization']['ecmwf']['use_ecmwf'] is True:
+    if config['atmospheric_model']['type'] == 'hybrid':
         end_str = '_mix.met'
     prof_names = []
 

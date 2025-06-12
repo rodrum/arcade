@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
   - python=3.9
+  - gfortran=8.5
   - geographiclib
   - toml
   - obspy
@@ -13,4 +14,5 @@ dependencies:
   - matplotlib
   - cartopy
   - eccodes
+  - cdsapi
 prefix: /Users/rodrigo/miniconda3/envs/arcade

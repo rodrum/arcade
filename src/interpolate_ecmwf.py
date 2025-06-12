@@ -29,11 +29,11 @@ def main_rng_ind():
     #=== get temperature and winds
     #>>> from 'request_era5_profiles.py'
     output_dir = "../output/ecmwf"
-    year    = config['discretization']['year']
+    year    = config['discretization']['year'][0]  # NOTE: one year
     secs    = config['discretization']['sec']
     doys    = config['discretization']['doys']
-    sources  = config['discretization']['sources']['pos_latlon']
-    stations = config['discretization']['stations']['pos_latlon']
+    sources  = config['discretization']['sou_pos']
+    stations = config['discretization']['sta_pos']
     all_comb = product(secs, doys, range(len(sources)), range(len(stations)))
     for sec, doy, nsou, nsta in all_comb:
         soulat, soulon = sources[nsou]
@@ -54,17 +54,17 @@ def main_rng_ind():
         lvls_mWin = pandas.read_csv(base_dir+"_meridionalWinds_new.csv")
 
         #=== discretization points from 'request_era5_profiles.py'
-        dlon = config['discretization']['ecmwf']['dlon']  # grid step in degrees
-        dlat = config['discretization']['ecmwf']['dlat']
+        dlon = config['atmospheric_model']['ecmwf']['dlon']  # grid step in degrees
+        dlat = config['atmospheric_model']['ecmwf']['dlat']
         lon0, lon1, lat0, lat1 = 0, 0, 0, 0
-        if config['discretization']['ecmwf']['auto_area'] is False:
-            lon0 = config['discretization']['ecmwf']['min_lon']
-            lon1 = config['discretization']['ecmwf']['max_lon']
-            lat0 = config['discretization']['ecmwf']['min_lat']
-            lat1 = config['discretization']['ecmwf']['max_lat']
+        if config['atmospheric_model']['ecmwf']['auto_area'] is False:
+            lon0 = config['atmospheric_model']['ecmwf']['min_lon']
+            lon1 = config['atmospheric_model']['ecmwf']['max_lon']
+            lat0 = config['atmospheric_model']['ecmwf']['min_lat']
+            lat1 = config['atmospheric_model']['ecmwf']['max_lat']
         else:
-            sou_pos = config['discretization']['sources']['pos_latlon']
-            sta_pos = config['discretization']['stations']['pos_latlon']
+            sou_pos = config['discretization']['sou_pos']
+            sta_pos = config['discretization']['sta_pos']
             lon0 = int(np.min([d[1] for d in (sou_pos+sta_pos)])) - 2*dlon
             lon1 = int(np.max([d[1] for d in (sou_pos+sta_pos)])) + 2*dlon
             lat0 = int(np.min([d[0] for d in (sou_pos+sta_pos)])) - 2*dlat
@@ -175,12 +175,12 @@ def main_rng_dep():
     #=== get temperature and winds
     #>>> from 'request_era5_profiles.py'
     output_dir = "../output/ecmwf"
-    year = config['discretization']['year']
+    year = config['discretization']['year'][0]  # NOTE: one year
     secs = config['discretization']['sec']
     doys = config['discretization']['doys']
     #=== source, receiver, discretization along... 
-    sources  = config['discretization']['sources']['sou_pos']
-    stations = config['discretization']['stations']['sta_pos']
+    sources  = config['discretization']['sou_pos']
+    stations = config['discretization']['sta_pos']
     all_comb = product(secs, doys, range(len(sources)), range(len(stations)))
 
     for sec, doy, nsou, nsta in all_comb:
@@ -221,8 +221,8 @@ def main_rng_dep():
         npts = nlon * nlat
 
         #=== calculate columns on specified discretized points
-        dlat_new = config['discretization']['range_dependent']['dlat']
-        dlon_new = config['discretization']['range_dependent']['dlon']
+        dlat_new = config['discretization']['range_dep']['dlat']
+        dlon_new = config['discretization']['range_dep']['dlon']
         all_lats = [d[0] for d in (stations+sources)]
         all_lons = [d[1] for d in (stations+sources)]
         min_lat = np.min(all_lats) - 2*dlat_new
@@ -312,7 +312,7 @@ def main_rng_dep():
 
 if __name__ == '__main__':
     config = toml.load("../input/config.toml")
-    if config['discretization']['range_dependent']['use_rng_dep'] is False:
+    if config['atmospheric_model']['prop_model'] == 'range_ind':
         main_rng_ind()
-    elif config['discretization']['range_dependent']['use_rng_dep'] is True:
+    elif config['atmospheric_model']['prop_model'] == 'range_dep':
         main_rng_dep()

@@ -540,7 +540,6 @@ def rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params, all_comb, sou
             prof_num += 1
             print("Done.")
 
-
 def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path):
     for sec, doy, isou, ista in all_comb:
         # print(f"-> iyd={iyd}")
@@ -566,6 +565,15 @@ def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path
         print("Running: ncpag2s")
         print("================")
         print("")
+        print([f"python {join('..',path_ncpag2s,'ncpag2s.py')} "
+                            f"line --date {this_date_str} --hour {this_hour_str} "
+                            f"--startlat {np.min([sou_lat, sta_lat])} "
+                            f"--startlon {np.min([sou_lon, sta_lon])} "
+                            f"--endlat {np.max([sou_lat, sta_lat])} "
+                            f"--endlon {np.max([sou_lon, sta_lon])} "
+                            f"--points {nl} "
+                            f"--output {out_path} "
+                            f"--outputformat ncpaprop"])
         outs, errs = Popen([f"python {join('..',path_ncpag2s,'ncpag2s.py')} "
                             f"line --date {this_date_str} --hour {this_hour_str} "
                             f"--startlat {np.min([sou_lat, sta_lat])} "
@@ -581,11 +589,11 @@ def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path
 
         # Read summary file to know the order of the names
         summ_files = []
-        with open(join(out_path, 'ncpag2s', 'summary.dat'), 'r') as f:
+        with open(join(out_path, 'summary.dat'), 'r') as f:
             for line in f.readlines():
                 summ_files.append(line.split())
         # Get altitudes from one of the profile files
-        aux_prof = np.loadtxt(join(out_path, 'ncpag2s', summ_files[0][1]))
+        aux_prof = np.loadtxt(join(out_path, summ_files[0][1]))
         alts = aux_prof[:,0]
 
         # =======================================================
@@ -596,8 +604,8 @@ def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path
         #       launch angle...
         file_out_1 = f"1_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
         file_out_2 = f"2_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
-        file_path_out_1 = join(out_path_prof, file_out_1)
-        file_path_out_2 = join(out_path_prof, file_out_2)
+        file_path_out_1 = join('../output/profiles', file_out_1)
+        file_path_out_2 = join('../output/profiles', file_out_2)
 
         for file_path_out in [file_path_out_1, file_path_out_2]:
             print(f"Writing to\n\t{file_path_out}")
@@ -716,7 +724,7 @@ if __name__ == '__main__':
 
     params = toml.load("../input/config.toml")
 
-    year = params['discretization']['year']
+    year = params['discretization']['year'][0]  # NOTE: one year
     doys = params['discretization']['doys']
     secs = params['discretization']['sec']
     hmin = params['discretization']['hmin']
@@ -725,10 +733,10 @@ if __name__ == '__main__':
     ds   = params['discretization']['ds']
 
     # Climatological model parameters (solad and geomagnetic activity)
-    f107a   = params['discretization']['clim']['f107a']
-    f107    = params['discretization']['clim']['f107']
-    apd     = params['discretization']['clim']['apd']
-    aph     = params['discretization']['clim']['aph']
+    f107a   = params['atmospheric_model']['clim']['f107a']
+    f107    = params['atmospheric_model']['clim']['f107']
+    apd     = params['atmospheric_model']['clim']['apd']
+    aph     = params['atmospheric_model']['clim']['aph']
     ## Nominal values for unused variables
     stl = 0.0
     mass = 0
@@ -741,13 +749,13 @@ if __name__ == '__main__':
         }
 
     # Load sources
-    sou_nam = params['discretization']['sources']['name']
-    sou_alt = params['discretization']['sources']['alt_km']
-    sou_pos = params['discretization']['sources']['pos_latlon']
+    sou_nam = params['discretization']['sou_name']
+    sou_alt = params['discretization']['sou_alt']
+    sou_pos = params['discretization']['sou_pos']
 
     # Load stations
-    sta_nam = params['discretization']['stations']['name']
-    sta_pos = params['discretization']['stations']['pos_latlon']
+    sta_nam = params['discretization']['sta_name']
+    sta_pos = params['discretization']['sta_pos']
 
     print("Times of the day (hrs.):")
     for sec in secs:
@@ -798,10 +806,10 @@ if __name__ == '__main__':
             f.write(f"{nsec:5d} {ndoy:3d} {isou+1:5d} {ista+1:4d}\n")
 
 
-    use_rngdep      = params['discretization']['range_dependent']['use_rng_dep']
-    recycle_rngdep  = params['discretization']['range_dependent']['recycle']
-    use_ecmwf       = params['discretization']['ecmwf']['use_ecmwf']
-    use_ncpag2s     = params['discretization']['ncpag2s']['use']
+    use_rngdep      = params['atmospheric_model']['prop_model'] == 'range_dep'
+    recycle_rngdep  = params['discretization']['range_dep']['recycle']
+    use_ecmwf       = params['atmospheric_model']['type'] == 'hybrid'
+    use_ncpag2s     = params['atmospheric_model']['type'] == 'ncpag2s'
 
     if use_rngdep is False:
         print("\n-> Range Independent (infraga-sph) 3D ray-tracing")
@@ -809,13 +817,13 @@ if __name__ == '__main__':
             print("-> NCPA-G2S atmospheric descriptions")
             if not isdir(join(out_path_prof, 'ncpag2s')):
                 mkdir(join(out_path_prof, 'ncpag2s'))
-            path_ncpag2s = params['discretization']['ncpag2s']['path']
+            path_ncpag2s = params['atmospheric_model']['ncpag2s']['path']
             if use_rngdep is False:
                 rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s,
                             join(out_path_prof, 'ncpag2s'))
             else:
-                dlat = params['discretization']['range_dependent']['dlat']
-                dlon = params['discretization']['range_dependent']['dlon']
+                dlat = params['discretization']['range_dep']['dlat']
+                dlon = params['discretization']['range_dep']['dlon']
                 rng_dep_ncpag2s(year, dlat, dlon, all_comb, sou_pos, sta_pos,
                                 path_ncpag2s, join(out_path_prof, 'ncpag2s'))
         if use_ecmwf is False:
@@ -824,16 +832,16 @@ if __name__ == '__main__':
         else:
             print("-> Hybrid ECMWF ERA 5 reanalysis (~0-80 km)"
                   "+ HWM14/MSIS2.0 (>~80 km) atmospheric descriptions")
-            h1 = params['discretization']['ecmwf']['h1']
-            h2 = params['discretization']['ecmwf']['h2']
+            h1 = params['atmospheric_model']['ecmwf']['h1']
+            h2 = params['atmospheric_model']['ecmwf']['h2']
             rng_ind_ecmwf(year, ds, h1, h2, alts, clim_params, all_comb,
                           sou_pos, sta_pos, out_path)
     else:
         print("\n-> Range Dependent (infraga-sph-rngdep) 3D ray tracing")
-        if not use_ecmwf:
+        if use_ecmwf is False:
             print("-> HSM14+MSIS2.0 atmospheric descriptions")
-            dlat = params['discretization']['range_dependent']['dlat']
-            dlon = params['discretization']['range_dependent']['dlon']
+            dlat = params['discretization']['range_dep']['dlat']
+            dlon = params['discretization']['range_dep']['dlon']
             rng_dep_clim(year, dlat, dlon, alts, clim_params, all_comb, sou_pos,
                          sta_pos, out_path)
         else:
@@ -842,9 +850,9 @@ if __name__ == '__main__':
             if recycle_rngdep is True:
                 print("--> Discretization skipped, using previous one.")
             else:
-                h1 = params['discretization']['ecmwf']['h1']
-                h2 = params['discretization']['ecmwf']['h2']
-                dlat = params['discretization']['range_dependent']['dlat']
-                dlon = params['discretization']['range_dependent']['dlon']
+                h1 = params['atmospheric_model']['ecmwf']['h1']
+                h2 = params['atmospheric_model']['ecmwf']['h2']
+                dlat = params['discretization']['range_dep']['dlat']
+                dlon = params['discretization']['range_dep']['dlon']
                 rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params,
                               all_comb, sou_pos, sta_pos, out_path)

@@ -26,7 +26,7 @@ import obspy as ob
 import sys
 import os
 from os import mkdir, stat
-from os.path import join
+from os.path import join, isdir
 import subprocess
 from subprocess import Popen, PIPE
 from contextlib import redirect_stdout
@@ -85,9 +85,9 @@ def get_profiles(pert_flag=False, mix_flag=False):
     profiles = []
     secs        = config['discretization']['sec']
     doys        = config['discretization']['doys']
-    sources     = config['discretization']['sources']['pos_latlon']
-    stations    = config['discretization']['stations']['pos_latlon']
-    stations_name = config['discretization']['stations']['name']
+    sources     = config['discretization']['sou_pos']
+    stations    = config['discretization']['sta_pos']
+    stations_name = config['discretization']['sta_name']
 
     end_str = '.met'
     if pert_flag is True and mix_flag is False:
@@ -141,9 +141,9 @@ def get_profiles_rngdep():
     profiles = []
     secs        = config['discretization']['sec']
     doys        = config['discretization']['doys']
-    sources     = config['discretization']['sources']['pos_latlon']
-    stations    = config['discretization']['stations']['pos_latlon']
-    stations_name = config['discretization']['stations']['name']
+    sources     = config['discretization']['sou_pos']
+    stations    = config['discretization']['sta_pos']
+    stations_name = config['discretization']['sta_name']
 
     end_str = '.met'
     # Below some flags I don't use right not, but will be useful later when
@@ -228,6 +228,7 @@ def create_launch_rngdep(launch_parameters):
     print("[create_launch_rngdep] Creating launch string...")
     launch = []
     prof = launch_parameters['prof_name'].split('_')
+    print(f"-> {prof}")
     nsec = prof[1]
     ndoy = prof[2]
     isou = prof[3]
@@ -505,7 +506,7 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
         out_file_name = f"{prof_name.split('.')[0]}_out.txt"
     else:
         prof = my_profiles[profInd][5].split('_')
-        prof_name = prof[0]+"_"+prof[1]+"_"+prof[2]+"_"+prof[3]+"_"+prof[5]+"_" # everything but prof num
+        prof_name = prof[0]+"_"+prof[1]+"_"+prof[2]+"_"+prof[3]+"_"+prof[4] # everything but prof num
         out_file_name = f"{prof_name}out.txt"
     # Out variables
     bphi1_s, bphi1_t = 0, 0
@@ -513,7 +514,7 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
     num_s_tot, num_t_tot = 0, 0
     with open("../output/proc/"+out_file_name, 'w') as fout:
         with redirect_stdout(fout):
-            print(f"\n[calculate_profiles] for {prof_name}.")
+            print(f"\n[calculate_profiles] for {prof_name}")
             print("  Profile number: ", profInd)
             staLat = my_profiles[profInd][0]
             staLon = my_profiles[profInd][1]
@@ -561,9 +562,9 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                 'bounces'   : config['launch']['bounces'],
                 'src_lat'   : gridLat,
                 'src_lon'   : gridLon,
-                'src_alt'   : config['launch']['src_alt'],
-                'write_atmo': config['other']['write_atmo'],
-                'calc_amp'  : config['other']['calc_amp'],
+                'src_alt'   : config['discretization']['sou_alt'][0],  # NOTE: one source
+                'write_atmo': config['launch']['write_atmo'],
+                'calc_amp'  : config['launch']['calc_amp'],
                 'freq'      : config['launch']['freq']
                 }
             for key in launch_parameters:
@@ -602,8 +603,8 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                                     # arrivals to calculate the backazimuth
             atten_th = config['launch']['atten_th']
 
-            save_raypaths = config['other']['save_raypaths']
-            save_arrivals = config['other']['save_arrivals']
+            save_raypaths = config['launch']['save_raypaths']
+            save_arrivals = config['launch']['save_arrivals']
             while True in bisect:
                 # Obtain ground intercepts
                 run_num, strato_tup1, thermo_tup1, strato_tup2, thermo_tup2 =\
@@ -684,9 +685,6 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                     # Re-run is there are no arrivals, with bigger dw threshold
                     # until it's possible to see something
                     print("  WARNING: No ground intercepts for profile")
-                    # dw = dw*2
-                    # print(f"           Trying with dw={dw:.2f} km.")
-                    # grid_params = [gridLat, gridLon, staLat, staLon, dw]
                     phi_min = float('nan')  # phi_min and phi_max are
                     phi_max = float('nan')  # set up as python 'nan' values
                     bisect = [False, False]
@@ -985,7 +983,7 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                     std_av = np.nan
                 table_name = '../output/azimuth_deviation_table.txt'
 
-                year = config['discretization']['year']
+                year = config['discretization']['year'][0]  # NOTE: one year
 
                 # E.g., prof_21600_155_00001_0001
                 #            5   9 1 3 5   9 1  4
@@ -1030,6 +1028,81 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                             f"{str(ill_flag):>7}\n"
                             )
 
+def wrap_and_save(config):
+    project_name = config['project_info']['name']
+    if project_name == 'auto':
+        sou_name = config['discretization']['sou_name']
+        if len(sou_name)>1:
+            sou_name = sou_name[0]+'etal'
+        else:
+            sou_name = sou_name[0]
+
+        sta_name = config['discretization']['sta_name']
+        if len(sta_name)>3:
+            sta_name = sta_name[0]+"_"+sta_name[1]+"_"+sta_name[2]+"etal"
+        elif len(sta_name) == 2:
+            sta_name = sta_name[0]+"_"+sta_name[1]
+        elif len(sta_name) == 1:
+            sta_name = sta_name[0]
+
+        year = config['discretization']['year']
+        if len(year)>2:
+            year = f"{year[0]}_to_{year[-1]}"
+        elif len(year)==2:
+            year = f"{year[0]}_{year[1]}"
+        else:
+            year = f"{year[0]}"
+
+        doys = config['discretization']['doys']
+        if len(doys)>3:
+            doys = f"{doys[0]}_to_{doys[-1]}"
+        elif len(doys) == 3:
+            doys = f"{doys[0]}_{doys[1]}_{doys[2]}"
+        elif len(doys) == 2:
+            doys = f"{doys[0]}_{doys[1]}"
+        else:
+            doys = f"{doys[0]}"
+
+        secs = ''
+        for s in config['discretization']['sec']:
+            secs += f"{s}_"
+        secs = secs[:-1]
+
+        atmo_model = config['atmospheric_model']['type']
+        prop_model = config['atmospheric_model']['prop_model']
+        use_pert = config['atmospheric_model']['use_pert']
+
+        project_name = sou_name+"-"+sta_name+"-"+year+"-"+doys+"-"+secs+"-"+\
+            atmo_model+"-"+prop_model
+
+        if use_pert is True:
+            project_name = project_name + "-" + 'pert'
+
+    print("\nRunning: wrap_project.sh")
+    print("========================")
+    proj_folder = os.path.join(config['project_info']['path'], project_name)
+    ind = 1
+    project_name_aux = project_name
+    while isdir(proj_folder):
+        print(f"[wrap_project] Project folder name \n{proj_folder}\nexists!")
+        project_name_aux = project_name+f"-v{ind:d}"
+        proj_folder = os.path.join(config['project_info']['path'], project_name_aux)
+        print(f"[wrap_project] Trying to save as \n{proj_folder}...")
+        ind += 1
+    project_name = project_name_aux
+
+    subprocess.check_output(
+        [
+            'bash',
+            'wrap_project.sh',
+            os.path.join(
+                    config['project_info']['path'],
+                    project_name
+                    )
+        ]
+    )
+
+
 if __name__ == '__main__':
     '''
     Default case, when calling the script from terminal
@@ -1072,28 +1145,26 @@ if __name__ == '__main__':
     config = toml.load("../input/config.toml")
     # =====================================================
 
+    # model type: 'clim', 'hybrid', or 'ncpag2s'
+    atmo_type       = config['atmospheric_model']['type']
+    use_pert        = config['atmospheric_model']['use_pert']
+    use_rng_dep     = config['atmospheric_model']['prop_model'] == 'range_dep'
 
     perc_cpu        = config['launch']['perc_cpu']
-    min_dist_arrv   = config['launch']['min_dist_arrv']
-    atmo_type       = config['model']['atmo']
-    run_type        = config['model']['type']
-
-
-    use_rng_dep = config['discretization']['range_dependent']['use_rng_dep']
 
     if use_rng_dep is True:
         profiles = []
         lons = None
         lats = None
-        if config['discretization']['ncpag2s']['use'] is False:
+        if config['atmospheric_model']['type'] == 'clim':
             lons = np.loadtxt("../output/profiles/nodes-lon.loc", dtype='float', ndmin=1)
             lats = np.loadtxt("../output/profiles/nodes-lat.loc", dtype='float', ndmin=1)
-        else:
+        elif config['atmospheric_model']['type'] == 'ncpag2s':
             lons = np.loadtxt("../output/profiles/lons.dat")
             lats = np.loadtxt("../output/profiles/lats.dat")
         profiles = get_profiles_rngdep()
         # Run with multiprocessing =============================================
-        num_cpu = int(mp.cpu_count()/perc_cpu)
+        num_cpu = int(mp.cpu_count()*perc_cpu)
         pool = mp.Pool(num_cpu)
         results = []
         print(f"- {len(profiles)} profiles fill be calculated with {num_cpu} cores")
@@ -1104,12 +1175,12 @@ if __name__ == '__main__':
     else:
         profiles = []
         profiles = get_profiles(
-            pert_flag = run_type == 'pert',
-            mix_flag  = config['discretization']['ecmwf']['use_ecmwf'] is True
+            pert_flag = use_pert,
+            mix_flag  = config['atmospheric_model']['type'] == 'hybrid'
         )
 
         # Run with multiprocessing =================================================
-        num_cpu = int(mp.cpu_count()/perc_cpu)
+        num_cpu = int(mp.cpu_count()*perc_cpu)
         pool = mp.Pool(num_cpu)
         results = []
         print(f"- {len(profiles)} profiles fill be calculated with {num_cpu} cores")
@@ -1133,18 +1204,4 @@ if __name__ == '__main__':
     import plot_results
     plot_results.main()
 
-    # =========================================================
-    # Run wrap_project.sh
-    # =========================================================
-    print("\nRunning: wrap_project.sh")
-    print("========================")
-    subprocess.check_output(
-        [
-            'bash',
-            'wrap_project.sh',
-            os.path.join(
-                    config['project_info']['path'],
-                    config['project_info']['name']
-                    )
-        ]
-    )
+    wrap_and_save(config)

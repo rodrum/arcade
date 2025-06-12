@@ -14,18 +14,18 @@ def main():
     fig_path = "../output/figures/"
 
     params = toml.load("../input/config.toml")
-    plot_arrivals = params['other']['plot_arrivals']
+    plot_arrivals = params['launch']['plot_arrivals']
 
     if plot_arrivals is True:
         secs        = params['discretization']['sec']
         doys        = params['discretization']['doys']
-        sources     = params['discretization']['sources']['sou_pos']
-        stations    = params['discretization']['stations']['sta_pos']
+        sources     = params['discretization']['sou_pos']
+        stations    = params['discretization']['sta_pos']
         all_comb = [combi for combi in product(secs, doys, range(len(sources)),
                                                range(len(stations)))]
-        run_type    = params['model']['type']
-        rng_dep     = params['discretization']['range_dependent']['use_rng_dep']
-        use_ecmwf   = params['discretization']['ecmwf']['use_ecmwf']
+        run_type    = params['atmospheric_model']['type']
+        rng_dep     = params['atmospheric_model']['prop_model'] == 'range_dep'
+        use_ecmwf   = run_type == 'hybrid'
 
 
         end_str = ".arrivals.dat"

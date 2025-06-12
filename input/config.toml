@@ -1,59 +1,33 @@
 [project_info]
-name = "PCCVC-Clim-Norm-StratoThermo"
-path = "FILLME"
+# if name is 'auto', it is set to something like the following:
+# source-stat_1_stat_2...-doy_1_doy2_...-sec1_sec2...-atmo_model-prop_model-use_pert(if present)
+# else, it takes the actual name set here
+name = "auto"
+path = "FILL_THIS" # this is the path where to save the project folder
+[atmospheric_model]
+# options are: 'clim', 'hybrid', 'ncpag2s'
+# - 'clim': only climatologies (HWM14/MSIS2)
+# - 'hybrid': ECMWF ERA5 from 0 to ~80 km + climatologies >80 km
+# - 'ncpag2s': only NCPA-G2S descriptions 0 to 150 km (max)
+type = 'clim'
+# options: 'range_ind' or 'range_dep'
+# - 'range_ind': range-independent calculations for infraGA (layers)
+# - 'range_dep': range-dependent calculations for infraGA (columns)
+#                Warning: very slow (10x slower than range-independent)
+prop_model = 'range_ind'
+use_pert = false # perturbation follows perturb_winds.py; only available for
+                 # range-independent models
+                 # see De Negri et al., 2023 in references list
 
-[model]
-atmo = 'clim' # options: 'ncpag2s', 'clim', 'hybrid'
-type = 'norm' # options: 'norm', 'pert'
-
-[discretization]
-year = 2011  # NOTE: only one year for now, could be multi-year
-doys = [155, 156] # day of year
-sec = [0, 21600] # seconds, 00:00:00 UTC, 06:00:00 UTC...
-
-
-hmin = 0.0 # km
-hmax = 170.0 # km
-dh = 0.5 # km
-
-ds = 50.0 # km, horizontal space from source to station?
-
-[discretization.sources]
-# source altitude in km
-name = ['PCCVC']
-alt_km = [2.236]
-pos_latlon = [
-    [-40.59, -72.117],
-]
-
-[discretization.stations]
-
-name = [
-    'I01AR',
-    'I02AR',
-]
-
-pos_latlon = [
-    [-40.7,-70.6],
-    [-54.6, -67.3],
-]
-
-
-[discretization.clim]
+[atmospheric_model.clim]
+# parameters for the climatologies (if used)
 f107a = 150 # moderate solar activity
 f107 = 150
 apd = 4 # quiet geomagnetic activity
 aph = 4
 
-# If using RngDep
-[discretization.range_dependent]
-use_rng_dep = false
-recycle = true
-dlat = 1.0
-dlon = 1.0
-
-[discretization.ecmwf]
-use_ecmwf = false
+[atmospheric_model.ecmwf]
+# parameters for the ECMWF ERA 5 requests (if used)
 auto_area = true
 min_lon = -110 # to define area for grid
 max_lon = -10
@@ -61,36 +35,55 @@ min_lat = -80
 max_lat = 0
 dlon = 1.0  # grid step in degrees
 dlat = 1.0
-h1 = 60.0 # km, heights to start and end merge
+h1 = 60.0 # km, heights to start and end merge (from h1 to h2)
 h2 = 80.0
 
-[discretization.ncpag2s]
-use = true
+[atmospheric_model.ncpag2s]
+# parameters for NCPA-G2S requests and processing (if used)
+# path were the repo is downloaded, ideally inside 'repos'.
+# note: the names must match
 path = 'repos/ncpag2s-clc-main'
 
+[discretization]
+# parameters that define the models in terms of time/space
+year = [2011]  # NOTE: only one year for now, could be multi-year
+doys = [55, 56] # day of year
+sec = [0, 21600] # seconds, 00:00:00 UTC, 06:00:00 UTC...
+# parameters below don't apply to NPCA-G2S, which sets hmin=0, hmax=150, and dh=0.1
+hmin = 0.0 # km, min altitude
+hmax = 170.0 # km, max altitude
+dh = 0.5 # km, step in altitude
+ds = 50.0 # km, horizontal steps from source to station
+
+# source name(s)
+sou_name = [
+    'Yasur'
+]
+# source altitude(s) in km
+sou_alt = [0.361]
+# source position(s) [lat, lon]
+sou_pos = [
+    [-19.532, 169.447],
+]
+
+# station name(s).
+sta_name = [
+    'IS22',
+]
+# station position(s) [lat, lon]
+sta_pos = [
+    [-22.18, 166.85]
+]
+
+[discretization.range_dep]
+recycle = false  # NOTE: check it makes sense
+dlat = 1.0
+dlon = 1.0
+
 [launch]
-# use thermospheric arrivals to determine azimuth deviation
-use_thermo = true
-# maximum number of runs before giving up
-max_run = 40
-# attenuation filter threshold
-atten_th = -1000.0
-# to filter arrivals
-min_dist_arrv = 50 # km
-# threshold distance in degrees to consider ground intercepts near the station
-daz = 0.5
-# aperture in degrees for launching rays around azimuth
-dphi = 1.5
-# parameter to weight dphi asd dphi/scale
-scale = 8.0
-# threshold to decide when to declare ground
-#   intercepts near enough (in deg) after first
-#   threshold has been satisfied
-thresh = 0.1
-# serves to scale the adaptative perturbation
-#   that is given to the launch azimuth while
-#   trying to improve the accuracy of the arrivals
-k = 0.1 # as (phi2-phi1)/2 * k
+# ==============================
+# infraGA ray-tracing parameters
+# ==============================
 # min vertical angle in degrees (0=horizontal)
 incl_min = 0.5
 # max vertical angle
@@ -100,22 +93,55 @@ incl_step = 0.5
 drng = 100.0
 # maximum number of bounces for ground intercepts
 bounces = 40
-# write atmospheric profiles output for GeoAC
-# Flags for main run
-perc_cpu = 1 # as num_cpu/perc_cpu
 # Default frequency for Sutherland and Bass (2004) TL
 freq = 0.1
-
-[other]
-# Plot profiles
-plot_profiles = false
-# Plot arrivals
-plot_arrivals = false
+# write atmospheric profiles output for infraGA
 write_atmo = false
-# calculate the amplitude of the rays for GeoAC
+# calculate the amplitude of the rays for infraGA
 # note: true slows down the calculations significatively
 calc_amp = false
+
+# ========================
+# ARCADE search parameters
+# ========================
+# include thermospheric arrivals to determine azimuth deviation or just use
+# stratospheric arrivals
+use_thermo = true
+# maximum number of runs before giving up
+max_run = 40
+# attenuation filter threshold (very low value practically means no filter)
+atten_th = -1000.0
+# distance to consider arrivals near the station as a 'ring' or 'band'
+# see function 'filter_grdInt' in ARCADE_main.py. This is the first step
+# in finding arrivals near enough.
+min_dist_arrv = 50 # km
+# threshold distance in degrees to consider ground intercepts near the station
+# this value is a used after passing the 'min_dist_arrv' filter, and it's
+# calculated based on the azimuthal distance, and futher reduced in the
+# iterative process to get to 'thresh' or smaller
+daz = 0.5
+# aperture in degrees for launching rays around target azimuth
+dphi = 1.5
+# parameter to weight dphi as dphi/scale. This parameter is inversely
+# proportional to the size of the increase/decrease added to the target
+# azimuth in the iterative process.
+scale = 8.0
+# threshold to decide when to declare ground
+#   intercepts near enough (in deg) after first
+#   threshold has been satisfied
+thresh = 0.1
+# serves to scale the adaptative perturbation
+#   that is given to the launch azimuth while
+#   trying to improve the accuracy of the arrivals. Applied if there are
+#   arrivals for both launch azimuths
+k = 0.1 # as (phi2-phi1)/2 * k
+
+# Flags for main run
+perc_cpu = 1 # percentage of cpu of all the available (1=100%, 0.5=50%, and so on)
+
+# Plot arrivals
+plot_arrivals = true
 # Save raypaths? Raypaths could be very heavy files
-save_raypaths = false
+save_raypaths = true
 # Save arrivals? Arrivals are smaller than raypaths, but still could grow big
-save_arrivals = false
+save_arrivals = true
