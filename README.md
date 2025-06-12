@@ -294,7 +294,7 @@ for reproducibility.
     Top-right: colored by travel time (hours).
     Bottom-left: colored by celerity (km/s).
     Bottom-right: colored by turnin height (km).
-     ![Arrivals](examples/Yasur-IS22-2011-55_56_0_21600-clim-range_ind/output/figures/arrv_00000_055_00001_0001.png?raw=true "Arrivals")
+     ![Arrivals](examples/Yasur-IS22-2011-55_56-0_21600-clim-range_ind/output/figures/arrv_00000_055_00001_0001.png?raw=true "Arrivals")
     These figures will be created if all `plot_arrivals` and `save_arrivals`
     are true.
   - `nodes/` contains files related with the calculations, basically
