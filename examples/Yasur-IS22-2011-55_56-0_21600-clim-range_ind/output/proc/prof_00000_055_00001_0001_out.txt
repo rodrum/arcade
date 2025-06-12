@@ -1,0 +1,1068 @@
+
+[calculate_profiles] for prof_00000_055_00001_0001.met
+  Profile number:  0
+
+Setup source and receiver parameters
+====================================
+
+Source            : (-19.532, 169.447)
+Receiver          : (-22.18, 166.85)
+Name              : IS22
+Distance [km]     : 398.71837108925735
+Azimuth [deg]     : 222.21705088833056
+Back Azimuth [deg]: 43.142023035281056
+
+Launch parameters
+=================
+
+incl_min   :0.5
+incl_max   :45.0
+incl_step  :0.5
+azimuth    :[220.71705088833056, 223.71705088833056]
+prof_inds  :[1, 2]
+prof_name  :prof_00000_055_00001_0001.met
+rng_max    :498.71837108925735
+bounces    :40
+src_lat    :-19.532
+src_lon    :169.447
+src_alt    :0.361
+write_atmo :False
+calc_amp   :False
+freq       :0.1
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 1 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/1_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=220.71705088833056 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=223.71705088833056 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 89 of 89
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 99 of 99
+DEBUG: after filter_atten
+        ind1=89, ind2=99
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  89 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 89
+  Means: lat= -22.1333, lon= 166.8510
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  99 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 99
+  Means: lat= -22.0009, lon= 166.7207
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1333
+    lon =  166.8510
+    baz =   41.6081
+    std baz =    0.0720
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0009
+    lon =  166.7207
+    baz =   44.6551
+    std baz =    0.0728
+  Using stratospheric and thermospheric arrivals.
+    Ray 1: 
+      lat_av1= -22.133
+      lon_av1= 166.851
+    Ray 2: 
+      lat_av2= -22.001
+      lon_av2= 166.721
+  Apparent azimuths are: 
+    az1=222.720
+    az2=225.610
+  Not enclosing station (phi1>true_phi)
+    New phi1=219.711.
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 2 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/1_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=219.71118965757347 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=223.71705088833056 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 99 of 99
+DEBUG: after filter_atten
+        ind1=88, ind2=99
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  99 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 99
+  Means: lat= -22.0009, lon= 166.7207
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0009
+    lon =  166.7207
+    baz =   44.6551
+    std baz =    0.0728
+  Using stratospheric and thermospheric arrivals.
+    Ray 1: 
+      lat_av1= -22.170
+      lon_av1= 166.903
+    Ray 2: 
+      lat_av2= -22.001
+      lon_av2= 166.721
+  Apparent azimuths are: 
+    az1=221.750
+    az2=225.610
+  Enclosing station (phi1<az<phi2), proceeding...
+    Bisecting phi1 and phi2.
+  Current launch angles are:
+    phi1=219.711
+    phi2=223.717
+  Distances from ground intercepts to station:
+    az_dist1= 0.05
+    az_dist2= 0.22
+  while daz=0.5.
+  Both launching azimuths have arrivals!
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.22
+   while thresh=0.1.
+    phi2 has been reduced by    0.200
+      phi1=219.711
+      phi2=223.517
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 3 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=223.5167578267927 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 99 of 99
+DEBUG: after filter_atten
+        ind1=88, ind2=99
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  99 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 99
+  Means: lat= -22.0086, lon= 166.7305
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0086
+    lon =  166.7305
+    baz =   44.4513
+    std baz =    0.0724
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.21
+   while thresh=0.1.
+    phi2 has been reduced by    0.190
+      phi1=219.711
+      phi2=223.326
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 4 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=223.32647941833176 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 100 of 100
+DEBUG: after filter_atten
+        ind1=88, ind2=100
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  100 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 100
+  Means: lat= -22.0160, lon= 166.7398
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0160
+    lon =  166.7398
+    baz =   44.2576
+    std baz =    0.0720
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.20
+   while thresh=0.1.
+    phi2 has been reduced by    0.181
+      phi1=219.711
+      phi2=223.146
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 5 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=223.14571493029385 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 99 of 99
+DEBUG: after filter_atten
+        ind1=88, ind2=99
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  99 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 99
+  Means: lat= -22.0230, lon= 166.7487
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0230
+    lon =  166.7487
+    baz =   44.0737
+    std baz =    0.0716
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.19
+   while thresh=0.1.
+    phi2 has been reduced by    0.172
+      phi1=219.711
+      phi2=222.974
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 6 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=222.97398866665782 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 97 of 97
+DEBUG: after filter_atten
+        ind1=88, ind2=97
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  97 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 97
+  Means: lat= -22.0296, lon= 166.7572
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0296
+    lon =  166.7572
+    baz =   43.8989
+    std baz =    0.0713
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.18
+   while thresh=0.1.
+    phi2 has been reduced by    0.163
+      phi1=219.711
+      phi2=222.811
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 7 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=222.8108487162036 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 96 of 96
+DEBUG: after filter_atten
+        ind1=88, ind2=96
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  96 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 96
+  Means: lat= -22.0358, lon= 166.7653
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0358
+    lon =  166.7653
+    baz =   43.7328
+    std baz =    0.0710
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.17
+   while thresh=0.1.
+    phi2 has been reduced by    0.155
+      phi1=219.711
+      phi2=222.656
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 8 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=222.6558657632721 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 95 of 95
+DEBUG: after filter_atten
+        ind1=88, ind2=95
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  95 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 95
+  Means: lat= -22.0418, lon= 166.7730
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0418
+    lon =  166.7730
+    baz =   43.5751
+    std baz =    0.0707
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.16
+   while thresh=0.1.
+    phi2 has been reduced by    0.147
+      phi1=219.711
+      phi2=222.509
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 9 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=222.50863195798715 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 94 of 94
+DEBUG: after filter_atten
+        ind1=88, ind2=94
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  94 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 94
+  Means: lat= -22.0474, lon= 166.7803
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0474
+    lon =  166.7803
+    baz =   43.4252
+    std baz =    0.0704
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.15
+   while thresh=0.1.
+    phi2 has been reduced by    0.140
+      phi1=219.711
+      phi2=222.369
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 10 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=222.36875984296645 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 93 of 93
+DEBUG: after filter_atten
+        ind1=88, ind2=93
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  93 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 93
+  Means: lat= -22.0527, lon= 166.7873
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0527
+    lon =  166.7873
+    baz =   43.2828
+    std baz =    0.0701
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.14
+   while thresh=0.1.
+    phi2 has been reduced by    0.133
+      phi1=219.711
+      phi2=222.236
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 11 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=222.2358813336968 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 91 of 91
+DEBUG: after filter_atten
+        ind1=88, ind2=91
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  91 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 91
+  Means: lat= -22.0577, lon= 166.7939
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0577
+    lon =  166.7939
+    baz =   43.1475
+    std baz =    0.0699
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.13
+   while thresh=0.1.
+    phi2 has been reduced by    0.126
+      phi1=219.711
+      phi2=222.110
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 12 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=222.10964674989063 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 90 of 90
+DEBUG: after filter_atten
+        ind1=88, ind2=90
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  90 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 90
+  Means: lat= -22.0624, lon= 166.8002
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0624
+    lon =  166.8002
+    baz =   43.0190
+    std baz =    0.0696
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.13
+   while thresh=0.1.
+    phi2 has been reduced by    0.120
+      phi1=219.711
+      phi2=221.990
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 13 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=221.98972389527478 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 91 of 91
+DEBUG: after filter_atten
+        ind1=88, ind2=91
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  91 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 91
+  Means: lat= -22.0669, lon= 166.8062
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0669
+    lon =  166.8062
+    baz =   42.8969
+    std baz =    0.0694
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.12
+   while thresh=0.1.
+    phi2 has been reduced by    0.114
+      phi1=219.711
+      phi2=221.876
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 14 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=221.87579718338972 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 91 of 91
+DEBUG: after filter_atten
+        ind1=88, ind2=91
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  91 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 91
+  Means: lat= -22.0712, lon= 166.8119
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0712
+    lon =  166.8119
+    baz =   42.7809
+    std baz =    0.0692
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.12
+   while thresh=0.1.
+    phi2 has been reduced by    0.108
+      phi1=219.711
+      phi2=221.768
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 15 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=221.76756680709892 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 91 of 91
+DEBUG: after filter_atten
+        ind1=88, ind2=91
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  91 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 91
+  Means: lat= -22.0753, lon= 166.8174
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0753
+    lon =  166.8174
+    baz =   42.6707
+    std baz =    0.0690
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.11
+   while thresh=0.1.
+    phi2 has been reduced by    0.103
+      phi1=219.711
+      phi2=221.665
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 16 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=221.66474794962264 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 90 of 90
+DEBUG: after filter_atten
+        ind1=88, ind2=90
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  90 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 90
+  Means: lat= -22.0791, lon= 166.8225
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0791
+    lon =  166.8225
+    baz =   42.5660
+    std baz =    0.0688
+    Using stratospheric and thermospheric arrivals.
+    Distances from ground intercepts to station:
+     az_dist1= 0.05
+     az_dist2= 0.10
+   while thresh=0.1.
+    phi2 has been reduced by    0.098
+      phi1=219.711
+      phi2=221.567
+[create_launch] Creating launch string...
+
+[run_launch] This is run number 17 for profile 0
+  Calculating: 
+    ./infraga-sph -prop ../output/profiles/2_prof_00000_055_00001_0001.met incl_min=0.5 incl_max=45.0 incl_step=0.5 azimuth=221.56707003502018 rng_max=498.71837108925735 bounces=40 src_lat=-19.532 src_lon=169.447 src_alt=0.361 write_atmo=False calc_amp=False freq=0.1
+  -> File 1_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 2_prof_00000_055_00001_0001.arrivals.dat copied to ../output/proc/arrv/
+  -> File 1_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  -> File 2_prof_00000_055_00001_0001.raypaths.dat copied to ../output/proc/rays/
+  Profile 1_prof_00000_055_00001_0001.arrivals.dat loaded.
+  Profile 2_prof_00000_055_00001_0001.arrivals.dat loaded.
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 88 of 88
+[filter_atten] Called with attenuation threshold at -1000.000 db
+  Number of rays after filtering: 90 of 90
+DEBUG: after filter_atten
+        ind1=88, ind2=90
+[filter_grdInt] called for profile 1_prof_00000_055_00001_0001.arrivals.dat.
+  88 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 19 of 88
+  Means: lat= -22.1696, lon= 166.9032
+[filter_grdInt] called for profile 2_prof_00000_055_00001_0001.arrivals.dat.
+  90 ground intercepts.
+  Threshold distance of 50.0000 km.
+  Number of rays after filtering: 18 of 90
+  Means: lat= -22.0827, lon= 166.8275
+DEBUG: after filter_grdInt
+len(filt_grdInt1)=19
+len(filt_grdInt2)=18
+[filter_stratoThermo] called for for profile 1_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 19
+    lat =  -22.1696
+    lon =  166.9032
+    baz =   40.5833
+    std baz =    0.0700
+[filter_stratoThermo] called for for profile 2_prof_00000_055_00001_0001.arrivals.dat
+  Threshold height is    60.00000 km
+  WARNING: No stratospheric arrivals for this run.
+           Returning an empty tuple.
+  Thermospheric arrivals:
+    n   = 18
+    lat =  -22.0827
+    lon =  166.8275
+    baz =   42.4666
+    std baz =    0.0686
+    Using stratospheric and thermospheric arrivals.
+
+Final azimuths:
+===============
+phi1 (min): 219.711
+phi2 (max): 221.567
+back phi1 strato (min):     nan
+back phi2 strato (max):     nan
+back phi1 thermo (min):  40.583
+back phi2 thermo (max):  42.467
+
+========================
+Saving azimuth deviation
+========================
+
+[ang_dist]
+** W: Input angles were not numbers
+      >> phi1=    nan, phi2=    NAN
+
+[ang_dist]
+-- phi1= 40.583, phi2= 42.467
+
+[ang_dist]
+** W: Input angles were not numbers
+      >> phi1=    nan, phi2= 43.142
+
+[ang_dist]
+-- phi1= 41.525, phi2= 43.142
+
+    Year     DOY Seconds  SouNum  StaNum  StaNam TrueBaz BazDevS  #BazDS BazDevT  #BazDT  BazDevA  StdBDA     Ill
+ 
+

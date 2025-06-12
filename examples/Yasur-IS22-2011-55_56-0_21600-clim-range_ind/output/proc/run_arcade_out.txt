@@ -1,0 +1,19 @@
+discretize.py
+-------------
+2.27user 0.08system 0:01.30elapsed 181%CPU (0avgtext+0avgdata 69380maxresident)k
+0inputs+3400outputs (0major+20130minor)pagefaults 0swaps
+
+perturb_winds.py
+----------------
+1.37user 0.05system 0:00.39elapsed 364%CPU (0avgtext+0avgdata 45480maxresident)k
+0inputs+384outputs (0major+13062minor)pagefaults 0swaps
+
+plot_profiles.py
+----------------
+1.84user 0.10system 0:00.88elapsed 220%CPU (0avgtext+0avgdata 87584maxresident)k
+0inputs+0outputs (0major+26723minor)pagefaults 0swaps
+
+ARCADE_main.py
+--------------
+1027.83user 8.48system 5:34.39elapsed 309%CPU (0avgtext+0avgdata 238124maxresident)k
+95728inputs+2055096outputs (352major+1947461minor)pagefaults 0swaps
