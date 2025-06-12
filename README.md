@@ -271,13 +271,13 @@ for reproducibility.
   deviations. The colums are explained in detail in the previous section.
   The file should contain these two lines:
  
-    ```
+  ```
    Year     DOY Seconds  SouNum  StaNum  StaNam TrueBaz BazDevS  #BazDS BazDevT  #BazDT  BazDevA  StdBDA     Ill
    2011      55       0       1       1      IS22  43.14     nan       0    1.62      37    1.62 7.00e-02   False
    2011      56       0       1       1      IS22  43.14     nan       0    1.48      37    1.48 6.59e-02   False
    2011      56   21600       1       1      IS22  43.14    2.15      28    2.28      36    2.22 5.22e-02   False
    2011      55   21600       1       1      IS22  43.14    2.56      33    2.68      35    2.62 4.72e-02   False
-    ```
+  ```
     Meaning that the average azimuth deviation is 1.62 +/- 7.00e-2 and
     1.44 +/- 6.59e-2 degrees (`BazDevA`) for days 56 and 56, respectively,
     at 00:00:00 UTC (`Seconds` is 0). At 00:06:00 UTC (`Seconds` is 21600),

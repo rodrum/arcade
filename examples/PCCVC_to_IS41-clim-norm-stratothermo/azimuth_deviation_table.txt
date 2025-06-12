@@ -1,2 +1,0 @@
-   Year     DOY  SouNum  StaNum TrueBaz BazDevS  #BazDS BazDevT  #BazDT BazDevA   StdBDA     Ill
-   2011     155       1       1  217.16    6.65      15    6.67      17    6.66 6.37e-02   False

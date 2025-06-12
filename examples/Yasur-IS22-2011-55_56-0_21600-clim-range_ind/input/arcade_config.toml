@@ -1,0 +1,64 @@
+# run type: if normal, perturbed, or hybrid 
+run_type = "norm"  # options: "norm", "pert", "hybrid"
+# use thermospheric arrivals to determine azimuth deviation
+use_thermo = true
+# maximum number of runs before giving up
+max_run = 40
+# attenuation filter threshold
+atten_th = -1000.0
+# to filter arrivals
+min_dist_arrv = 50 # km
+# threshold distance in degrees to consider ground intercepts near the station
+daz = 0.5
+# aperture in degrees for launching rays around azimuth
+dphi = 1.5
+# parameter to weight dphi asd dphi/scale
+scale = 8.0
+# threshold to decide when to declare ground 
+#   intercepts near enough (in deg) after first 
+#   threshold has been satisfied
+thresh = 0.1
+# serves to scale the adaptative perturbation 
+#   that is given to the launch azimuth while 
+#   trying to improve the accuracy of the arrivals
+k = 0.1 # as (phi2-phi1)/2 * k
+# Plot profiles
+plot_profiles = false
+# Plot arrivals
+plot_arrivals = false
+
+# Launch parameters for iterations ########################
+[launch_parameters]
+# min vertical angle in degrees (0=horizontal)
+incl_min = 0.5
+# max vertical angle
+incl_max = 45.0
+incl_step = 0.5
+# maximum range as range+drng in km
+drng = 100.0
+# maximum number of bounces for ground intercepts
+bounces = 40
+# source altitude in km
+#src_alt = 1.974 # Calbuco    
+src_alt = 2.236 # PCCVC
+# write atmospheric profiles output for GeoAC
+write_atmo = false
+# calculate the amplitude of the rays for GeoAC
+# note: true slows down the calculations significatively
+calc_amp = false
+
+# Flags for main run
+perc_cpu = 1 # as num_cpu/perc_cpu
+
+# Save raypaths? Raypaths could be very heavy files
+save_raypaths = false
+# Save arrivals? Arrivals are smaller than raypaths, but still could grow big
+save_arrivals = false
+
+# Default frequency for Sutherland and Bass (2004) TL
+freq = 0.1
+    
+# Project info ############################################
+[project_info]
+name = "PCCVC-Clim-Norm-StratoThermo"
+path = "FILLME"
