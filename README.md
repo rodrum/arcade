@@ -280,9 +280,9 @@ for reproducibility.
   ```
     Meaning that the average azimuth deviation is 1.62 +/- 7.00e-2 and
     1.44 +/- 6.59e-2 degrees (`BazDevA`) for days 56 and 56, respectively,
-    at 00:00:00 UTC (`Seconds` is 0). At 00:06:00 UTC (`Seconds` is 21600),
+    at 00:00:00 UTC (`Seconds` is 0). At 06:00:00 UTC (`Seconds` is 21600),
     these values are 2.62 +/- 4.72e-2 and 2.22 +/- 5.22e-2 for days 55 and 56,
-    respectively. At 00:06:00 UTC, both back-azimuth deviations are calculated
+    respectively. At 06:00:00 UTC, both back-azimuth deviations are calculated
     considering both stratospheric and thermospheric arrivals
     (`BazDevS` and `BazDevT` are not `nan`).
     
