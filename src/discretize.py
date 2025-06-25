@@ -701,6 +701,7 @@ def rng_dep_ncpag2s(year, dlat, dlon, all_comb, sou_pos, sta_pos, path_ncpag2s, 
 
         out_files = [f for f in listdir(out_path) if f.split('.')[-1]=='met']
         prof_num = 0
+        print("Saving profiles...")
         for ilon, ilat in product(range(len(lons_dat)), range(len(lats_dat))):
             # match file
             for ifile in out_files:
@@ -719,7 +720,7 @@ def rng_dep_ncpag2s(year, dlat, dlon, all_comb, sou_pos, sta_pos, path_ncpag2s, 
                         f"2_prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}"\
                         f"_{prof_num:d}.met"))
             prof_num += 1
-            print("Done.")
+        print("Done.")
 
 if __name__ == '__main__':
 

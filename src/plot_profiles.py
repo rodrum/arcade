@@ -20,6 +20,9 @@ config = toml.load("./input/config.toml")
 plot_arrivals = config['launch']['plot_arrivals']
 plot_profiles = config['launch']['plot_profiles']
 
+# NOTE: added this to skip case
+is_ncpag2s_model = config['atmospheric_model']['type'] == 'ncpag2s'
+
 geod = Geodesic.WGS84
 
 path_input      = "./input"
@@ -40,7 +43,7 @@ try:
 except FileExistsError:
     print(f"Folder {path_figures} already there")
 
-if plot_profiles is True:
+if plot_profiles is True and is_ncpag2s_model is False:
     profile_num = 0
     for sec, doy, isou, ista in all_comb:
         sou_lat, sou_lon = sources[isou][0], sources[isou][1]

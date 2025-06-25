@@ -208,7 +208,7 @@ def create_launch(launch_parameters):
         launch.append(launch_txt)
     return launch
 
-def create_launch_rngdep(launch_parameters):
+def create_launch_rngdep(atmo_type, launch_parameters):
     """
     This function is called to create the launch configurations
     files for infraga-sph
@@ -234,10 +234,15 @@ def create_launch_rngdep(launch_parameters):
     isou = prof[3]
     ista = prof[4]
     prof = f"prof_{nsec}_{ndoy}_{isou}_{ista}_" # everything but prof num
+    nodes_lon = 'nodes-lon.loc'
+    nodes_lat = 'nodes-lat.loc'
+    if atmo_type == 'ncpag2s':
+        nodes_lon = 'ncpag2s/lons.dat'
+        nodes_lat = 'ncpag2s/lats.dat'
     for azimuth, prof_ind in zip(launch_parameters['azimuth'],
                                  launch_parameters['prof_inds']):
         launch_txt = f"./infraga-sph-rngdep -prop ../output/profiles/{str(prof_ind)}_{prof} "\
-            +f"../output/profiles/nodes-lat.loc ../output/profiles/nodes-lon.loc "\
+            +f"../output/profiles/{nodes_lat} ../output/profiles/{nodes_lon} "\
             +f"incl_min={launch_parameters['incl_min']} "\
             +f"incl_max={launch_parameters['incl_max']} "\
             +f"incl_step={launch_parameters['incl_step']} "\
@@ -354,13 +359,13 @@ def filter_stratoThermo(results_tab, filtered_grdInt, thresh_height, prof):
         print(f"    std baz = {thermo_tup[4]:9.4f}")
     return strato_tup, thermo_tup
 
-def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False, atten_th=-120, save_arrivals=False, save_raypaths=False):
+def run_launch(launch_parameters, grid_params, run_num, prof_ind, atmo_type, rngdep=False, atten_th=-120, save_arrivals=False, save_raypaths=False):
     # Create launch
     launch = ''
     if rngdep is False:
         launch = create_launch(launch_parameters)
     else:
-        launch = create_launch_rngdep(launch_parameters)
+        launch = create_launch_rngdep(atmo_type, launch_parameters)
     # Run
     print("\n[run_launch] This is run number {0} for profile {1}".format(run_num, prof_ind))
     for launchi in launch:
@@ -488,7 +493,7 @@ def run_launch(launch_parameters, grid_params, run_num, prof_ind, rngdep=False, 
             )
     return run_num, strato_tup1, thermo_tup1, strato_tup2, thermo_tup2
 
-def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
+def calculate_profiles(my_profiles, arcade_conf, atmo_type, profInd=0, rngdep=False):
     '''
     # Load, and copy duplicates of profiles (.met files)
     # Obtained profile is called 'profile_00001.met', then copied
@@ -613,6 +618,7 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                         grid_params,
                         run_num,
                         profInd,
+                        atmo_type,
                         rngdep,
                         atten_th,
                         save_arrivals,
@@ -826,6 +832,7 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                                             grid_params,
                                             run_num,
                                             profInd,
+                                            atmo_type,
                                             rngdep,
                                             atten_th,
                                             save_arrivals,
@@ -871,6 +878,7 @@ def calculate_profiles(my_profiles, arcade_conf, profInd=0, rngdep=False):
                                             grid_params,
                                             run_num,
                                             profInd,
+                                            atmo_type,
                                             rngdep,
                                             atten_th,
                                             save_arrivals,
@@ -1160,8 +1168,8 @@ if __name__ == '__main__':
             lons = np.loadtxt("../output/profiles/nodes-lon.loc", dtype='float', ndmin=1)
             lats = np.loadtxt("../output/profiles/nodes-lat.loc", dtype='float', ndmin=1)
         elif config['atmospheric_model']['type'] == 'ncpag2s':
-            lons = np.loadtxt("../output/profiles/lons.dat")
-            lats = np.loadtxt("../output/profiles/lats.dat")
+            lons = np.loadtxt("../output/profiles/ncpag2s/lons.dat")
+            lats = np.loadtxt("../output/profiles/ncpag2s/lats.dat")
         profiles = get_profiles_rngdep()
         # Run with multiprocessing =============================================
         num_cpu = int(mp.cpu_count()*perc_cpu)
@@ -1170,7 +1178,7 @@ if __name__ == '__main__':
         print(f"- {len(profiles)} profiles fill be calculated with {num_cpu} cores")
         results = pool.starmap_async(
             calculate_profiles,
-            [(profiles, config, i, use_rng_dep) for i in range(len(profiles))]).get()
+            [(profiles, config, atmo_type, i, use_rng_dep) for i in range(len(profiles))]).get()
         pool.close()
     else:
         profiles = []
@@ -1186,7 +1194,7 @@ if __name__ == '__main__':
         print(f"- {len(profiles)} profiles fill be calculated with {num_cpu} cores")
         results = pool.starmap_async(
             calculate_profiles,
-            [(profiles, config, i, use_rng_dep) for i in range(len(profiles))]).get()
+            [(profiles, config, atmo_type, i, use_rng_dep) for i in range(len(profiles))]).get()
         pool.close()
 
     os.chdir("../src")
