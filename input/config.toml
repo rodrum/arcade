@@ -48,6 +48,10 @@ path = 'repos/ncpag2s-clc-main'
 # parameters that define the models in terms of time/space
 year = [2011]  # NOTE: only one year for now, could be multi-year
 doys = [55, 56] # day of year
+doy_step = 0 # if > 0 and doys has two number, it makes a list as doys[0] to doys[1]
+             # in steps of doy_step. E.g., every day of the non-leap year would be: 
+             # doys = [1,365]
+             # doy_step = 1
 sec = [0, 21600] # seconds, 00:00:00 UTC, 06:00:00 UTC...
 # parameters below don't apply to NPCA-G2S, which sets hmin=0, hmax=150, and dh=0.1
 hmin = 0.0 # km, min altitude
