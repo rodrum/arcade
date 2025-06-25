@@ -286,10 +286,20 @@ for reproducibility.
     considering both stratospheric and thermospheric arrivals
     (`BazDevS` and `BazDevT` are not `nan`).
     
+  - `profiles/` contains the atmospheric descriptions for the source-station
+    direction. The files `.met` are the descriptions that infraGA uses to run 3D
+    ray tracing. These files are names as `{1,2}_prof_WWWWW_XXX_YYYYYY_ZZZ.met`.
+    The `1` or `2` represent the profiles used for the two iterative beams, 
+    but contain the same values. `WWWWW` is the number of seconds 
+    (i.e, same as `Seconds` column in table). 
+    `XXX` is the DOY (same as `DOY` column in table).
+    `YYYYY` is the source number (`SouNum` in table). 
+    `ZZZZ` is the station number (`StaNum` in table). 
+    This convention follows through all the other named files.
   - `figures/`: this folder contains useful figures that serve to have a visual
   idea of the locations of the source and station as well as the atmospheric
   winds for each profile. The only automatically generated figures are:
-    - `arrv_XXX_YYYYY_ZZZZ.png` - Snapshot of last iteration of ground intecept
+    - `arrv_WWWWW_XXX_YYYYY_ZZZZ.png` - Snapshot of last iteration of ground intecept
     (arrivals) for the profile. Top-left: colored by Transmission Loss (dB).
     Top-right: colored by travel time (hours).
     Bottom-left: colored by celerity (km/s).
@@ -297,6 +307,9 @@ for reproducibility.
      ![Arrivals](examples/Yasur-IS22-2011-55_56-0_21600-clim-range_ind/output/figures/arrv_00000_055_00001_0001.png?raw=true "Arrivals")
     These figures will be created if all `plot_arrivals` and `save_arrivals`
     are true.
+  - `prof_WWWWW_XXX_YYYYY_ZZZZ.png` - Snapshot of profiles plus a map that was
+    used to calculate the arrivals.
+     ![Profiles](examples/Yasur-IS22-2011-55_56-0_21600-clim-range_ind/output/figures/prof_00000_055_00001_0001.png?raw=true "Profiles")
   - `nodes/` contains files related with the calculations, basically
     middle-ground files to help obtain atmospheric descriptions with HWM14/NRMLSIS2.0
   - `proc/` contains important output of the calculations that can be used later
@@ -305,7 +318,7 @@ for reproducibility.
     Check this file if anything goes wrong and the calculations fail.
     It should also contain the time it took to calculate the model in the last
     three lines (is the output of `time` in Unix).
-    - `prof_XXX_YYYYY_ZZZZ_SOMENAME.txt` - contains the output of each iteration
+    - `prof_WWWWW_XXX_YYYYY_ZZZZ_SOMENAME.txt` - contains the output of each iteration
     search done with ARCADE. The name `SOMENAME` will change depending in the kind
     of model you choose to calculate. In this case it will be just `_out`,
     as we are using raw empirical climatologies. Use this file to check how the
@@ -314,20 +327,17 @@ for reproducibility.
     (output of 3d rat tracing infraGA).
     As the number of files could be huge, this feature should be disabled for
     large combinations of sources and stations.
-    The format of each file name is `NUM-A_prof_XXX_YYYYY_ZZZZ.arrivals.dat`,
+    The format of each file name is `NUM-A_prof_WWWWW_XXX_YYYYY_ZZZ.arrivals.dat`,
     where `NUM` is the run number (iteration number), and `A` could be `1` or `2`
     depending on the launch azimuth used to enclose the target station.
     Use these files to understand the iteration process, or even make a video
     as each files is a snapshot of the resulting 3d ray tracing calculations.
-    Note that the plot `arrv_XXX_YYYYY_ZZZZ.png` is actually the last snapshot
-    of the profile `XXX_YYYYY_ZZZZ`.
+    Note that the plot `arrv_WWWWW_XXX_YYYYY_ZZZ.png` is actually the last snapshot
+    of the profile `WWWWW_XXX_YYYYY_ZZZZ`.
     - `rays/` - contains the 3D ray paths for each iteration and profile
     (also output of infraGA).
     The format is similar to the files in `arrv/`.
     You can use this files to plot the 3D rays.
-  - `profiles/` contains the atmospheric descriptions for the source-station
-    direction. The files `.met` are the descriptions that infraGA uses to run 3D
-    ray tracing.
 
 
 ## Thanks to...
