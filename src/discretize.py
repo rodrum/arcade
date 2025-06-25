@@ -617,7 +617,7 @@ def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path
                     ave_zonw = 0
                     ave_pres = 0
                     for dist_in, file_in in summ_files:
-                        prof_in = np.loadtxt(join(out_path, 'ncpag2s', file_in))
+                        prof_in = np.loadtxt(join(out_path, file_in))
                         # density [g/m^3]
                         ave_dens += prof_in[i, 4]
                         # tempereture [K]
@@ -635,6 +635,10 @@ def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path
                     ave_pres = ave_pres/nl
                     f.write(f"{alts[i]:>5.1f} {ave_temp:>7.2f} {ave_zonw:>7.2f} "
                             f"{ave_merw:>7.2f} {ave_dens:>10.2e} {ave_pres:>10.2e}\n")
+
+        # Move output of NCPAG2S away to avoid FileExistsError
+        this_date_str = f"{this_date.year:d}{this_date.month:02d}{this_date.day:02d}_{sec:05d}"
+        shutil.move(join(out_path, 'summary.dat'), join(out_path, f"{this_date_str}_summary.dat"))
     print("Done.")
 
 
@@ -726,6 +730,14 @@ if __name__ == '__main__':
 
     year = params['discretization']['year'][0]  # NOTE: one year
     doys = params['discretization']['doys']
+    doy_step = params['discretization']['doy_step']
+    # Option of writing a [start, stop] and setting a doy step to create a 
+    # list as in [1, 2,..., 365] for whole year or long time intervals
+    if doy_step > 0:
+        if len(doys) == 2:
+            doys = np.arange(int(float(doys[0])), 
+                             int(float(doys[1]))+doy_step, 
+                             doy_step)
     secs = params['discretization']['sec']
     hmin = params['discretization']['hmin']
     hmax = params['discretization']['hmax']
@@ -818,33 +830,29 @@ if __name__ == '__main__':
             if not isdir(join(out_path_prof, 'ncpag2s')):
                 mkdir(join(out_path_prof, 'ncpag2s'))
             path_ncpag2s = params['atmospheric_model']['ncpag2s']['path']
-            if use_rngdep is False:
-                rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s,
-                            join(out_path_prof, 'ncpag2s'))
-            else:
-                dlat = params['discretization']['range_dep']['dlat']
-                dlon = params['discretization']['range_dep']['dlon']
-                rng_dep_ncpag2s(year, dlat, dlon, all_comb, sou_pos, sta_pos,
-                                path_ncpag2s, join(out_path_prof, 'ncpag2s'))
-        if use_ecmwf is False:
-            print("-> HWM14/MSIS2.0 atmospheric descriptions")
-            rng_ind_clim(ds, alts, clim_params, all_comb, sou_pos, sta_pos, out_path)
-        else:
+            rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s,
+                join(out_path_prof, 'ncpag2s'))
+        elif use_ecmwf is False:
             print("-> Hybrid ECMWF ERA 5 reanalysis (~0-80 km)"
                   "+ HWM14/MSIS2.0 (>~80 km) atmospheric descriptions")
             h1 = params['atmospheric_model']['ecmwf']['h1']
             h2 = params['atmospheric_model']['ecmwf']['h2']
             rng_ind_ecmwf(year, ds, h1, h2, alts, clim_params, all_comb,
                           sou_pos, sta_pos, out_path)
+        else:
+            print("-> HWM14/MSIS2.0 atmospheric descriptions")
+            rng_ind_clim(ds, alts, clim_params, all_comb, sou_pos, sta_pos, out_path)
     else:
         print("\n-> Range Dependent (infraga-sph-rngdep) 3D ray tracing")
-        if use_ecmwf is False:
-            print("-> HSM14+MSIS2.0 atmospheric descriptions")
+        if use_ncpag2s is True:
             dlat = params['discretization']['range_dep']['dlat']
             dlon = params['discretization']['range_dep']['dlon']
-            rng_dep_clim(year, dlat, dlon, alts, clim_params, all_comb, sou_pos,
-                         sta_pos, out_path)
-        else:
+            path_ncpag2s = params['atmospheric_model']['ncpag2s']['path']
+            if not isdir(join(out_path_prof, 'ncpag2s')):
+                mkdir(join(out_path_prof, 'ncpag2s'))
+            rng_dep_ncpag2s(year, dlat, dlon, all_comb, sou_pos, sta_pos,
+                            path_ncpag2s, join(out_path_prof, 'ncpag2s'))
+        elif use_ecmwf is True:
             print("-> Hybrid ECMWF ERA 5 reanalysis (~0-80 km)"
                   " + HWM14/MSIS2.0 (>~80 km) atmospheric descriptions")
             if recycle_rngdep is True:
@@ -856,3 +864,9 @@ if __name__ == '__main__':
                 dlon = params['discretization']['range_dep']['dlon']
                 rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params,
                               all_comb, sou_pos, sta_pos, out_path)
+        else:
+            print("-> HSM14+MSIS2.0 atmospheric descriptions")
+            dlat = params['discretization']['range_dep']['dlat']
+            dlon = params['discretization']['range_dep']['dlon']
+            rng_dep_clim(year, dlat, dlon, alts, clim_params, all_comb, sou_pos,
+                         sta_pos, out_path)

@@ -9,11 +9,11 @@ import toml
 from itertools import product
     
 def main():
-    arrv_path   = "./output/profiles"
-    rays_path   = "./output/profiles"
-    fig_path    = "./output/figures/"
+    arrv_path   = "../output/profiles"
+    rays_path   = "../output/profiles"
+    fig_path    = "../output/figures/"
 
-    params = toml.load("./input/config.toml")
+    params = toml.load("../input/config.toml")
     plot_arrivals = params['launch']['plot_arrivals']
 
     if plot_arrivals is True:
@@ -244,9 +244,4 @@ def main():
             """
     else:
         print(f"Note: skipping arrival plots (results)...")
-
-
-if __name__ == '__main__':
-    main()
-
 

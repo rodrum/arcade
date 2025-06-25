@@ -1191,4 +1191,12 @@ if __name__ == '__main__':
 
     os.chdir("../src")
 
+    # =========================================================
+    # Run plot_results.py
+    # =========================================================
+    print("\nRunning: plot_arrivals.py")
+    print("========================")
+    import plot_arrivals
+    plot_arrivals.main()
+
     wrap_and_save(config)
