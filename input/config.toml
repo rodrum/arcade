@@ -141,6 +141,8 @@ perc_cpu = 1 # percentage of cpu of all the available (1=100%, 0.5=50%, and so o
 
 # Plot arrivals
 plot_arrivals = true
+# Plot profiles
+plot_profiles = true
 # Save raypaths? Raypaths could be very heavy files
 save_raypaths = true
 # Save arrivals? Arrivals are smaller than raypaths, but still could grow big

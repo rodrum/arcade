@@ -15,22 +15,24 @@ from obspy.geodetics.base import gps2dist_azimuth
 from matplotlib import colors
 from itertools import product
 
-params = toml.load("./input/discretize_parameters.toml")
+config = toml.load("./input/config.toml")
 
-arcade_params = toml.load("./input/arcade_config.toml")
-plot_profiles = arcade_params['plot_profiles']
+plot_arrivals = config['launch']['plot_arrivals']
+plot_profiles = config['launch']['plot_profiles']
 
 geod = Geodesic.WGS84
 
-path_input = "./input"
-path_profiles = "./output/profiles"
-path_figures = "./output/figures"
+path_input      = "./input"
+path_profiles   = "./output/profiles"
+path_figures    = "./output/figures"
 
-secs = params['sec']
-doys = params['doys']
-sources = params['sou_pos']
-stations = params['sta_pos']
-all_comb = [combi for combi in product(secs, doys, range(len(sources)), range(len(stations)))]
+secs        = config['discretization']['sec']
+doys        = config['discretization']['doys']
+sources     = config['discretization']['sou_pos']
+stations    = config['discretization']['sta_pos']
+
+all_comb = [combi for combi in
+            product(secs, doys, range(len(sources)), range(len(stations)))]
 
 try:
     mkdir(path_figures)
@@ -38,7 +40,7 @@ try:
 except FileExistsError:
     print(f"Folder {path_figures} already there")
 
-if plot_profiles == True:
+if plot_profiles is True:
     profile_num = 0
     for sec, doy, isou, ista in all_comb:
         sou_lat, sou_lon = sources[isou][0], sources[isou][1]
@@ -99,7 +101,7 @@ if plot_profiles == True:
             transform=ax1.transAxes
             )
         ax1.text(0.5, 0.5, 
-            f"Geodesic arc", fontsize=12, horizontalalignment='left',
+            "Geodesic arc", fontsize=12, horizontalalignment='left',
             verticalalignment='center', 
             transform=ax1.transAxes
             )
@@ -129,8 +131,10 @@ if plot_profiles == True:
         profile_num += 1
         print(f"   > Figure {out_fig_path} saved")
 
-    if params['range_dependent']['use_rng_dep'] == False:
-        end_str = '.met' if params['ecmwf']['use_ecmwf'] == False else '_mix.met'
+    if config['atmospheric_model']['prop_model'] == 'range_ind':
+        end_str = '.met'
+        if config['atmospheric_model']['type'] == 'hybrid':
+            end_str =  '_mix.met'
         profile_num = 0
         for sec, doy, isou, ista in all_comb:
             sou_lat, sou_lon = sources[isou][0], sources[isou][1]
@@ -239,8 +243,9 @@ if plot_profiles == True:
 
 
                 # title
-                title = f"Profile prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}{end_str}"\
-                        +f" - DOY {doy:03d} "
+                title = "Profile "\
+                    +f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}{end_str}"\
+                    +f" - DOY {doy:03d} "
                 plt.suptitle(title, fontsize=14)
 
                 # grid lines
@@ -282,14 +287,14 @@ if plot_profiles == True:
                 plt.close(fig) 
                 profile_num += 1
                 print(f"   > Figure {out_fig_path} saved")
-            else: 
+            else:
                 #=== create fig
                 fig, axs = plt.subplots(
-                num=profile_num,
-                nrows = 2,
-                ncols = 5,
-                figsize = (8, 8),
-                gridspec_kw = {"width_ratios" : [1, 1, 1, 1, 1]},
+                    num=profile_num,
+                    nrows = 2,
+                    ncols = 5,
+                    figsize = (8, 8),
+                    gridspec_kw = {"width_ratios" : [1, 1, 1, 1, 1]},
                 )
                 # Merge upper five cols into one plot
                 gs = axs[0, 0].get_gridspec()
@@ -300,7 +305,7 @@ if plot_profiles == True:
                 ax1 = axs[1,1]  # Zonal w. [m/s]
                 ax2 = axs[1,2]  # Mer w. [m/s]
                 ax3 = axs[1,3]  # Dens. [g/cm^3]
-                ax4 = axs[1,4]  # Pres. [mbar] (Pa*10^-2)
+                ax4 = axs[1,4]  # Pres. prof_name[mbar] (Pa*10^-2)
 
                 # Make ticks go inwards, and background gray for each plot
                 ax0.tick_params(direction='in')
@@ -337,8 +342,9 @@ if plot_profiles == True:
                 ax0.set_ylabel("Height [km]")
 
                 # title
-                title = f"Profile prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"\
-                        +f" - DOY {doy:03d} "
+                title = "Profile "\
+                    +f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"\
+                    +f" - DOY {doy:03d} "
                 plt.suptitle(title, fontsize=14)
 
                 # grid lines
@@ -370,7 +376,7 @@ if plot_profiles == True:
                 plt.close(fig) 
                 profile_num += 1
                 print(f"   > Figure {out_fig_path} saved")
-    else:
+    elif config['atmospheric_model']['prop_model'] == 'range_dep':
         print("\nNote: this plot type has been implemented only for a case of one ")
         print("      station, one source, and one day of the year. Trying more")
         print("      than one of each could create unexpected output plots.\n")
@@ -381,7 +387,8 @@ if plot_profiles == True:
             prof_num = 0
             for xi in range(x_points.shape[0]):
                 for yi in range(y_points.shape[0]):
-                    prof_name = f"1_prof_{nsec:05d}_{ndoy:03d}_{nsou+1:05d}_{nsta+1:04d}_{prof_num}.met"
+                    prof_name = f"1_prof_{nsec:05d}_{ndoy:03d}_{nsou+1:05d}"\
+                                f"_{nsta+1:04d}_{prof_num}.met"
                     prof_vals = np.loadtxt(f"./output/profiles/{prof_name}")
                     zonw_values[xi, yi] = prof_vals[num_h, 2]
                     merw_values[xi, yi] = prof_vals[num_h, 3] 

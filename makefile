@@ -91,6 +91,11 @@ run-arcade:
 	@{ time python $(SRC)/plot_profiles.py ; } 2>> $(OUT)/proc/$(ARCADE_OUT)
 	@echo "" >> $(OUT)/proc/$(ARCADE_OUT)
 
+	@echo "plot_arrivals.py" >> $(OUT)/proc/$(ARCADE_OUT)
+	@echo "----------------" >> $(OUT)/proc/$(ARCADE_OUT)
+	@{ time python $(SRC)/plot_arrivals.py ; } 2>> $(OUT)/proc/$(ARCADE_OUT)
+	@echo "" >> $(OUT)/proc/$(ARCADE_OUT)
+
 	@echo "ARCADE_main.py" >> $(OUT)/proc/$(ARCADE_OUT)
 	@echo "--------------" >> $(OUT)/proc/$(ARCADE_OUT)
 	@{ time python $(SRC)/ARCADE_main.py ; } 2>> $(OUT)/proc/$(ARCADE_OUT)

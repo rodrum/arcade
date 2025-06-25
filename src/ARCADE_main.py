@@ -1190,18 +1190,5 @@ if __name__ == '__main__':
         pool.close()
 
     os.chdir("../src")
-    # # Plot IMS_vASC
-    # print("\nRunning: interface_ims_vasc.py")
-    # print("==============================")
-    # import interface_ims_vasc
-    # interface_ims_vasc.main()
-
-    # =========================================================
-    # Run plot_results.py
-    # =========================================================
-    print("\nRunning: plot_results.py")
-    print("========================")
-    import plot_results
-    plot_results.main()
 
     wrap_and_save(config)
