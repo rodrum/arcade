@@ -202,6 +202,15 @@ docker run -it --name arcade --mount type=bind,source=/path/on/the/host,target=/
 
 ## How to run in general
 
+**NOTE 1**: please avoid leaving `plot_arrivals` and `plot_results` as `true`
+in `input/config.toml` if you are not using `prop_model = range_ind` and
+`type = clim`. These two scripts are not complete and could fail the whole run
+if left as true. 
+
+**NOTE 2**: if not saving arrivals (`save_arrivals = false`), 
+`plot_arrivals = true` will be not taken inconsideration as there will not be
+arrivals to plot.
+
 1. Inside repo, run `make all-prep` (not needed if using the docker image). 
 2. Modify the input configuration file `config.toml` to suit your model.
 (Currently it is setup with an example run for Puyehue-Cordon Caulle to IS02 on 2011-06-04 at 19:00:00 UTC)
