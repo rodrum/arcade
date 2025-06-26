@@ -7,11 +7,19 @@ import matplotlib.pyplot as plt
 from os.path import join
 import toml
 from itertools import product
+from os import mkdir
     
 def main():
     arrv_path   = "../output/profiles"
     rays_path   = "../output/profiles"
     fig_path    = "../output/figures/"
+
+    try:
+        mkdir(fig_path)
+        print(f"Folder {fig_path} created")
+    except FileExistsError:
+        print(f"Folder {fig_path} already there")
+
 
     params = toml.load("../input/config.toml")
     plot_arrivals = params['launch']['plot_arrivals']

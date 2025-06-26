@@ -28,6 +28,11 @@ aph = 4
 
 [atmospheric_model.ecmwf]
 # parameters for the ECMWF ERA 5 requests (if used)
+recycle = false  # it true, you MUST copy-paste output/ecmwf/ ECWMF ERA5 
+                 # downloaded files from another case to skip the re-download 
+                 # All those files will start with the format YYYY-MM-DD_*
+                 # So you can do, for example:
+                 # $ mkdir -p output/ecmwf && cp /PATH/TO/ecmwf/YYYY-* output/ecmwf/
 auto_area = true
 min_lon = -110 # to define area for grid
 max_lon = -10
@@ -80,7 +85,6 @@ sta_pos = [
 ]
 
 [discretization.range_dep]
-recycle = false  # NOTE: check it makes sense
 dlat = 1.0
 dlon = 1.0
 

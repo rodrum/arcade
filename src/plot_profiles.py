@@ -3,6 +3,7 @@ Code to plot profiles automatically from '.met' files and output from
 'discretize.py'
 """
 
+import shutil
 import numpy as np
 import matplotlib.pyplot as plt
 from os.path import join
@@ -287,6 +288,8 @@ if plot_profiles is True and is_ncpag2s_model is False:
                 out_fig_path = join(path_figures, namefig)
                 plt.savefig(out_fig_path, dpi=300, bbox_inches='tight')
 
+                shutil.remove(in_fig_path)
+                
                 plt.close(fig) 
                 profile_num += 1
                 print(f"   > Figure {out_fig_path} saved")
@@ -375,6 +378,8 @@ if plot_profiles is True and is_ncpag2s_model is False:
                 namefig = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.png"
                 out_fig_path = join(path_figures, namefig)
                 plt.savefig(out_fig_path, dpi=300, bbox_inches='tight')
+
+                shutil.remove(in_fig_path)
 
                 plt.close(fig) 
                 profile_num += 1
@@ -596,6 +601,8 @@ if plot_profiles is True and is_ncpag2s_model is False:
                 out_fig_path,
                 dpi=300, bbox_inches='tight'
                 )
+
+            shutil.remove(in_fig_path)
 
             profile_num += 1
 else:

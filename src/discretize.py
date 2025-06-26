@@ -140,7 +140,7 @@ def rng_ind_clim(ds, alts, clim_params, all_comb, sou_pos, sta_pos, out_path):
                     lay_ind += nl
     print("Done.")
 
-def rng_ind_ecmwf(year, ds, h1, h2, alts, clim_params, all_comb, sou_pos, sta_pos, out_path):
+def rng_ind_ecmwf(year, ds, h1, h2, alts, clim_params, all_comb, sou_pos, sta_pos, out_path, skip_download=False):
     stl     = clim_params['stl']
     f107a   = clim_params['f107a']
     f107    = clim_params['f107']
@@ -148,8 +148,9 @@ def rng_ind_ecmwf(year, ds, h1, h2, alts, clim_params, all_comb, sou_pos, sta_po
     aph     = clim_params['aph']
 
     print("-> Hybrid profile with ECMWF ERA 5 lower ~80 km values")
-    import request_era5_profiles
-    request_era5_profiles.main()
+    if skip_download is False:
+        import request_era5_profiles
+        request_era5_profiles.main()
     import interpolate_ecmwf
     interpolate_ecmwf.main_rng_ind()
 
@@ -383,15 +384,16 @@ def rng_dep_clim(year, dlat, dlon, alts, clim_params, all_comb, sou_pos, sta_pos
             prof_num += 1
             print("Done.")
 
-def rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params, all_comb, sou_pos, sta_pos, out_path):
+def rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params, all_comb, sou_pos, sta_pos, out_path, skip_download=False):
     stl     = clim_params['stl']
     f107a   = clim_params['f107a']
     f107    = clim_params['f107']
     apd     = clim_params['apd']
     aph     = clim_params['aph']
 
-    import request_era5_profiles
-    request_era5_profiles.main()
+    if skip_download is False:
+        import request_era5_profiles
+        request_era5_profiles.main()
     import interpolate_ecmwf
     interpolate_ecmwf.main_rng_dep()
 
@@ -820,7 +822,7 @@ if __name__ == '__main__':
 
 
     use_rngdep      = params['atmospheric_model']['prop_model'] == 'range_dep'
-    recycle_rngdep  = params['discretization']['range_dep']['recycle']
+    recycle         = params['atmospheric_model']['ecmwf']['recycle']
     use_ecmwf       = params['atmospheric_model']['type'] == 'hybrid'
     use_ncpag2s     = params['atmospheric_model']['type'] == 'ncpag2s'
 
@@ -833,13 +835,17 @@ if __name__ == '__main__':
             path_ncpag2s = params['atmospheric_model']['ncpag2s']['path']
             rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s,
                 join(out_path_prof, 'ncpag2s'))
-        elif use_ecmwf is False:
+        elif use_ecmwf is True:
             print("-> Hybrid ECMWF ERA 5 reanalysis (~0-80 km)"
                   "+ HWM14/MSIS2.0 (>~80 km) atmospheric descriptions")
             h1 = params['atmospheric_model']['ecmwf']['h1']
             h2 = params['atmospheric_model']['ecmwf']['h2']
+            if recycle is True:
+                print("--> WARNING: Assuming the ECMWF ERA 5 descriptions "
+                      "for this area have already been downloaded.")
+                print("    These profiles should be manually put in output/ecmwf.")
             rng_ind_ecmwf(year, ds, h1, h2, alts, clim_params, all_comb,
-                          sou_pos, sta_pos, out_path)
+                          sou_pos, sta_pos, out_path, recycle == True)
         else:
             print("-> HWM14/MSIS2.0 atmospheric descriptions")
             rng_ind_clim(ds, alts, clim_params, all_comb, sou_pos, sta_pos, out_path)
@@ -856,15 +862,16 @@ if __name__ == '__main__':
         elif use_ecmwf is True:
             print("-> Hybrid ECMWF ERA 5 reanalysis (~0-80 km)"
                   " + HWM14/MSIS2.0 (>~80 km) atmospheric descriptions")
-            if recycle_rngdep is True:
-                print("--> Discretization skipped, using previous one.")
-            else:
-                h1 = params['atmospheric_model']['ecmwf']['h1']
-                h2 = params['atmospheric_model']['ecmwf']['h2']
-                dlat = params['discretization']['range_dep']['dlat']
-                dlon = params['discretization']['range_dep']['dlon']
-                rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params,
-                              all_comb, sou_pos, sta_pos, out_path)
+            h1 = params['atmospheric_model']['ecmwf']['h1']
+            h2 = params['atmospheric_model']['ecmwf']['h2']
+            dlat = params['discretization']['range_dep']['dlat']
+            dlon = params['discretization']['range_dep']['dlon']
+            if recycle is True:
+                print("--> WARNING: Assuming the ECMWF ERA 5 descriptions "
+                      "for this area have already been downloaded.")
+                print("    These profiles should be manually put in output/ecmwf.")
+            rng_dep_ecmwf(year, dlat, dlon, dh, h1, h2, alts, clim_params,
+                          all_comb, sou_pos, sta_pos, out_path, recycle == True)
         else:
             print("-> HSM14+MSIS2.0 atmospheric descriptions")
             dlat = params['discretization']['range_dep']['dlat']
