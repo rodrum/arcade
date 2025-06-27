@@ -60,7 +60,7 @@ RUN sed -i "s|	ifort checkhwm14.f90 hwm14.f90 -o check.opt.exe|#	ifort checkhwm1
     
 # Get infraGA
 RUN git clone -b master https://github.com/LANL-Seismoacoustics/infraGA.git && \
-    mv infraGA infraGA-master
+    mv infraGA/infraga infraGA-master
     
 # Initialize the repos
 
