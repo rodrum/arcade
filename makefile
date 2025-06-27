@@ -1,4 +1,4 @@
-GFORT = gfortran
+GFORT = gfortran-8
 # locations of external necessary repos
 MSISE = ./repos/NRLMSIS2.0
 HWM = ./repos/HWM14
