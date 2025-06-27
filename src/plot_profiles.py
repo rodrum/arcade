@@ -3,11 +3,10 @@ Code to plot profiles automatically from '.met' files and output from
 'discretize.py'
 """
 
-import shutil
 import numpy as np
 import matplotlib.pyplot as plt
 from os.path import join
-from os import mkdir, stat
+from os import mkdir, stat, remove
 import cartopy.crs as ccrs
 from geographiclib.geodesic import Geodesic
 import matplotlib.image as mpimg
@@ -288,7 +287,7 @@ if plot_profiles is True and is_ncpag2s_model is False:
                 out_fig_path = join(path_figures, namefig)
                 plt.savefig(out_fig_path, dpi=300, bbox_inches='tight')
 
-                shutil.remove(in_fig_path)
+                os.remove(in_fig_path)
                 
                 plt.close(fig) 
                 profile_num += 1
@@ -379,7 +378,7 @@ if plot_profiles is True and is_ncpag2s_model is False:
                 out_fig_path = join(path_figures, namefig)
                 plt.savefig(out_fig_path, dpi=300, bbox_inches='tight')
 
-                shutil.remove(in_fig_path)
+                os.remove(in_fig_path)
 
                 plt.close(fig) 
                 profile_num += 1
@@ -602,7 +601,7 @@ if plot_profiles is True and is_ncpag2s_model is False:
                 dpi=300, bbox_inches='tight'
                 )
 
-            shutil.remove(in_fig_path)
+            os.remove(in_fig_path)
 
             profile_num += 1
 else:
