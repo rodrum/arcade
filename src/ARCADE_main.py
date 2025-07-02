@@ -104,24 +104,23 @@ def get_profiles(pert_flag=False, mix_flag=False):
         sta_name = stations_name[ista]
         prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}" \
                     +f"{end_str}"
-        prof_name_1 = f"../output/profiles/1_{prof_name}"
-        print(prof_name_1)
-        if stat(prof_name_1).st_size > 0:  # if file is not empty
-            profiles.append((
-                sta_lat, sta_lon,
-                sou_lat, sou_lon,
-                sta_name, prof_name))
-            print(f"   > {prof_name} added.")
-        else:  # file is empty, default to normal case
-            prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
-            if pert_flag is True: # overwrite as mix
-                prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}_mix.met"
-            profiles.append((
-                sta_lat, sta_lon,
-                sou_lat, sou_lon,
-                sta_name, prof_name))
-            print("Using profile without perturbation")
-            print(f"   > {prof_name} added.")
+#        prof_name_1 = f"../output/profiles/1_{prof_name}"
+#        if stat(prof_name_1).st_size > 0:  # if file is not empty
+#            profiles.append((
+#                sta_lat, sta_lon,
+#                sou_lat, sou_lon,
+#                sta_name, prof_name))
+#            print(f"   > {prof_name} added.")
+#        else:  # file is empty, default to normal case
+#            prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
+#            if pert_flag is True: # overwrite as mix
+#                prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}_mix.met"
+       profiles.append((
+           sta_lat, sta_lon,
+           sou_lat, sou_lon,
+           sta_name, prof_name))
+       # print("Using profile without perturbation")
+       print(f"   > {prof_name} added.")
     return profiles
 
 def get_profiles_rngdep():
@@ -1046,7 +1045,7 @@ def wrap_and_save(config):
             sou_name = sou_name[0]
 
         sta_name = config['discretization']['sta_name']
-        if len(sta_name)>3:
+        if len(sta_name)>=3:
             sta_name = sta_name[0]+"_"+sta_name[1]+"_"+sta_name[2]+"etal"
         elif len(sta_name) == 2:
             sta_name = sta_name[0]+"_"+sta_name[1]

@@ -15,4 +15,3 @@ dependencies:
   - cartopy
   - eccodes
   - cdsapi
-prefix: /Users/rodrigo/miniconda3/envs/arcade
