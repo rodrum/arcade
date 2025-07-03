@@ -71,7 +71,7 @@ def ang_dist(phi1, phi2, rad=False):
         mid_p = phi1 - ang_d/2.0  # weird, why phi1? works if mid_p can be < 0
     return ang_d*swap, mid_p
 
-def get_profiles(pert_flag=False, mix_flag=False):
+def get_profiles(doys, pert_flag=False, mix_flag=False):
     """
     Returns: (sta_lat, sta_lon, sou_lat, sou_lon, prof_name)
     where
@@ -84,7 +84,7 @@ def get_profiles(pert_flag=False, mix_flag=False):
     print("\n[get_profiles] Adding profiles to list...")
     profiles = []
     secs        = config['discretization']['sec']
-    doys        = config['discretization']['doys']
+    #doys        = config['discretization']['doys']
     sources     = config['discretization']['sou_pos']
     stations    = config['discretization']['sta_pos']
     stations_name = config['discretization']['sta_name']
@@ -123,7 +123,7 @@ def get_profiles(pert_flag=False, mix_flag=False):
        print(f"   > {prof_name} added.")
     return profiles
 
-def get_profiles_rngdep():
+def get_profiles_rngdep(doys):
     """
     Returns: (sta_lat, sta_lon, sou_lat, sou_lon, prof_name)
     where
@@ -139,7 +139,7 @@ def get_profiles_rngdep():
     print("\n[get_profiles_rngdep] Adding profiles to list...")
     profiles = []
     secs        = config['discretization']['sec']
-    doys        = config['discretization']['doys']
+    #doys        = config['discretization']['doys']
     sources     = config['discretization']['sou_pos']
     stations    = config['discretization']['sta_pos']
     stations_name = config['discretization']['sta_name']
@@ -1159,6 +1159,16 @@ if __name__ == '__main__':
 
     perc_cpu        = config['launch']['perc_cpu']
 
+    doys = params['discretization']['doys']
+    doy_step = params['discretization']['doy_step']
+    # Option of writing a [start, stop] and setting a doy step to create a
+    # list as in [1, 2,..., 365] for whole year or long time intervals
+    if doy_step > 0:
+        if len(doys) == 2:
+            doys = np.arange(int(float(doys[0])),
+                             int(float(doys[1]))+doy_step,
+                             doy_step)
+
     if use_rng_dep is True:
         profiles = []
         lons = None
@@ -1169,7 +1179,7 @@ if __name__ == '__main__':
         elif config['atmospheric_model']['type'] == 'ncpag2s':
             lons = np.loadtxt("../output/profiles/ncpag2s/lons.dat")
             lats = np.loadtxt("../output/profiles/ncpag2s/lats.dat")
-        profiles = get_profiles_rngdep()
+        profiles = get_profiles_rngdep(doys)
         # Run with multiprocessing =============================================
         num_cpu = int(mp.cpu_count()*perc_cpu)
         pool = mp.Pool(num_cpu)
@@ -1182,8 +1192,9 @@ if __name__ == '__main__':
     else:
         profiles = []
         profiles = get_profiles(
+            doys,
             pert_flag = use_pert,
-            mix_flag  = config['atmospheric_model']['type'] == 'hybrid'
+            mix_flag  = config['atmospheric_model']['type'] == 'hybrid',
         )
 
         # Run with multiprocessing =================================================
