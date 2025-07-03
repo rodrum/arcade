@@ -14,7 +14,7 @@ import toml
 import datetime
 from itertools import product
 
-def main_rng_ind():
+def main_rng_ind(doys):
     config = toml.load("../input/config.toml")
     #=== load levels 1/to/137
     levels_file = join("../input", 'ECMWF - L137 model level definitions.csv')
@@ -31,7 +31,7 @@ def main_rng_ind():
     output_dir = "../output/ecmwf"
     year    = config['discretization']['year'][0]  # NOTE: one year
     secs    = config['discretization']['sec']
-    doys    = config['discretization']['doys']
+    # doys    = config['discretization']['doys']
     sources  = config['discretization']['sou_pos']
     stations = config['discretization']['sta_pos']
     all_comb = product(secs, doys, range(len(sources)), range(len(stations)))
@@ -160,7 +160,7 @@ def main_rng_ind():
                     av_mer[lvl]
                     ))
 
-def main_rng_dep():
+def main_rng_dep(doys):
     config = toml.load("../input/config.toml")
     #=== load levels 1/to/137
     levels_file = join("../input", 'ECMWF - L137 model level definitions.csv')
@@ -176,7 +176,7 @@ def main_rng_dep():
     #>>> from 'request_era5_profiles.py'
     output_dir = "../output/ecmwf"
     year = config['discretization']['year'][0]  # NOTE: one year
-    secs = config['discretization']['sec']
+    # secs = config['discretization']['sec']
     doys = config['discretization']['doys']
     #=== source, receiver, discretization along... 
     sources  = config['discretization']['sou_pos']
@@ -312,7 +312,16 @@ def main_rng_dep():
 
 if __name__ == '__main__':
     config = toml.load("../input/config.toml")
+    doys = config['discretization']['doys']
+    doy_step = config['discretization']['doy_step']
+    # Option of writing a [start, stop] and setting a doy step to create a
+    # list as in [1, 2,..., 365] for whole year or long time intervals
+    if doy_step > 0:
+        if len(doys) == 2:
+            doys = np.arange(int(float(doys[0])),
+                             int(float(doys[1]))+doy_step,
+                             doy_step)
     if config['atmospheric_model']['prop_model'] == 'range_ind':
-        main_rng_ind()
+        main_rng_ind(doys)
     elif config['atmospheric_model']['prop_model'] == 'range_dep':
-        main_rng_dep()
+        main_rng_dep(doys)

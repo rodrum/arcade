@@ -41,6 +41,14 @@ def main():
     config = toml.load("../input/config.toml")
     year = config['discretization']['year'][0]  # NOTE: one year
     doys = config['discretization']['doys']
+    doy_step = config['discretization']['doy_step']
+    # Option of writing a [start, stop] and setting a doy step to create a
+    # list as in [1, 2,..., 365] for whole year or long time intervals
+    if doy_step > 0:
+        if len(doys) == 2:
+            doys = np.arange(int(float(doys[0])),
+                             int(float(doys[1]))+doy_step,
+                             doy_step)
     secs = config['discretization']['sec']
     for sec in secs:
         for doy in doys:

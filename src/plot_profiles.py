@@ -31,6 +31,14 @@ path_figures    = "./output/figures"
 
 secs        = config['discretization']['sec']
 doys        = config['discretization']['doys']
+doy_step = config['discretization']['doy_step']
+# Option of writing a [start, stop] and setting a doy step to create a
+# list as in [1, 2,..., 365] for whole year or long time intervals
+if doy_step > 0:
+    if len(doys) == 2:
+        doys = np.arange(int(float(doys[0])),
+                         int(float(doys[1]))+doy_step,
+                         doy_step)
 sources     = config['discretization']['sou_pos']
 stations    = config['discretization']['sta_pos']
 

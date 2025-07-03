@@ -20,6 +20,14 @@ pert_hgt = 40 # km
 #   (this means we already run 'discretize.py') 
 secs = config['discretization']['sec']
 doys = config['discretization']['doys']
+doy_step = config['discretization']['doy_step']
+# Option of writing a [start, stop] and setting a doy step to create a
+# list as in [1, 2,..., 365] for whole year or long time intervals
+if doy_step > 0:
+    if len(doys) == 2:
+        doys = np.arange(int(float(doys[0])),
+                         int(float(doys[1]))+doy_step,
+                         doy_step)
 sources  = config['discretization']['sou_pos']
 stations = config['discretization']['sta_pos']
 all_comb = product(secs, doys, range(len(sources)), range(len(stations)))
