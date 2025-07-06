@@ -1159,8 +1159,8 @@ if __name__ == '__main__':
 
     perc_cpu        = config['launch']['perc_cpu']
 
-    doys = params['discretization']['doys']
-    doy_step = params['discretization']['doy_step']
+    doys = config['discretization']['doys']
+    doy_step = config['discretization']['doy_step']
     # Option of writing a [start, stop] and setting a doy step to create a
     # list as in [1, 2,..., 365] for whole year or long time intervals
     if doy_step > 0:
