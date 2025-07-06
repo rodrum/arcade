@@ -115,12 +115,12 @@ def get_profiles(doys, pert_flag=False, mix_flag=False):
 #            prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}.met"
 #            if pert_flag is True: # overwrite as mix
 #                prof_name = f"prof_{sec:05d}_{doy:03d}_{isou+1:05d}_{ista+1:04d}_mix.met"
-       profiles.append((
-           sta_lat, sta_lon,
-           sou_lat, sou_lon,
-           sta_name, prof_name))
-       # print("Using profile without perturbation")
-       print(f"   > {prof_name} added.")
+        profiles.append((
+            sta_lat, sta_lon,
+            sou_lat, sou_lon,
+            sta_name, prof_name))
+        # print("Using profile without perturbation")
+        print(f"   > {prof_name} added.")
     return profiles
 
 def get_profiles_rngdep(doys):
