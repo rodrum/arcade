@@ -44,7 +44,7 @@ def ang_dist(phi1, phi2, rad=False):
     2019/08/15
     """
     print("\n[ang_dist]")
-    # if any of the angles is np.NaN, skip
+    # if any of the angles is np.nan, skip
     if np.isnan(phi1) or np.isnan(phi2):
         print("** W: Input angles were not numbers")
         print("      >> phi1={0:7.3f}, phi2={1:7.3F}".format(phi1, phi2))
@@ -920,10 +920,10 @@ def calculate_profiles(my_profiles, arcade_conf, atmo_type, profInd=0, rngdep=Fa
                         num2_s, num2_t = strato_tup2[0], thermo_tup2[0]
                         # So the idea below is to have a flag in the table as NaN
                         # to know if there are strato/thermo arrivals or not
-                        bphi1_s = strato_tup1[3] if num1_s != 0 else np.NaN
-                        bphi1_t = thermo_tup1[3] if num1_t != 0 else np.NaN
-                        bphi2_s = strato_tup2[3] if num2_s != 0 else np.NaN
-                        bphi2_t = thermo_tup2[3] if num2_t != 0 else np.NaN
+                        bphi1_s = strato_tup1[3] if num1_s != 0 else np.nan
+                        bphi1_t = thermo_tup1[3] if num1_t != 0 else np.nan
+                        bphi2_s = strato_tup2[3] if num2_s != 0 else np.nan
+                        bphi2_t = thermo_tup2[3] if num2_t != 0 else np.nan
                         num_s_tot = num1_s+num2_s
                         num_t_tot = num1_t+num2_t
                         print("\nFinal azimuths:")
