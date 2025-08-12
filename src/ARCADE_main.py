@@ -71,6 +71,24 @@ def ang_dist(phi1, phi2, rad=False):
         mid_p = phi1 - ang_d/2.0  # weird, why phi1? works if mid_p can be < 0
     return ang_d*swap, mid_p
 
+
+def print_baz(baz, ref_phi):
+    """
+    Return baz dev depending on ref_phi
+    """
+    if np.isnan(baz) is True:
+        return np.nan
+    else:
+        if np.cos(ref_phi*np.pi/180)>0 and np.sin(ref_phi*np.pi/180)<0:
+            if np.cos(baz*np.pi/180)>0 and np.sin(baz*np.pi/180)>0:
+                return -(360 - ref_phi + baz)
+        elif np.cos(ref_phi*np.pi/180)>0 and np.sin(ref_phi*np.pi/180)>0:
+            if np.cos(baz*np.pi/180)>0 and np.sin(baz*np.pi/180)<0:
+                return -(baz - 360 - ref_phi)
+        else:
+            return ref_phi - baz
+
+
 def get_profiles(doys, pert_flag=False, mix_flag=False):
     """
     Returns: (sta_lat, sta_lon, sou_lat, sou_lon, prof_name)
@@ -965,8 +983,10 @@ def calculate_profiles(my_profiles, arcade_conf, atmo_type, profInd=0, rngdep=Fa
                 _, deviated_baz_s = ang_dist(bphi1_s, bphi2_s, rad=False)
                 _, deviated_baz_t = ang_dist(bphi1_t, bphi2_t, rad=False)
                 # true baz - observed (deviated) baz
-                baz_dev_s, _ = ang_dist(deviated_baz_s, baz, rad=False)
-                baz_dev_t, _ = ang_dist(deviated_baz_t, baz, rad=False)
+                #baz_dev_s, _ = ang_dist(deviated_baz_s, baz, rad=False)
+                #baz_dev_t, _ = ang_dist(deviated_baz_t, baz, rad=False)
+                baz_dev_s = print_baz(baz_dev_s, baz)
+                baz_dev_t = print_baz(baz_dev_t, baz)
                 # Standard deviations
                 num1_s, num1_t = strato_tup1[0], thermo_tup1[0]
                 num2_s, num2_t = strato_tup2[0], thermo_tup2[0]
