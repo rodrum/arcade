@@ -76,7 +76,7 @@ def print_baz(baz, ref_phi):
     """
     Return baz dev depending on ref_phi
     """
-    if np.isnan(baz) is True:
+    if np.isnan(baz):
         return np.nan
     else:
         if np.cos(ref_phi*np.pi/180)>0 and np.sin(ref_phi*np.pi/180)<0:
@@ -990,6 +990,8 @@ def calculate_profiles(my_profiles, arcade_conf, atmo_type, profInd=0, rngdep=Fa
                 # Standard deviations
                 num1_s, num1_t = strato_tup1[0], thermo_tup1[0]
                 num2_s, num2_t = strato_tup2[0], thermo_tup2[0]
+                num_s_tot = num1_s+num2_s
+                num_t_tot = num1_t+num2_t
                 std_av_s_1 = strato_tup1[4]
                 std_av_s_2 = strato_tup2[4]
                 std_av_t_1 = thermo_tup1[4]
