@@ -988,23 +988,23 @@ def calculate_profiles(my_profiles, arcade_conf, atmo_type, profInd=0, rngdep=Fa
                 baz_dev_s = print_baz(deviated_baz_s, baz)
                 baz_dev_t = print_baz(deviated_baz_t, baz)
                 # Standard deviations
-                num1_s, num1_t = strato_tup1[0], thermo_tup1[0]
-                num2_s, num2_t = strato_tup2[0], thermo_tup2[0]
-                num_s_tot = num1_s+num2_s
-                num_t_tot = num1_t+num2_t
+                #num_s_tot = num1_s+num2_s
+                #num_t_tot = num1_t+num2_t
                 std_av_s_1 = strato_tup1[4]
                 std_av_s_2 = strato_tup2[4]
                 std_av_t_1 = thermo_tup1[4]
                 std_av_t_2 = thermo_tup1[4]
-                if num_s_tot>0 and num_t_tot>0:
+                s_arr_flag = num_s_tot>0 and baz_dev_s is True
+                t_arr_flag = num_t_tot>0 and baz_dev_t is True
+                if s_arr_flag and t_arr_flag:
                     tot_baz_dev = (num_s_tot*baz_dev_s+num_t_tot*baz_dev_t)/(num_s_tot+num_t_tot)
                     std_av_s = np.sqrt((num1_s*std_av_s_1**2+num2_s*std_av_s_2**2)/(num1_s+num2_s))
                     std_av_t = np.sqrt((num1_t*std_av_t_1**2+num2_t*std_av_t_2**2)/(num1_t+num2_t))
                     std_av = np.sqrt((num_s_tot*std_av_s**2+num_t_tot*std_av_t**2)/(num_s_tot+num_t_tot))
-                elif num_s_tot>0:
+                elif s_arr_flag:
                     tot_baz_dev = baz_dev_s
                     std_av = np.sqrt((num1_s*std_av_s_1**2+num2_s*std_av_s_2**2)/(num1_s+num2_s))
-                elif num_t_tot>0:
+                elif t_arr_flag:
                     tot_baz_dev = baz_dev_t
                     std_av = np.sqrt((num1_t*std_av_t_1**2+num2_t*std_av_t_2**2)/(num1_t+num2_t))
                 else:
