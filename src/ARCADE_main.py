@@ -985,8 +985,8 @@ def calculate_profiles(my_profiles, arcade_conf, atmo_type, profInd=0, rngdep=Fa
                 # true baz - observed (deviated) baz
                 #baz_dev_s, _ = ang_dist(deviated_baz_s, baz, rad=False)
                 #baz_dev_t, _ = ang_dist(deviated_baz_t, baz, rad=False)
-                baz_dev_s = print_baz(baz_dev_s, baz)
-                baz_dev_t = print_baz(baz_dev_t, baz)
+                baz_dev_s = print_baz(deviated_baz_s, baz)
+                baz_dev_t = print_baz(deviated_baz_t, baz)
                 # Standard deviations
                 num1_s, num1_t = strato_tup1[0], thermo_tup1[0]
                 num2_s, num2_t = strato_tup2[0], thermo_tup2[0]
