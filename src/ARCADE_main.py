@@ -37,56 +37,61 @@ from itertools import product
 gps2dist_azimuth = ob.geodetics.base.gps2dist_azimuth
 
 
-def ang_dist(phi1, phi2, rad=False):
+def midpoint(phi1, phi2):
     """
     Function to calculate the distance and middle
     point of two angles.
     2019/08/15
+
+    Parameters
+    ----------
+    :phi1: float
+           angle in degrees
+    :phi2: float
+           angle in degrees
     """
-    print("\n[ang_dist]")
+    print("\n[midpoint]")
     # if any of the angles is np.nan, skip
     if np.isnan(phi1) or np.isnan(phi2):
         print("** W: Input angles were not numbers")
         print("      >> phi1={0:7.3f}, phi2={1:7.3F}".format(phi1, phi2))
         return np.nan, np.nan
-    # thinking in degrees
-    if rad == True:
-        phi1 *= 180.0/np.pi
-        phi2 *= 180.0/np.pi
-    # negative angles will be changed to positive value
-    phi1 = phi1+360 if phi1 < 0 else phi1
-    phi2 = phi2+360 if phi2 < 0 else phi2
-    # sort them and redefine so phi1 < phi2
-    swap = 1
-    if phi1 > phi2:
-        phi1, phi2 = phi2, phi1
-        swap = -1
-    print("-- phi1={0:7.3f}, phi2={1:7.3f}".format(phi1, phi2))
-    # calculate distance and middlepoint
-    if phi2 < 180.0 + phi1:
-        ang_d = phi2-phi1
-        mid_p = phi1 + ang_d/2.0
     else:
-        ang_d = 360.0 - (phi2-phi1)
-        mid_p = phi1 - ang_d/2.0  # weird, why phi1? works if mid_p can be < 0
-    return ang_d*swap, mid_p
+        mid_p = phi1 + np.abs(phi1-phi2)/2
+        if mid_p < 0:
+            mid_p += 360
+        print(f"-- I: mid angle={mid_p:.1f}")
+        return mid_p
 
 
-def print_baz(baz, ref_phi):
+def baz_dev(true_baz, calc_baz):
     """
-    Return baz dev depending on ref_phi
+    Parameters
+    ----------
+    :true_baz: float
+           angle in degrees
+    :calc_baz: float
+           angle in degrees
     """
-    if np.isnan(baz):
-        return np.nan
+    print("\n[baz_dev]")
+    # if any of the angles is np.nan, skip
+    if np.isnan(true_baz) or np.isnan(calc_baz):
+        print("** W: Input angles were not numbers")
+        print("      >> true_baz={0:7.3f}, calc_baz={1:7.3F}".format(true_baz, calc_baz))
+        return np.nan, np.nan
     else:
-        if np.cos(ref_phi*np.pi/180)>0 and np.sin(ref_phi*np.pi/180)<0:
-            if np.cos(baz*np.pi/180)>0 and np.sin(baz*np.pi/180)>0:
-                return -(360 - ref_phi + baz)
-        elif np.cos(ref_phi*np.pi/180)>0 and np.sin(ref_phi*np.pi/180)>0:
-            if np.cos(baz*np.pi/180)>0 and np.sin(baz*np.pi/180)<0:
-                return -(baz - 360 - ref_phi)
-        else:
-            return ref_phi - baz
+        print(f"-- I: baz dev={true_baz-calc_baz:.1f}")
+        if np.cos(true_baz*np.pi/180)>0 and np.sin(true_baz*np.pi/180)<0:
+            # e.g., true_baz=359
+            if np.cos(calc_baz*np.pi/180)>0 and np.sin(calc_baz*np.pi/180)>0:
+                # e.g., calc_baz=1
+                return true_baz - calc_baz - 360  # e.g., return -2
+        if np.cos(true_baz*np.pi/180)>0 and np.sin(true_baz*np.pi/180)>0:
+            # e.g., true_baz=1
+            if np.cos(calc_baz*np.pi/180)>0 and np.sin(calc_baz*np.pi/180)<0:
+                # e.g., calc_baz=359
+                return true_baz - calc_baz + 360  # e.g., return +2
+        return true_baz - calc_baz
 
 
 def get_profiles(doys, pert_flag=False, mix_flag=False):
@@ -980,22 +985,18 @@ def calculate_profiles(my_profiles, arcade_conf, atmo_type, profInd=0, rngdep=Fa
                 print("Saving azimuth deviation")
                 print("========================")
                 # deviated_az = (phi_min+phi_max)*0.5
-                _, deviated_baz_s = ang_dist(bphi1_s, bphi2_s, rad=False)
-                _, deviated_baz_t = ang_dist(bphi1_t, bphi2_t, rad=False)
+                deviated_baz_s = midpoint(bphi1_s, bphi2_s)
+                deviated_baz_t = midpoint(bphi1_t, bphi2_t)
                 # true baz - observed (deviated) baz
-                #baz_dev_s, _ = ang_dist(deviated_baz_s, baz, rad=False)
-                #baz_dev_t, _ = ang_dist(deviated_baz_t, baz, rad=False)
-                baz_dev_s = print_baz(deviated_baz_s, baz)
-                baz_dev_t = print_baz(deviated_baz_t, baz)
+                baz_dev_t = baz_dev(baz, deviated_baz_t)
+                baz_dev_s = baz_dev(baz, deviated_baz_s)
                 # Standard deviations
-                #num_s_tot = num1_s+num2_s
-                #num_t_tot = num1_t+num2_t
                 std_av_s_1 = strato_tup1[4]
                 std_av_s_2 = strato_tup2[4]
                 std_av_t_1 = thermo_tup1[4]
                 std_av_t_2 = thermo_tup1[4]
-                s_arr_flag = num_s_tot>0 and baz_dev_s is True
-                t_arr_flag = num_t_tot>0 and baz_dev_t is True
+                s_arr_flag = num_s_tot>0 and not np.isnan(baz_dev_s)
+                t_arr_flag = num_t_tot>0 and not np.isnan(baz_dev_t)
                 if s_arr_flag and t_arr_flag:
                     tot_baz_dev = (num_s_tot*baz_dev_s+num_t_tot*baz_dev_t)/(num_s_tot+num_t_tot)
                     std_av_s = np.sqrt((num1_s*std_av_s_1**2+num2_s*std_av_s_2**2)/(num1_s+num2_s))

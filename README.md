@@ -78,10 +78,11 @@ If choosing to install on your computer, you will need to manually deal with ins
 Ensure that you have:
 
 - Fortran and c++ compilers (check `makefile` to define Fortran compiler in first line)
+  - For HWM14 you'll need fftw3 (libfftw3-dev in Ubuntu; fftw-3 with port in MacOS).
   - For NRMLSIS2.0 you'll need gfortran version 4.8.5 or 6.3.0 or 8.1.0. 
     Ubuntu 24.04, the gfortran version 8.x are not available, but it is possible
-    to install them via `conda`, through the `conda-forge` repos (see below).
-  - For HWM14 you'll need fftw3 (libfftw3-dev in Ubuntu; fftw-3 with port in MacOS).
+    to install them via `conda`, through the `conda-forge` repos (included in file
+    `environment_cross_clatform.yml`, see below).
 - Python 3.9 Conda: follow instructions here https://docs.conda.io/en/latest/miniconda.html
   - Create the `arcade` envinroment with `conda env create -f environment_cross_platform.yml`    
   - When running the calculations, activate the environment with `conda activate arcade`.
