@@ -82,16 +82,23 @@ def baz_dev(true_baz, calc_baz):
         return np.nan
     else:
         print(f"-- I: baz dev={true_baz-calc_baz:.1f}")
-        if np.cos(true_baz*np.pi/180)>0 and np.sin(true_baz*np.pi/180)<0:
-            # e.g., true_baz=359
-            if np.cos(calc_baz*np.pi/180)>0 and np.sin(calc_baz*np.pi/180)>0:
-                # e.g., calc_baz=1
-                return true_baz - calc_baz - 360  # e.g., return -2
-        elif np.cos(true_baz*np.pi/180)>0 and np.sin(true_baz*np.pi/180)>0:
-            # e.g., true_baz=1
-            if np.cos(calc_baz*np.pi/180)>0 and np.sin(calc_baz*np.pi/180)<0:
-                # e.g., calc_baz=359
-                return true_baz - calc_baz + 360  # e.g., return +2
+
+        # e.g., true_baz=359
+        case_1a = np.cos(true_baz*np.pi/180)>0 and np.sin(true_baz*np.pi/180)<0
+        # e.g., calc_baz=1
+        case_1b = np.cos(calc_baz*np.pi/180)>0 and np.sin(calc_baz*np.pi/180)>0
+        case_1 = case_1a and case_1b
+
+        # e.g., true_baz=1
+        case_2a = np.cos(true_baz*np.pi/180)>0 and np.sin(true_baz*np.pi/180)>0
+        # e.g., calc_baz=359
+        case_2b = np.cos(calc_baz*np.pi/180)>0 and np.sin(calc_baz*np.pi/180)<0
+        case_2 = case_2a and case_2b
+
+        if case_1 is True:
+            return true_baz - calc_baz - 360  # e.g., return -2
+        elif case_2 is True:
+            return true_baz - calc_baz + 360  # e.g., return +2
         else:
             return true_baz - calc_baz
 
