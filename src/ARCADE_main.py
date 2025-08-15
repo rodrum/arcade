@@ -54,12 +54,13 @@ def midpoint(phi1, phi2):
     # if any of the angles is np.nan, skip
     if np.isnan(phi1) or np.isnan(phi2):
         print("** W: Input angles were not numbers")
-        print("      >> phi1={0:7.3f}, phi2={1:7.3F}".format(phi1, phi2))
-        return np.nan, np.nan
+        print("      >> phi1={0:7.3f}, phi2={1:7.3f}".format(phi1, phi2))
+        return np.nan
     else:
         mid_p = phi1 + np.abs(phi1-phi2)/2
         if mid_p < 0:
             mid_p += 360
+        print(f"-- I: phi1={phi1:7.3f}, phi2={phi2:7.3f}")
         print(f"-- I: mid angle={mid_p:.1f}")
         return mid_p
 
@@ -77,8 +78,8 @@ def baz_dev(true_baz, calc_baz):
     # if any of the angles is np.nan, skip
     if np.isnan(true_baz) or np.isnan(calc_baz):
         print("** W: Input angles were not numbers")
-        print("      >> true_baz={0:7.3f}, calc_baz={1:7.3F}".format(true_baz, calc_baz))
-        return np.nan, np.nan
+        print("      >> true_baz={0:7.3f}, calc_baz={1:7.3f}".format(true_baz, calc_baz))
+        return np.nan
     else:
         print(f"-- I: baz dev={true_baz-calc_baz:.1f}")
         if np.cos(true_baz*np.pi/180)>0 and np.sin(true_baz*np.pi/180)<0:
@@ -86,12 +87,13 @@ def baz_dev(true_baz, calc_baz):
             if np.cos(calc_baz*np.pi/180)>0 and np.sin(calc_baz*np.pi/180)>0:
                 # e.g., calc_baz=1
                 return true_baz - calc_baz - 360  # e.g., return -2
-        if np.cos(true_baz*np.pi/180)>0 and np.sin(true_baz*np.pi/180)>0:
+        elif np.cos(true_baz*np.pi/180)>0 and np.sin(true_baz*np.pi/180)>0:
             # e.g., true_baz=1
             if np.cos(calc_baz*np.pi/180)>0 and np.sin(calc_baz*np.pi/180)<0:
                 # e.g., calc_baz=359
                 return true_baz - calc_baz + 360  # e.g., return +2
-        return true_baz - calc_baz
+        else:
+            return true_baz - calc_baz
 
 
 def get_profiles(doys, pert_flag=False, mix_flag=False):
@@ -988,15 +990,17 @@ def calculate_profiles(my_profiles, arcade_conf, atmo_type, profInd=0, rngdep=Fa
                 deviated_baz_s = midpoint(bphi1_s, bphi2_s)
                 deviated_baz_t = midpoint(bphi1_t, bphi2_t)
                 # true baz - observed (deviated) baz
-                baz_dev_t = baz_dev(baz, deviated_baz_t)
                 baz_dev_s = baz_dev(baz, deviated_baz_s)
+                baz_dev_t = baz_dev(baz, deviated_baz_t)
                 # Standard deviations
                 std_av_s_1 = strato_tup1[4]
                 std_av_s_2 = strato_tup2[4]
                 std_av_t_1 = thermo_tup1[4]
                 std_av_t_2 = thermo_tup1[4]
-                s_arr_flag = num_s_tot>0 and not np.isnan(baz_dev_s)
-                t_arr_flag = num_t_tot>0 and not np.isnan(baz_dev_t)
+                #s_arr_flag = num_s_tot>0 and not np.isnan(baz_dev_s)
+                #t_arr_flag = num_t_tot>0 and not np.isnan(baz_dev_t)
+                s_arr_flag = num_s_tot>0
+                t_arr_flag = num_t_tot>0
                 if s_arr_flag and t_arr_flag:
                     tot_baz_dev = (num_s_tot*baz_dev_s+num_t_tot*baz_dev_t)/(num_s_tot+num_t_tot)
                     std_av_s = np.sqrt((num1_s*std_av_s_1**2+num2_s*std_av_s_2**2)/(num1_s+num2_s))
