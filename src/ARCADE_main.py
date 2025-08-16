@@ -53,7 +53,7 @@ def midpoint(phi1, phi2):
     print("\n[midpoint]")
     # if any of the angles is np.nan, skip
     if np.isnan(phi1) or np.isnan(phi2):
-        print("** W: Nan found in input angles")
+        print("** W: Input angles were not numbers")
         print("      >> phi1={0:7.3f}, phi2={1:7.3f}".format(phi1, phi2))
         return np.nan
     else:
@@ -61,7 +61,7 @@ def midpoint(phi1, phi2):
         if mid_p < 0:
             mid_p += 360
         print(f"-- I: phi1={phi1:7.3f}, phi2={phi2:7.3f}")
-        print(f"-- I: mid angle={mid_p:.3f}")
+        print(f"-- I: mid angle={mid_p:.1f}")
         return mid_p
 
 
@@ -77,12 +77,11 @@ def baz_dev(true_baz, calc_baz):
     print("\n[baz_dev]")
     # if any of the angles is np.nan, skip
     if np.isnan(true_baz) or np.isnan(calc_baz):
-        print("** W: Nan found in input angles")
+        print("** W: Input angles were not numbers")
         print("      >> true_baz={0:7.3f}, calc_baz={1:7.3f}".format(true_baz, calc_baz))
         return np.nan
     else:
-        print(f"-- I: true_baz={true_baz:.3f}, calc_baz={calc_baz:.3f}")
-        print(f"      ==> baz dev={true_baz-calc_baz:.3f}")
+        print(f"-- I: baz dev={true_baz-calc_baz:.1f}")
 
         # e.g., true_baz=359
         case_1a = np.cos(true_baz*np.pi/180)>0 and np.sin(true_baz*np.pi/180)<0
@@ -96,11 +95,9 @@ def baz_dev(true_baz, calc_baz):
         case_2b = np.cos(calc_baz*np.pi/180)>0 and np.sin(calc_baz*np.pi/180)<0
         case_2 = case_2a and case_2b
 
-        if case_1 is True:
-            print("-- I: true_baz 4th quadrant, while calc_baz 1st")
+        if case_1 is np.True_:
             return true_baz - calc_baz - 360  # e.g., return -2
-        elif case_2 is True:
-            print("-- I: true_baz 1st quadrant, while calc_baz 4th")
+        elif case_2 is np.True_:
             return true_baz - calc_baz + 360  # e.g., return +2
         else:
             return true_baz - calc_baz
