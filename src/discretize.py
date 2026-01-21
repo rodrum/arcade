@@ -549,7 +549,7 @@ def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path
         sta_lat, sta_lon = sta_pos[ista][0], sta_pos[ista][1]
 
         # Transform year-doy-sec to YYYY-MM-DD HOUR
-        this_date = datetime(year, 1, 1) + timedelta(doy - 1)
+        this_date = datetime(year, 1, 1) + timedelta(int(doy) - 1)
         this_date_str = f"{this_date.year:d}-{this_date.month:02d}-{this_date.day:02d}"
         this_hour_str = f"{int(sec/3600):d}"
 
@@ -657,7 +657,7 @@ def rng_dep_ncpag2s(year, dlat, dlon, all_comb, sou_pos, sta_pos, path_ncpag2s, 
 
     for sec, doy, isou, ista in all_comb:
         # Transform year-doy-sec to YYYY-MM-DD HOUR
-        this_date = datetime(year, 1, 1) + timedelta(doy - 1)
+        this_date = datetime(year, 1, 1) + timedelta(int(doy) - 1)
         this_date_str = f"{this_date.year:d}-{this_date.month:02d}-{this_date.day:02d}"
         this_hour_str = f"{int(sec/3600):d}"
 

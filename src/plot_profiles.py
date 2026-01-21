@@ -3,6 +3,7 @@ Code to plot profiles automatically from '.met' files and output from
 'discretize.py'
 """
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from os.path import join

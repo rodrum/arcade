@@ -27,7 +27,7 @@ def main():
     if plot_arrivals is True:
         secs        = params['discretization']['sec']
         doys        = params['discretization']['doys']
-        doy_step = config['discretization']['doy_step']
+        doy_step = params['discretization']['doy_step']
         # Option of writing a [start, stop] and setting a doy step to create a
         # list as in [1, 2,..., 365] for whole year or long time intervals
         if doy_step > 0:

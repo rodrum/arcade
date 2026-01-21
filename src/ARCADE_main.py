@@ -548,6 +548,9 @@ def calculate_profiles(my_profiles, arcade_conf, atmo_type, profInd=0, rngdep=Fa
     bphi1_s, bphi1_t = 0, 0
     bphi2_s, bphi2_t = 0, 0
     num_s_tot, num_t_tot = 0, 0
+    # separated by stratospheric and thermospheric arrivals
+    num1_s, num1_t = 0, 0
+    num2_s, num2_t = 0, 0
     with open("../output/proc/"+out_file_name, 'w') as fout:
         with redirect_stdout(fout):
             print(f"\n[calculate_profiles] for {prof_name}")
