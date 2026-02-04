@@ -7,7 +7,7 @@ _Automated Rapid Climatological Azimuth Deviation Estimation_
 This project aims to understand the feasibility of a simplified rapid azimuth
 deviation prediction scheme for improving the source location when implementing
 an association and location cross-bearings, grid-search method like IMS\_vASC
-[Matoza et al., 2017].
+([Matoza et al., 2017](https://doi.org/10.1002/2016JB013356)).
 This implies using "offline", portable, and available for research purposes tools,
 so the calculations could be performed by any scientist in their personal
 workstation machine, but could also scale to a large research computation center.
@@ -26,10 +26,10 @@ basic model is range independent (spherically layered atmosphere), meaning that
 uses average atmospheric descriptions in height for a source to receiver (station)
 direction slice ('profile'). This case uses only climatologies to determine the
 properties of the atmosphere for a given datetime and profile. This case can be
-tuned to use "perturbed" climatological profiles (see De Negri and Matoza, 2023).
+tuned to use "perturbed" climatological profiles (see [De Negri and Matoza, 2023](https://doi.org/10.1029/2022JB025735)).
 
 The second range independent modeling type is a hybrid calculation that merges
-ECMWF ERA 5 descriptions for the lower ~80 km, with climatologies for the 
+[ECMWF ERA 5](https://www.ecmwf.int/en/forecasts/dataset/ecmwf-reanalysis-v5) descriptions for the lower ~80 km, with climatologies for the 
 upper atmosphere. This case needs internet connection, and could fail if
 the download process hangs. 
 
@@ -52,7 +52,7 @@ interesting cases.
 
 Additionally, the same range-independent/range-dependent models can now use
 NCPA-G2S atmospheric specifications, thanks to the work of C. Hetzer at
-LANL (see https://github.com/chetzer-ncpa/ncpag2s-clc).
+LANL (see [NCPAG2S](https://github.com/chetzer-ncpa/ncpag2s-clc)).
 
 ## Related publications to this project
 - De Negri, R. S., Matoza, R. S., Hupe, P., Le Pichon, A., Rose, K. R.,
@@ -92,13 +92,12 @@ Ensure that you have:
   
 ### External repositories
 
-The climatologies used are the Horizontal Wind Model (HWM14) [Drob et al., 2014] 
-to estimate horizonal winds in height, and NRLMSIS2.0 [Emmert et al., 2021] to 
+The climatologies used are the Horizontal Wind Model (HWM14) ([Drob et al., 2015](https://doi.org/10.1002/2014EA000089)) 
+to estimate horizonal winds in height, and NRLMSIS2.0 ([Emmert et al., 2020](https://doi.org/10.1029/2020EA001321)) to
 estimate other properties of the atmosphere in height, like density, temperature 
-and pressure. The 3D ray-tracing algorithm used is infraGA [Blom and Waxler, 2012].
+and pressure. The 3D ray-tracing algorithm used is infraGA ([Blom and Waxler, 2012](https://doi.org/10.1121/1.3699174)).
 Additionally, a very convenient interface to obtain the NCPA ground-to-space (NCPA-G2S)
-atmospheric descriptions has been recently made available by C. Hetzer
-(see https://github.com/chetzer-ncpa/ncpag2s-clc).
+atmospheric descriptions has been recently made available by [C. Hetzer](https://github.com/chetzer-ncpa/ncpag2s-clc).
 These descriptions are similar to the hybrid models, coupling reanalysis
 datasets and empirical climatologies automatically.
 They are now included as part of the possible tools to model the back-azimuth
@@ -117,15 +116,17 @@ the folder name should follow the `path` variable within
 Below are the instructions to access each one of the components.
 
 #### NRLMSIS2.0
-NRLMSIS 2.0 Code and all data samples used in this work are available at https://map.nrl.navy.mil/map/pub/nrl/NRLMSIS/NRLMSIS2.0
-The associated publication is __Emmert, J. T., Drob, D. P., Picone, J. M., Siskind, D. E., Jones, M., Mlynczak, M. G., et al. (2021). NRLMSIS 2.0: A whole-atmosphere empirical model of temperature and neutral species densities. Earth and Space Science, 8, e2020EA001321. https://doi.org/10.1029/2020EA001321__
+NRLMSIS 2.0 Code and all data samples used in this work are available [here](https://map.nrl.navy.mil/map/pub/nrl/NRLMSIS/NRLMSIS2.0).
+The associated publication is:
+- Emmert, J. T., Drob, D. P., Picone, J. M., Siskind, D. E., Jones, M., Mlynczak, M. G., et al. (2020). NRLMSIS 2.0: A whole-atmosphere empirical model of temperature and neutral species densities. Earth and Space Science, 8, e2020EA001321. https://doi.org/10.1029/2020EA001321
 
 
 #### HWM14
-Available to download from the supporting information of __Drob, D. P., Emmert, J. T., Meriwether, J. W., Makela, J. J., Doornbos, E., Conde, M., Hernandez, G., Noto, J., Zawdie, K. A., McDonald, S. E., et al. (2015), An update to the Horizontal Wind Model (HWM): The quiet time thermosphere, Earth and Space Science, 2, 301– 319, doi:10.1002/2014EA000089.__
+Available to download from the supporting information in:
+- Drob, D. P., Emmert, J. T., Meriwether, J. W., Makela, J. J., Doornbos, E., Conde, M., Hernandez, G., Noto, J., Zawdie, K. A., McDonald, S. E., et al. (2015), An update to the Horizontal Wind Model (HWM): The quiet time thermosphere, Earth and Space Science, 2, 301– 319, doi:10.1002/2014EA000089.
 
 #### infraGA/geoAC
-Available from the public seosmoacoustic repository of Los Alamos National Laboratory https://github.com/LANL-Seismoacoustics/infraGA
+Published and maintained by Philip Blom, from Los Alamos National Laboratory (LANL). Available from the public seosmoacoustic repository of LANL [here](https://github.com/LANL-Seismoacoustics/infraGA).
 
 #### NCPA-G2S
 Hetzer, C.H. (2024). "The NCPAG2S command line client". https://github.com/chetzer-ncpa/ncpag2s-clc. doi: 10.5281/zenodo.13345069.
@@ -134,18 +135,15 @@ Hetzer, C.H. (2024). "The NCPAG2S command line client". https://github.com/chetz
 In addition to the empirical climatologies (NRMSLSIS2.0/HWM14), you can also use hybrid atmospheric descriptions that are a combination of ERA 5 ECMWF below ~80 km and empirical climatologies at higher altitudes. These models were used to compare and validate the climatological estimations, but can still be used for realistic aproaches.
 
 #### CDSAPI Python module
-The hybrid models need the Climate Data Store (CDS) infrastructure and API module, `cdsapi`, provided by the European Centre for Medium-Range Weather Forecasts (ECMWF, https://www.ecmwf.int/). Please visit https://cds.climate.copernicus.eu/api-how-to to ensure the module is installed in your system, and properly configured API user and key to be able to download the atmospheric descriptions.
+The hybrid models need the Climate Data Store (CDS) infrastructure and API module, `cdsapi`, provided by the European Centre for Medium-Range Weather Forecasts (ECMWF, https://www.ecmwf.int/). Please visit [this how-to](https://cds.climate.copernicus.eu/api-how-to) to ensure the module is installed in your system, and properly configured API user and key to be able to download the atmospheric descriptions.
 
 #### ecCodes to decode data
-In order to decode the downloaded data and use it automatically for ray tracing with infraGA, it is necessary to install `ecCodes` provided by ECMWF. Please follow the instructions here https://confluence.ecmwf.int/display/ECC/ecCodes+installation. I recommend to use the Python binding installation (https://confluence.ecmwf.int/display/UDOC/How+to+install+ecCodes+with+Python+bindings+in+conda+-+ecCodes+FAQ).
+In order to decode the downloaded data and use it automatically for ray tracing with infraGA, it is necessary to install `ecCodes` provided by ECMWF. Please follow the instructions [here](https://confluence.ecmwf.int/display/ECC/ecCodes+installation). I recommend to use the Python [binding installation](https://confluence.ecmwf.int/display/UDOC/How+to+install+ecCodes+with+Python+bindings+in+conda+-+ecCodes+FAQ).
 
 ## Installation using Docker 
 We published a Docker image to simplify the installation process of ARCADE.
 By using Docker, you can quickly set up the required environment without worrying
 about the dependency installations.
-**Note:** At the moment, this image is a couple of commits behind.
-However, once your docker image is up and running, you can manually download the
-latest version and use it inside the docker image if you want.
 
 ### Prerequisites
 
@@ -154,31 +152,32 @@ Before you begin, ensure that you have Docker engine installed on your system. Y
 ### Installation Steps
 
 1. Pull the Docker image from the GitHub Container Registry (ghcr.io) by running the following command in your terminal:
-```bash
-docker pull ghcr.io/rodrum/arcade:main
-```
-2. Once the Docker image is successfully downloaded, you can create a new container and start the software using the following command:
+	```bash
+	docker pull ghcr.io/rodrum/arcade:main
+	```
+2. _(Note: I recommend using the "bind mount" described below instead to be able to save the results out of the docker container. If you prefer to use `docker cp` instead, use the following command)_. Once the Docker image is successfully downloaded, you can create a new container and start the software using the following command:
 
-```bash
-docker run -it --name arcade ghcr.io/rodrum/arcade:main
-```
-This will start interactively a new docker container based on the previously
+	```bash
+	docker run -it --name arcade ghcr.io/rodrum/arcade:main
+	```
+	This will start interactively a new docker container based on the previously
 downloaded image and named "arcade".
 All the dependencies are already installed and you can start using the software.
 Nano is installed by defaults and you can use it to modify the input files.
-**Note that you don't need to run `conda activate arcade` before `make run-arcade`, the environment is activated by default.**
+
+	**Note that you don't need to run `conda activate arcade` before `make run-arcade`, the environment is activated by default.**
 
 3. After exiting the container, you can restart it using:
 
-```bash
-docker start -i arcade
-```
+	```bash
+	docker start -i arcade
+	```
 
 ### Retrieving results
 
 To retrieve the results of ARCADE, you have two solutions. 
 1. Using `docker cp`: This solution should be used if you want to retrieve results from small runs or only the result table.
-2. Using bind mounts: This solution should be used if you want to retrieve all the data from the output folder in case of long runs.
+2. **Using bind mounts (recommended)**: This solution should be used if you want to retrieve all the data from the output folder in case of long runs.
 
 #### Using `docker cp`:
 
@@ -198,8 +197,10 @@ This will copy the file or folder specified to the given destination.
 Bind mounts allow the docker container to directly write on the host instead of inside the docker container. To use a bind mount, you need to run the container with the following command:
 
 ```bash
-docker run -it --name arcade --mount type=bind,source=/path/on/the/host,target=/app/results ghcr.io/username/docker-image:tag
+docker run -it --name arcade --mount type=bind,source=/path/on/the/host,target=/app/results ghcr.io/rodrum/arcade:main
 ```
+- Note that `/path/on/the/host` should be the place where you want to mount `/app/results`.
+- `/app/results` should be the place where you tell ARCADE to save your results: `path = "/app/results"` in `config.toml`. 
 
 ## How to run in general
 

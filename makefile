@@ -1,8 +1,8 @@
-GFORT = gfortran-8
+GFORT = gfortran
 # locations of external necessary repos
 MSISE = ./repos/NRLMSIS2.0
 HWM = ./repos/HWM14
-INF = ./repos/infraGA-master
+INF = ./repos/infraGA-master/infraga
 # other locations
 BIN = ./bin
 SRC = ./src
