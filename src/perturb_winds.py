@@ -52,7 +52,12 @@ if config['atmospheric_model']['prop_model'] == 'range_ind':
         print(f"a12={a12:.2f} deg.")
         a12 = np.deg2rad(a12) # pass to radians
         # Load profiles, modify them, and save the perturbed version
-        prof = np.loadtxt(file_in)
+        try:
+            prof = np.loadtxt(file_in)
+        except FileNotFoundError:
+            print("[perturb_winds.py] ERROR!")
+            print(f"\tFile  {file_in} not found!")
+            print("Skipping...")
         h = prof[:, 0] # altitude (km)
         u = prof[:, 2] # Zonal winds, East (+)
         v = prof[:, 3] # Meridional winds, North (+)

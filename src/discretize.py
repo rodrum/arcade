@@ -591,6 +591,17 @@ def rng_ind_ncpag2s(year, ds, all_comb, sou_pos, sta_pos, path_ncpag2s, out_path
 
         # Read summary file to know the order of the names
         summ_files = []
+        try:
+            open(join(out_path, 'summary.dat'), 'r')
+        except FileNotFoundError:
+            print(f"[rng_ind_ncpag2s] ERROR: file {join(out_path, 'summary.dat')}")
+            print("                         not found!")
+            print("                   Please check that NCPAG2S can find data.")
+            print("                   Skipping this combination:")
+            print(f"                  {sec} {doy} {isou} {ista}")
+            print("                   (sec doy isou ista)")
+            continue
+
         with open(join(out_path, 'summary.dat'), 'r') as f:
             for line in f.readlines():
                 summ_files.append(line.split())
