@@ -29,6 +29,7 @@ f107    Not used
 aph     current 3hr AP index
 """
 
+import sys
 import shutil
 from os import mkdir, chdir, listdir
 from os.path import join, isdir
@@ -41,6 +42,28 @@ from itertools import product
 from datetime import datetime, timedelta
 
 geod = Geodesic.WGS84
+
+
+def get_sta_pos(config_path):
+    """Check if using station location file and return station positions"""
+    sta_nam = toml.load(join(config_path, 'config.toml'))['discretization']['sta_name']
+    sta_net = toml.load(join(config_path, 'config.toml'))['discretization']['sta_net']
+    sta_pos = []
+    if sta_net == 'IMS':
+        try:
+            ims_net = pandas.read_csv(join(config_path, 'ims_stations.csv'))
+        except FileNotFoundError:
+            print("[get_sta_pos] ERROR: File <ims_stations.csv> not found!")
+            print("              Bye!")
+            sys.exit()
+        for sta_nam_i in sta_nam:
+            lat_i = ims_net[ims_net['array'] == sta_nam_i]['lat (deg)'].values[0]
+            lon_i = ims_net[ims_net['array'] == sta_nam_i]['lon (deg)'].values[0]
+            sta_pos.append([lat_i, lon_i])
+    else:
+        sta_pos = params['discretization']['sta_pos']
+    return sta_pos
+
 
 def pres(dens, temp, R=287.058):
     """
@@ -780,8 +803,9 @@ if __name__ == '__main__':
     sou_pos = params['discretization']['sou_pos']
 
     # Load stations
-    sta_nam = params['discretization']['sta_name']
-    sta_pos = params['discretization']['sta_pos']
+    # check if using IMS network
+    sta_net = params['discretization']['sta_net']
+    sta_pos = get_sta_pos('../input')
 
     print("Times of the day (hrs.):")
     for sec in secs:

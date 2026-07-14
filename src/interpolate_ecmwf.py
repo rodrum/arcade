@@ -13,6 +13,7 @@ from scipy import interpolate
 import toml
 import datetime
 from itertools import product
+from discretize import get_sta_pos
 
 def main_rng_ind(doys):
     config = toml.load("../input/config.toml")
@@ -33,7 +34,7 @@ def main_rng_ind(doys):
     secs    = config['discretization']['sec']
     # doys    = config['discretization']['doys']
     sources  = config['discretization']['sou_pos']
-    stations = config['discretization']['sta_pos']
+    stations = get_sta_pos('../input')  #config['discretization']['sta_pos']
     all_comb = product(secs, doys, range(len(sources)), range(len(stations)))
     for sec, doy, nsou, nsta in all_comb:
         soulat, soulon = sources[nsou]

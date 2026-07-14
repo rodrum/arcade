@@ -8,6 +8,7 @@ from os.path import join
 import toml
 from itertools import product
 from os import mkdir
+from discretize import get_sta_pos
     
 def main():
     arrv_path   = "../output/profiles"
@@ -36,7 +37,7 @@ def main():
                                  int(float(doys[1]))+doy_step,
                                  doy_step)
         sources     = params['discretization']['sou_pos']
-        stations    = params['discretization']['sta_pos']
+        stations    = get_sta_pos('../input')  #params['discretization']['sta_pos']
         all_comb = [combi for combi in product(secs, doys, range(len(sources)),
                                                range(len(stations)))]
         run_type    = params['atmospheric_model']['type']

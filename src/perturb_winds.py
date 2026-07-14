@@ -8,6 +8,7 @@ from os.path import join
 from obspy.geodetics.base import gps2dist_azimuth
 import toml
 from itertools import product
+from discretize import get_sta_pos
 
 config = toml.load("./input/config.toml")
 
@@ -29,7 +30,7 @@ if doy_step > 0:
                          int(float(doys[1]))+doy_step,
                          doy_step)
 sources  = config['discretization']['sou_pos']
-stations = config['discretization']['sta_pos']
+stations = get_sta_pos('./input')  #config['discretization']['sta_pos']
 all_comb = product(secs, doys, range(len(sources)), range(len(stations)))
 
 # Create the profile names following 'discretize.py'

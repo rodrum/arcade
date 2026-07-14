@@ -6,6 +6,7 @@ import toml
 import datetime 
 import subprocess
 import numpy as np
+from discretize import get_sta_pos
 
 def format_csv(in_file, out_file):
     """Function to format CSV"""
@@ -69,7 +70,7 @@ def main():
                 max_lat = config['atmospheric_model']['ecmwf']['max_lat']
             else:
                 sou_pos = config['discretization']['sou_pos']
-                sta_pos = config['discretization']['sta_pos']
+                sta_pos = get_sta_pos('../input')  #config['discretization']['sta_pos']
                 min_lon = int(np.min([s[1] for s in (sou_pos+sta_pos)])) - 2*dlon
                 max_lon = int(np.max([s[1] for s in (sou_pos+sta_pos)])) + 2*dlon
                 min_lat = int(np.min([s[0] for s in (sou_pos+sta_pos)])) - 2*dlat

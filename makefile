@@ -1,8 +1,10 @@
+SHELL := /usr/bin/bash
+
 GFORT = gfortran
 # locations of external necessary repos
-MSISE = ./repos/NRLMSIS2.0
+MSISE = ./repos/NRLMSIS2
 HWM = ./repos/HWM14
-INF = ./repos/infraGA-master/infraga
+INF = ./repos/infraGA/infraga
 # other locations
 BIN = ./bin
 SRC = ./src
@@ -74,26 +76,52 @@ all-prep: infraga-sph infraga-sph-rngdep calculate-sph-nodes complete-ecmwf calc
 
 #===============================================================================
 
-run-arcade: 
+discretize:
 	mkdir -p $(OUT)/proc
+
 	@echo "discretize.py" > $(OUT)/proc/$(ARCADE_OUT)
 	@echo "-------------" >> $(OUT)/proc/$(ARCADE_OUT)
-	@{ time python $(SRC)/discretize.py ; } 2>> $(OUT)/proc/$(ARCADE_OUT)
+	@{ time python $(SRC)/discretize.py ; } 2>&1 | tee -a $(OUT)/proc/$(ARCADE_OUT)
+	@echo "" >> $(OUT)/proc/$(ARCADE_OUT)
+
+perturb:
+	@echo "perturb_winds.py" >> $(OUT)/proc/$(ARCADE_OUT)
+	@echo "----------------" >> $(OUT)/proc/$(ARCADE_OUT)
+	@{ time python $(SRC)/perturb_winds.py ; } 2>&1 | tee -a $(OUT)/proc/$(ARCADE_OUT)
+	@echo "" >> $(OUT)/proc/$(ARCADE_OUT)
+
+plot:
+	@echo "plot_profiles.py" >> $(OUT)/proc/$(ARCADE_OUT)
+	@echo "----------------" >> $(OUT)/proc/$(ARCADE_OUT)
+	@{ time python $(SRC)/plot_profiles.py ; } 2>&1 $(OUT)/proc/$(ARCADE_OUT)
+	@echo "" >> $(OUT)/proc/$(ARCADE_OUT)
+
+run:
+	@echo "ARCADE_main.py" >> $(OUT)/proc/$(ARCADE_OUT)
+	@echo "--------------" >> $(OUT)/proc/$(ARCADE_OUT)
+	@{ time python $(SRC)/ARCADE_main.py ; } 2>&1 | tee -a $(OUT)/proc/$(ARCADE_OUT)
+
+run-arcade: 
+	mkdir -p $(OUT)/proc
+	
+	@echo "discretize.py" > $(OUT)/proc/$(ARCADE_OUT)
+	@echo "-------------" >> $(OUT)/proc/$(ARCADE_OUT)
+	@{ time python $(SRC)/discretize.py ; } 2>&1 | tee -a $(OUT)/proc/$(ARCADE_OUT)
 	@echo "" >> $(OUT)/proc/$(ARCADE_OUT)
 
 	@echo "perturb_winds.py" >> $(OUT)/proc/$(ARCADE_OUT)
 	@echo "----------------" >> $(OUT)/proc/$(ARCADE_OUT)
-	@{ time python $(SRC)/perturb_winds.py ; } 2>> $(OUT)/proc/$(ARCADE_OUT)
+	@{ time python $(SRC)/perturb_winds.py ; } 2>&1 | tee -a $(OUT)/proc/$(ARCADE_OUT)
 	@echo "" >> $(OUT)/proc/$(ARCADE_OUT)
 
 	@echo "plot_profiles.py" >> $(OUT)/proc/$(ARCADE_OUT)
 	@echo "----------------" >> $(OUT)/proc/$(ARCADE_OUT)
-	@{ time python $(SRC)/plot_profiles.py ; } 2>> $(OUT)/proc/$(ARCADE_OUT)
+	@{ time python $(SRC)/plot_profiles.py ; } 2>&1 $(OUT)/proc/$(ARCADE_OUT)
 	@echo "" >> $(OUT)/proc/$(ARCADE_OUT)
 
 	@echo "ARCADE_main.py" >> $(OUT)/proc/$(ARCADE_OUT)
 	@echo "--------------" >> $(OUT)/proc/$(ARCADE_OUT)
-	@{ time python $(SRC)/ARCADE_main.py ; } 2>> $(OUT)/proc/$(ARCADE_OUT)
+	@{ time python $(SRC)/ARCADE_main.py ; } 2>&1 | tee -a $(OUT)/proc/$(ARCADE_OUT)
 
 
 eigen_search:
@@ -103,11 +131,3 @@ eigen_search:
 	@{ time python $(SRC)/eigen_search_infraGA.py ; } 2>> $(OUT)/proc/$(EIGENSEARCH_OUT)
 	@echo "" >> $(OUT)/proc/$(EIGENSEARCH_OUT)
 
-# -----
-# Tests
-# -----
-test_discretize:
-	python $(SRC)/discretize.py
-test_clean:
-	rm -r $(OUT)
-	rm input/secs_doys_sources_stations.txt
