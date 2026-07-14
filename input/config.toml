@@ -75,6 +75,9 @@ sou_pos = [
     [-19.532, 169.447],
 ]
 
+# station network (options are 'IMS' or 'None' for now. If using 'IMS' it will
+# use the name to get the latitude and longitude from input/ims_station.csv)
+sta_net = 'IMS'
 # station name(s).
 sta_name = [
     'IS22',
